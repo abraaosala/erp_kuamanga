@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import "../../node_modules/select2/dist/css/select2.min.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-main: #f8fafc; /* slate-50 */
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --text-main: #0f172a; /* slate-900 */
+  --text-muted: #64748b; /* slate-500 */
+  --border-color: #e2e8f0; /* slate-200 */
+  --accent: #7c3aed; /* violet-600 */
+  --accent-soft: #f5f3ff; /* violet-50 */
+  --input-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  --bg-main: #09090b; /* gray-950 */
+  --bg-sidebar: #111827; /* gray-900 */
+  --bg-card: #111827;
+  --text-main: #f3f4f6; /* gray-100 */
+  --text-muted: #9ca3af; /* gray-400 */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent: #8b5cf6; /* violet-500 */
+  --accent-soft: rgba(139, 92, 246, 0.1);
+  --input-bg: #1f2937; /* gray-800 */
+  --glass-bg: rgba(17, 24, 39, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Sidebar */
+  .sidebar {
+    background-color: var(--bg-sidebar);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border-color);
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer;
+    color: var(--text-muted);
+  }
+
+  .nav-item:hover {
+    color: var(--text-main);
+    background-color: var(--accent-soft);
+  }
+
+  .nav-item.active {
+    color: var(--accent);
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-color: rgba(124, 58, 237, 0.2);
+  }
+
+  /* Glass card */
+  .glass-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Stat cards */
+  .stat-card {
+    @apply glass-card p-5 rounded-2xl transition-all duration-300;
+  }
+  
+  .stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  /* Form inputs */
+  .form-input {
+    @apply w-full px-4 py-3 rounded-xl text-sm transition-all duration-200;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+  
+  .form-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .form-input:focus {
+    @apply outline-none ring-2;
+    border-color: var(--accent);
+    --tw-ring-color: rgba(124, 58, 237, 0.2);
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl text-sm font-semibold text-white
+           bg-gradient-to-r from-violet-600 to-indigo-600
+           hover:from-violet-500 hover:to-indigo-500
+           shadow-lg shadow-violet-500/20
+           transition-all duration-200
+           disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--accent-soft);
+    color: var(--text-main);
+    border-color: var(--accent);
+  }
+
+  .btn-danger {
+    @apply px-5 py-2.5 rounded-xl text-sm font-semibold text-white
+           bg-red-600 hover:bg-red-500
+           transition-all duration-200;
+  }
+
+  /* Tables */
+  .table-container {
+    @apply w-full overflow-hidden rounded-2xl;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .app-table {
+    @apply w-full text-left border-collapse;
+  }
+
+  .app-table th {
+    @apply px-6 py-4 text-xs font-semibold uppercase tracking-wider;
+    background-color: var(--bg-main);
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .app-table td {
+    @apply px-6 py-4 text-sm;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .app-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .app-table tr:hover td {
+    background-color: var(--accent-soft);
+  }
+
+  /* Select2 Custom Styles */
+  .select2-container--default .select2-selection--multiple {
+    @apply border-0 min-h-[46px] px-2 py-1 rounded-xl transition-all duration-200;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .select2-container--default.select2-container--focus .select2-selection--multiple {
+    @apply ring-2 shadow-sm;
+    border-color: var(--accent) !important;
+    --tw-ring-color: rgba(124, 58, 237, 0.2);
+  }
+
+  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    @apply px-2 py-0.5 rounded-md text-xs font-semibold border-0;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    @apply mr-1 hover:text-red-500 transition-colors;
+    color: var(--accent) !important;
+    border: 0 !important;
+  }
+
+  .select2-dropdown {
+    @apply rounded-xl shadow-xl overflow-hidden;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main);
+  }
+
+  .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--accent) !important;
+    color: white !important;
+  }
+
+  .select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: var(--accent-soft) !important;
+    color: var(--accent);
+  }
+
+  .select2-search--dropdown .select2-search__field {
+    @apply rounded-lg px-3 py-2 text-sm;
+    background-color: var(--bg-main) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-main);
+  }
+}
+
+@layer utilities {
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+}

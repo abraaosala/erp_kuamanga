@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * ERP Console CLI - Entry Point
+ * Based on Symphony Console and decoupled Illuminate components
+ */
+
+// Bootstrap the application
+$app = require __DIR__ . '/bootstrap/app.php';
+
+use Symfony\Component\Console\Application;
+
+$application = new Application('ERP Console', '1.0.0');
+
+// Register Commands
+$commands = [
+    \App\Console\Commands\MigrateCommand::class,
+    \App\Console\Commands\DbSeedCommand::class,
+    \App\Console\Commands\DbCreateCommand::class,
+    \App\Console\Commands\DbDropCommand::class,
+    \App\Console\Commands\MakeControllerCommand::class,
+    \App\Console\Commands\MakeModelCommand::class,
+];
+
+foreach ($commands as $commandClass) {
+    if (class_exists($commandClass)) {
+        // Resolve from container to allow DI in commands
+        $application->add($app->getContainer()->make($commandClass));
+    }
+}
+
+$application->run();

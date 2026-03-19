@@ -1,0 +1,25 @@
+{
+  "name": "ofto",
+  "version": "1.0.0",
+  "description": "Frontend assets for ofto",
+  "main": "index.js",
+  "scripts": {
+    "dev:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --watch",
+    "dev:js": ".\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --watch",
+    "build:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --minify",
+    "build:js": ".\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --minify",
+    "dev": "(start /B .\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --watch) & .\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --watch",
+    "build": "npm run build:css && npm run build:js"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.15",
+    "esbuild": "^0.27.4",
+    "postcss": "^8.4.28",
+    "tailwindcss": "^3.3.3"
+  },
+  "dependencies": {
+    "alpinejs": "^3.13.0",
+    "jquery": "^4.0.0",
+    "select2": "^4.1.0-rc.0"
+  }
+}
