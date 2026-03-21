@@ -20,6 +20,7 @@
   "dependencies": {
     "alpinejs": "^3.13.0",
     "jquery": "^4.0.0",
+    "lucide": "^0.577.0",
     "select2": "^4.1.0-rc.0"
   }
 }

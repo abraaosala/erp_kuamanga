@@ -72,18 +72,21 @@ if (!function_exists('request')) {
 if (!function_exists('session')) {
     function session($key = null, $default = null)
     {
+        /** @var \App\Core\Session $session */
+        $session = app(\App\Core\Session::class);
+
         if (is_null($key)) {
-            return $_SESSION;
+            return $session;
         }
 
         if (is_array($key)) {
             foreach ($key as $k => $v) {
-                $_SESSION[$k] = $v;
+                $session->set((string)$k, $v);
             }
             return true;
         }
 
-        return $_SESSION[$key] ?? $default;
+        return $session->get((string)$key, $default);
     }
 }
 
@@ -100,5 +103,20 @@ if (!function_exists('back')) {
     {
         $referer = $_SERVER['HTTP_REFERER'] ?? '/';
         return redirect($referer);
+    }
+}
+
+if (!function_exists('current_empresa')) {
+    function current_empresa()
+    {
+        $id = session()->empresaId();
+        return \App\Models\Empresa::find($id) ?: (object)['id' => 1, 'nome' => 'Kuamanga'];
+    }
+}
+
+if (!function_exists('all_empresas')) {
+    function all_empresas()
+    {
+        return \App\Models\Empresa::where('status', 'ativo')->get();
     }
 }

@@ -12,6 +12,12 @@ Este é um sistema ERP focado em gestão de usuários, implementado com uma arqu
   - **Select2**: Seleção de funções com busca inteligente e múltipla escolha, integrada via npm.
   - **Design Moderno**: Estética baseada em variáveis CSS e Tailwind CSS para uma experiência limpa e profissional.
 
+## 📦 Módulos do Sistema
+
+A arquitetura do Kuamanga ERP está dividida por módulos orientados ao negócio. Verifique a documentação específica de cada módulo:
+
+- 📊 **[Módulo de Contabilidade (PGC Angola)](docs/modules/accounting.md)**: Plano de Contas, Lançamentos, Razão, Balancetes e Mapas Oficiais (Balanço & DRE).
+
 ## 🛠️ Tecnologias Utilizadas
 
 - **Backend**: PHP 8.x, Illuminate components (Database, Routing, Validation, Pagination).

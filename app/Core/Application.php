@@ -29,6 +29,10 @@ class Application
 
         Facade::setFacadeApplication($this->container);
 
+        $this->container->singleton(\App\Core\Session::class, function() {
+            return new \App\Core\Session();
+        });
+
         $this->bootstrapConfig();
         $this->bootstrapSession();
         $this->bootstrapRouting();

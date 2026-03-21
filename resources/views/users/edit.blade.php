@@ -2,7 +2,7 @@
 
 @section('title', 'Editar Usuário')
 @section('page-title', 'Editar Usuário')
-@section('page-subtitle', 'Atualizar dados do usuário: {{ $user->name }}')
+@section('page-subtitle',"Atualizar dados do usuário: {{ $user->name }}")
 
 @section('content')
 <div class="max-w-2xl">

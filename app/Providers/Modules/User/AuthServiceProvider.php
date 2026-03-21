@@ -46,5 +46,9 @@ class AuthServiceProvider
         });
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        $router = $this->container->make('router');
+        $router->aliasMiddleware('auth', \App\Http\Middleware\AuthMiddleware::class);
+    }
 }
