@@ -10,3 +10,6 @@ use Illuminate\Routing\Router;
 $router->get('/', function () {
     return redirect('/dashboard');
 });
+
+$router->get('/companies', [\App\Http\Controllers\CompanyController::class, 'index'])->middleware('auth');
+$router->post('/company/switch', [\App\Http\Controllers\CompanyController::class, 'switch'])->middleware('auth');
