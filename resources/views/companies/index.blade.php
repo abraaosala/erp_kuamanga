@@ -4,19 +4,34 @@
 @section('page-title', 'Empresas')
 @section('page-subtitle', 'Gestão de Clientes e Entidades')
 
+@section('header-actions')
+<a href="/companies/create" class="btn-primary flex items-center gap-2 text-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    </svg>
+    Nova Empresa
+</a>
+@endsection
+
 @section('content')
 <div class="space-y-6">
-    <!-- Header Card -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex justify-between items-center">
-        <div>
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Lista de Empresas</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 text-xs">Gerencie os clientes que a Kuamanga atende.</p>
-        </div>
-        <button class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Nova Empresa</span>
-        </button>
+    @if(!empty($success))
+    <div class="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ $success }}
     </div>
+    @endif
+
+    @if(!empty($error))
+    <div class="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ $error }}
+    </div>
+    @endif
 
     <!-- Companies Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -27,9 +42,9 @@
                         {{ substr($company->nome, 0, 1) }}
                     </div>
                     <div class="flex gap-2">
-                        <button class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors" title="Editar">
+                        <a href="/companies/{{ $company->id }}/edit" class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors" title="Editar">
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
+                        </a>
                         @if($company->id != current_empresa()->id)
                             <form action="/company/switch" method="POST">
                                 <input type="hidden" name="empresa_id" value="{{ $company->id }}">
