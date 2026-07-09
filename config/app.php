@@ -13,6 +13,7 @@ return [
         App\Providers\Modules\User\AuthServiceProvider::class,
         App\Providers\Modules\User\UserServiceProvider::class,
         App\Providers\Modules\Accounting\AccountingServiceProvider::class,
+        App\Providers\Modules\Rh\RhServiceProvider::class,
     ],
 
     'session' => [
