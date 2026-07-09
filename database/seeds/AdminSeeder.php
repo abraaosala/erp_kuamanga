@@ -75,6 +75,7 @@ class AdminSeeder extends AbstractSeed
         // Create admin user
         $adminPassword = password_hash('admin123', PASSWORD_BCRYPT);
         $usersTable    = $this->table('users');
+        
         $usersTable->insert([
             [
                 'name'       => 'Administrador',

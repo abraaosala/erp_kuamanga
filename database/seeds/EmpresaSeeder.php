@@ -8,6 +8,12 @@ class EmpresaSeeder extends AbstractSeed
 {
     public function run(): void
     {
+        $exists = $this->fetchRow("SELECT id FROM empresas WHERE nif = '500123456'");
+        if ($exists) {
+            echo "⚠ Empresa de demonstração já existe, skipping\n";
+            return;
+        }
+
         $data = [
             [
                 'nome'           => 'Empresa de Demonstração LDA',
@@ -23,5 +29,6 @@ class EmpresaSeeder extends AbstractSeed
 
         $table = $this->table('empresas');
         $table->insert($data)->saveData();
+        echo "✅ Empresa de demonstração criada\n";
     }
 }

@@ -12,24 +12,45 @@ declare(strict_types=1);
 $app = require __DIR__ . '/bootstrap/app.php';
 
 use Symfony\Component\Console\Application;
+use App\Console\DatabaseManager;
+use App\Console\PhinxRunner;
+use App\Console\StubService;
 
 $application = new Application('ERP Console', '1.0.0');
 
-// Register Commands
-$commands = [
-    \App\Console\Commands\MigrateCommand::class,
-    \App\Console\Commands\DbSeedCommand::class,
-    \App\Console\Commands\DbCreateCommand::class,
-    \App\Console\Commands\DbDropCommand::class,
-    \App\Console\Commands\MakeControllerCommand::class,
-    \App\Console\Commands\MakeModelCommand::class,
+// Register Commands resolved from container (existing ERP commands)
+$containerCommands = [
+    \App\Console\Commands\DbSeedCommand::class,   // db:seed (ERP)
 ];
 
-foreach ($commands as $commandClass) {
+foreach ($containerCommands as $commandClass) {
     if (class_exists($commandClass)) {
         // Resolve from container to allow DI in commands
         $application->add($app->getContainer()->make($commandClass));
     }
 }
+
+// Create shared service instances for new commands
+$dbManager = new DatabaseManager();
+$phinxRunner = new PhinxRunner();
+$stubService = new StubService();
+
+// Register new commands (direct instantiation)
+$application->add(new \App\Console\Commands\DbCreate($dbManager));
+$application->add(new \App\Console\Commands\DbDrop($dbManager));
+$application->add(new \App\Console\Commands\DbSeed($phinxRunner));
+$application->add(new \App\Console\Commands\MakeController($stubService));
+$application->add(new \App\Console\Commands\MakeMiddleware($stubService));
+$application->add(new \App\Console\Commands\MakeMigration($phinxRunner));
+$application->add(new \App\Console\Commands\MakeModel($stubService));
+$application->add(new \App\Console\Commands\MakeRepository($stubService));
+$application->add(new \App\Console\Commands\MakeSeed($phinxRunner));
+$application->add(new \App\Console\Commands\MakeService($stubService));
+$application->add(new \App\Console\Commands\MakeView($stubService));
+$application->add(new \App\Console\Commands\Migrate($dbManager, $phinxRunner));
+$application->add(new \App\Console\Commands\MigrateBreakpoint($phinxRunner));
+$application->add(new \App\Console\Commands\MigrateRollback($phinxRunner));
+$application->add(new \App\Console\Commands\MigrateStatus($phinxRunner));
+$application->add(new \App\Console\Commands\Serve());
 
 $application->run();

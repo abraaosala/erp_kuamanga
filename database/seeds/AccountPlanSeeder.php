@@ -20,6 +20,12 @@ class AccountPlanSeeder extends AbstractSeed
 
         $empresaId = $empresa['id'];
 
+        $exists = $this->fetchRow("SELECT id FROM account_plans WHERE empresa_id = $empresaId LIMIT 1");
+        if ($exists) {
+            echo "⚠ Plano de contas já existe, skipping\n";
+            return;
+        }
+
         $data = [
             // Classe 1: Meios Monetários
             ['empresa_id' => $empresaId, 'code' => '1', 'name' => 'MEIOS MONETÁRIOS', 'type' => 'asset', 'is_analytic' => false],
