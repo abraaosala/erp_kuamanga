@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+use Illuminate\Routing\Controller;
+
+
+class {{ class }}  extends Controller
+{
+    public function index()
+    {
+        // TODO: implementar
+    }
+    public function show($id)
+    {
+        // TODO: implementar
+    }
+    public function create()
+    {
+        // TODO: implementar
+    }
+    public function store()
+    {
+        // TODO: implementar
+    }
+
+    public function edit($id)
+    {
+        // TODO: implementar
+    }
+
+    public function update($id)
+    {
+        // TODO: implementar
+    }
+    public function destroy($id)
+    {
+        // TODO: implementar
+    }
+    
+    
+    
+
+    
+}
