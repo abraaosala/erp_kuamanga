@@ -15,13 +15,13 @@ $router->group(['middleware' => [AuthMiddleware::class]], function() use ($route
     
     // Dashboard
     $router->get('/dashboard', function () use ($container) {
-        $blade = $container->make(BladeOne::class);
-        $user  = $container->make(AuthServiceInterface::class)->user();
-        $html  = $blade->run('dashboard', [
+        $blade   = $container->make(BladeOne::class);
+        $user    = $container->make(AuthServiceInterface::class)->user();
+        $session = $container->make(\App\Core\Session::class);
+        $html    = $blade->run('dashboard', [
             'user'    => $user,
-            'success' => $_SESSION['flash_success'] ?? null,
+            'success' => $session->getFlash('success'),
         ]);
-        unset($_SESSION['flash_success']);
         return response($html);
     });
 

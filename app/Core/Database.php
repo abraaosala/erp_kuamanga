@@ -24,9 +24,14 @@ class Database
         require_once BASE_PATH . '/vendor/illuminate/pagination/AbstractPaginator.php';
         require_once BASE_PATH . '/vendor/illuminate/pagination/Paginator.php';
 
-        // Setup Paginator resolver
+        // Setup Paginator resolvers
         Paginator::currentPageResolver(function ($pageName = 'page') {
             return (int) ($_GET[$pageName] ?? 1);
+        });
+
+        Paginator::currentPathResolver(function () {
+            $uri = $_SERVER['REQUEST_URI'] ?? '/';
+            return strtok($uri, '?');
         });
 
         $config = config('database');

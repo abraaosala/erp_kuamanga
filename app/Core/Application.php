@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Validation\DatabasePresenceVerifier;
+use Illuminate\Validation\Factory as ValidatorFactory;
 
 class Application
 {
@@ -37,6 +39,7 @@ class Application
         $this->bootstrapSession();
         $this->bootstrapRouting();
         $this->bootstrapDatabase();
+        $this->bootstrapValidation();
         $this->bootstrapErrorHandling();
         $this->registerProviders();
     }
@@ -86,6 +89,47 @@ class Application
         $database->boot();
     }
 
+    protected function bootstrapValidation(): void
+    {
+        $this->container->singleton('files', function () {
+            return new \Illuminate\Filesystem\Filesystem();
+        });
+
+        $this->container->singleton('translation.loader', function () {
+            return new \Illuminate\Translation\ArrayLoader();
+        });
+
+        $this->container->singleton('translator', function ($app) {
+            $loader = $app['translation.loader'];
+            $locale = $this->getLocale();
+            $trans = new \Illuminate\Translation\Translator($loader, $locale);
+            $trans->setFallback($this->getFallbackLocale());
+            return $trans;
+        });
+
+        $this->container->singleton('validation.presence', function ($app) {
+            return new DatabasePresenceVerifier($app['db']);
+        });
+
+        $this->container->singleton(ValidatorFactory::class, function ($app) {
+            $validator = new ValidatorFactory($app['translator'], $app);
+            $validator->setPresenceVerifier($app['validation.presence']);
+            return $validator;
+        });
+
+        $this->container->alias(ValidatorFactory::class, 'validator');
+    }
+
+    public function getLocale(): string
+    {
+        return $this->container->make('config.app')['locale'] ?? 'pt_BR';
+    }
+
+    public function getFallbackLocale(): string
+    {
+        return 'pt_BR';
+    }
+
     protected function bootstrapErrorHandling(): void
     {
         $appConfig = $this->container->make('config.app');
@@ -128,6 +172,7 @@ class Application
 
         $request = Request::capture();
         $this->container->instance('request', $request);
+        $this->container->instance(Request::class, $request);
 
         try {
             $response = $this->router->dispatch($request);

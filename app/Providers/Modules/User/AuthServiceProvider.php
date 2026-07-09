@@ -10,9 +10,6 @@ use App\Services\Contracts\AuthServiceInterface;
 use App\Services\Modules\User\AuthService;
 use Illuminate\Container\Container;
 use eftec\bladeone\BladeOne;
-use Illuminate\Validation\Factory as Validator;
-use Illuminate\Translation\Translator;
-use Illuminate\Translation\ArrayLoader;
 
 class AuthServiceProvider
 {
@@ -38,12 +35,8 @@ class AuthServiceProvider
             return new BladeOne($views, $cache, BladeOne::MODE_AUTO);
         });
 
-        // Register Illuminate Validator
-        $this->container->singleton(Validator::class, function () {
-            $loader     = new ArrayLoader();
-            $translator = new Translator($loader, 'pt');
-            return new Validator($translator, $this->container);
-        });
+        // Validator is registered globally in Application::bootstrapValidation()
+        // with presence verifier support. Do not override it here.
     }
 
     public function boot(): void

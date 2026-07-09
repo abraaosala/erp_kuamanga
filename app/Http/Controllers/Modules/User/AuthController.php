@@ -61,6 +61,7 @@ class AuthController
     public function logout(Request $request)
     {
         $this->authService->logout();
-        return redirect('/login')->with('success', 'Desconectado com sucesso!');
+        $_SESSION['flash_success'] = 'Desconectado com sucesso!';
+        return redirect('/login');
     }
 }

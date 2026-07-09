@@ -79,7 +79,7 @@ class Session
         return $this->get('user');
     }
 
-    public function empresaId(int $id = null)
+    public function empresaId(?int $id = null)
     {
         if ($id !== null) {
             $this->set('empresa_id', $id);
