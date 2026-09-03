@@ -92,7 +92,6 @@ Preenche os seguintes campos:
 | Telefone          | Não         | Contacto telefónico                      |
 | Departamento      | Não         | Selecionar da lista de departamentos     |
 | Cargo             | Não         | Selecionar da lista de cargos            |
-| Salário (AOA)     | Não         | Salário base em Kwanzas                  |
 | Data de Admissão  | Não         | Data em que o colaborador iniciou funções|
 
 Após preencher, clica em **Salvar**. Serás redirecionado de volta à lista com uma mensagem de sucesso.
@@ -109,15 +108,116 @@ Podes alterar qualquer campo do registo, incluindo o **Status** (Ativo / Inativo
 
 ---
 
-## 5. Submódulos Futuros
+## 5. Contratos
 
-O módulo de RH será expandido com os seguintes submódulos nas próximas versões:
+O submódulo de Contratos regista os contratos de trabalho de cada colaborador, incluindo tipo, vigência e dados salariais.
 
-*   **Contratos** — Registo de contratos de trabalho, renovações, termos.
-*   **Ausências e Férias** — Controlo de faltas, licenças, férias e respectivos saldos.
-*   **Processamento Salarial** — Cálculo de salários, impostos (IRT), segurança social e emissão de recibos.
-*   **Avaliações** — Gestão de desempenho e avaliações periódicas.
-*   **Recrutamento** — Pipeline de candidaturas, entrevistas e admissões.
+*   **Aceder a:** `RH > Contratos`
+
+### 5.1. Lista de Contratos
+Tabela com os contratos registados: **Funcionário**, **Tipo de Contrato**, **Data de Início**, **Data de Fim**, **Salário Base**, **Status**. Botões de **Editar** e **Excluir** em cada linha, além de pesquisa e paginação.
+
+### 5.2. Cadastrar Novo Contrato
+*   **Aceder a:** `RH > Contratos > Novo Contrato`
+
+| Campo           | Obrigatório | Descrição                                    |
+|-----------------|-------------|----------------------------------------------|
+| Funcionário     | Sim         | Selecionar da lista de funcionários          |
+| Tipo de Contrato| Sim         | Ex: Termo certo, Indeterminado, Estágio      |
+| Data de Início  | Sim         | Início da vigência do contrato               |
+| Data de Fim     | Não         | Deve ser igual ou posterior à data de início |
+| Salário Base (AOA)| Não       | Salário contratual em Kwanzas                |
+| Carga Horária   | Não         | Ex: 40h/semanais                            |
+| Observações     | Não         | Notas adicionais do contrato                 |
+
+### 5.3. Editar Contrato
+Permite alterar todos os campos do contrato, incluindo o **Status** (Ativo / Inativo).
+
+### 5.4. Remover Contrato
+A exclusão é lógica (soft delete).
+
+---
+
+## 6. Assiduidade (Ponto)
+
+O submódulo de Assiduidade regista a presença diária dos colaboradores, incluindo entradas, saídas e faltas.
+
+*   **Aceder a:** `RH > Assiduidade`
+
+### 6.1. Lista de Assiduidade
+Tabela com os registos de ponto: **Funcionário**, **Data**, **Entrada**, **Saída**, **Status** (Presente/Atrasado/Falta/Justificado). Botões de **Editar** e **Excluir** em cada linha, além de pesquisa e paginação.
+
+### 6.2. Cadastrar Novo Registo de Ponto
+*   **Aceder a:** `RH > Assiduidade > Novo Registo`
+
+| Campo           | Obrigatório | Descrição                                    |
+|-----------------|-------------|----------------------------------------------|
+| Funcionário     | Sim         | Selecionar da lista de funcionários          |
+| Data            | Sim         | Data do registo de ponto                     |
+| Entrada         | Não         | Hora de entrada (formato HH:mm)              |
+| Saída           | Não         | Hora de saída (formato HH:mm)                |
+| Status          | Sim         | Presente / Atrasado / Falta / Justificado    |
+| Observações     | Não         | Notas do registo                             |
+
+### 6.3. Editar Registo de Ponto
+Permite alterar todos os campos do registo.
+
+### 6.4. Remover Registo de Ponto
+A exclusão é lógica (soft delete).
+
+---
+
+## 7. Visão / Roadmap do Módulo de RH
+
+O módulo de RH já cobre a **gestão de colaboradores** (departamentos, cargos, funcionários, contratos) e a **assiduidade** (ponto). A seguir está a visão completa do módulo, com as áreas a desenvolver nas próximas versões:
+
+### 7.1. Recrutamento e seleção
+- Publicação e gestão de vagas
+- Receção e triagem de candidaturas
+- Agendamento de entrevistas
+- Registo de avaliações e criação de banco de talentos
+
+### 7.2. Admissão e onboarding
+- Recolha de documentos do novo colaborador
+- Assinatura de contratos e termos
+- Checklists de integração
+- Atribuição de acessos, equipamentos e formação inicial
+
+### 7.3. Ponto, presença e férias
+- Registo de entradas, saídas, atrasos e horas extras
+- Gestão de escalas e banco de horas
+- Solicitação, aprovação e controlo de férias
+- Registo de faltas, licenças e justificações
+
+### 7.4. Folha salarial
+- Cálculo de salários, subsídios, descontos e horas extras
+- Geração de recibos de vencimento
+- Gestão de impostos (IRT), contribuições e obrigações legais aplicáveis
+- Exportação ou integração com sistemas contabilísticos e bancários
+
+### 7.5. Benefícios
+- Gestão de subsídio de alimentação, transporte, seguro e outros benefícios
+- Regras de elegibilidade por cargo, departamento ou antiguidade
+- Consulta de benefícios pelo colaborador
+
+### 7.6. Avaliação e desenvolvimento
+- Definição de metas e indicadores
+- Avaliações de desempenho periódicas ou 360 graus
+- Feedback entre gestor e colaborador
+- Plano de Desenvolvimento Individual (PDI), cursos e certificações
+
+### 7.7. Portal do colaborador
+- Consulta de dados pessoais, documentos e recibos
+- Pedido de férias e atualização de informações
+- Consulta de ponto, benefícios e avaliações
+- Comunicação de avisos internos
+
+### 7.8. Relatórios e indicadores
+- Número de colaboradores por departamento
+- Rotatividade (*turnover*)
+- Absenteísmo
+- Custos com pessoal
+- Férias pendentes, horas extras e desempenho
 
 ---
 
