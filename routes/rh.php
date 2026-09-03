@@ -6,7 +6,9 @@ use App\Http\Controllers\Modules\Rh\AttendanceController;
 use App\Http\Controllers\Modules\Rh\ContractController;
 use App\Http\Controllers\Modules\Rh\DepartmentController;
 use App\Http\Controllers\Modules\Rh\EmployeeController;
+use App\Http\Controllers\Modules\Rh\HourBankEntryController;
 use App\Http\Controllers\Modules\Rh\PositionController;
+use App\Http\Controllers\Modules\Rh\WorkScheduleController;
 use Illuminate\Routing\Router;
 
 /** @var Router $router */
@@ -46,4 +48,18 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/contracts/{id}/edit', [ContractController::class, 'edit'])->name('rh.contracts.edit');
     $router->post('/contracts/{id}/update', [ContractController::class, 'update'])->name('rh.contracts.update');
     $router->post('/contracts/{id}/delete', [ContractController::class, 'destroy'])->name('rh.contracts.destroy');
+
+    $router->get('/schedules', [WorkScheduleController::class, 'index'])->name('rh.schedules.index');
+    $router->get('/schedules/create', [WorkScheduleController::class, 'create'])->name('rh.schedules.create');
+    $router->post('/schedules', [WorkScheduleController::class, 'store'])->name('rh.schedules.store');
+    $router->get('/schedules/{id}/edit', [WorkScheduleController::class, 'edit'])->name('rh.schedules.edit');
+    $router->post('/schedules/{id}/update', [WorkScheduleController::class, 'update'])->name('rh.schedules.update');
+    $router->post('/schedules/{id}/delete', [WorkScheduleController::class, 'destroy'])->name('rh.schedules.destroy');
+
+    $router->get('/hour-bank', [HourBankEntryController::class, 'index'])->name('rh.hour-bank.index');
+    $router->get('/hour-bank/create', [HourBankEntryController::class, 'create'])->name('rh.hour-bank.create');
+    $router->post('/hour-bank', [HourBankEntryController::class, 'store'])->name('rh.hour-bank.store');
+    $router->get('/hour-bank/{id}/edit', [HourBankEntryController::class, 'edit'])->name('rh.hour-bank.edit');
+    $router->post('/hour-bank/{id}/update', [HourBankEntryController::class, 'update'])->name('rh.hour-bank.update');
+    $router->post('/hour-bank/{id}/delete', [HourBankEntryController::class, 'destroy'])->name('rh.hour-bank.destroy');
 });
