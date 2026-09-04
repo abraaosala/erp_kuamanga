@@ -25,8 +25,10 @@ class AuthServiceProvider
 
         // Register BladeOne
         $this->container->singleton(BladeOne::class, function () {
-            $views = $this->container->make('path.base') . '/resources/views';
-            $cache = $this->container->make('path.base') . '/storage/cache';
+            /** @var string $basePath */
+            $basePath = $this->container->make('path.base');
+            $views = $basePath . '/resources/views';
+            $cache = $basePath . '/storage/cache';
 
             if (!is_dir($cache)) {
                 mkdir($cache, 0755, true);
@@ -41,6 +43,7 @@ class AuthServiceProvider
 
     public function boot(): void
     {
+        /** @var \Illuminate\Routing\Router $router */
         $router = $this->container->make('router');
         $router->aliasMiddleware('auth', \App\Http\Middleware\AuthMiddleware::class);
     }

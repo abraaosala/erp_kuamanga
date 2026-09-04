@@ -40,15 +40,19 @@ class AuthService implements AuthServiceInterface
 
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params['path'],
-                $params['domain'],
-                $params['secure'],
-                $params['httponly']
-            );
+            $name = session_name();
+
+            if ($name !== false) {
+                setcookie(
+                    $name,
+                    '',
+                    time() - 42000,
+                    $params['path'],
+                    $params['domain'],
+                    $params['secure'],
+                    $params['httponly']
+                );
+            }
         }
 
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -72,12 +76,19 @@ class AuthService implements AuthServiceInterface
         if (!$this->check()) {
             return null;
         }
-        return $this->userRepository->findById((int) $_SESSION['user_id']);
+        /** @var mixed $rawUserId */
+        $rawUserId = $_SESSION['user_id'] ?? null;
+        if (!is_numeric($rawUserId)) {
+            return null;
+        }
+        return $this->userRepository->findById((int) $rawUserId);
     }
 
     public function id(): ?int
     {
-        return isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
+        /** @var mixed $rawUserId */
+        $rawUserId = $_SESSION['user_id'] ?? null;
+        return is_numeric($rawUserId) ? (int) $rawUserId : null;
     }
 
     protected function startSession(User $user): void

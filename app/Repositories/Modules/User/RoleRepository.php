@@ -12,19 +12,31 @@ class RoleRepository implements RoleRepositoryInterface
 {
     public function all(): Collection
     {
-        return Role::all();
+        /** @var Collection<int, Role> $result */
+        $result = Role::all();
+
+        return $result;
     }
 
     public function findById(int $id): ?Role
     {
-        return Role::with('permissions')->find($id);
+        /** @var \App\Models\Role|null $role */
+        $role = Role::with('permissions')->find($id);
+
+        return $role;
     }
 
     public function findByName(string $name): ?Role
     {
-        return Role::where('name', $name)->first();
+        /** @var \App\Models\Role|null $role */
+        $role = Role::where('name', $name)->first();
+
+        return $role;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Role
     {
         return Role::create($data);
@@ -32,12 +44,14 @@ class RoleRepository implements RoleRepositoryInterface
 
     public function assignToUser(int $roleId, int $userId): void
     {
+        /** @var Role $role */
         $role = Role::findOrFail($roleId);
         $role->users()->syncWithoutDetaching([$userId]);
     }
 
     public function removeFromUser(int $roleId, int $userId): void
     {
+        /** @var Role $role */
         $role = Role::findOrFail($roleId);
         $role->users()->detach($userId);
     }

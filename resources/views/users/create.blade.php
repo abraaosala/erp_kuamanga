@@ -66,14 +66,4 @@
 </div>
 @endsection
 
-@section('scripts')
-<script>
-    $(document).ready(function() {
-        $('#roles').select2({
-            width: '100%',
-            allowClear: true,
-            placeholder: 'Selecione as funções'
-        });
-    });
-</script>
 @endsection

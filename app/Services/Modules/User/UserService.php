@@ -34,7 +34,9 @@ class UserService implements UserServiceInterface
         }
 
         // Check for duplicate email
-        $existing = $this->userRepository->findByEmail($data['email']);
+        /** @var string $email */
+        $email = $data['email'];
+        $existing = $this->userRepository->findByEmail($email);
         if ($existing) {
             throw new \RuntimeException('Este email já está em uso.');
         }
@@ -52,10 +54,14 @@ class UserService implements UserServiceInterface
         }
 
         // Check email uniqueness if updating email
-        if (isset($data['email']) && $data['email'] !== $user->email) {
-            $existing = $this->userRepository->findByEmail($data['email']);
-            if ($existing) {
-                throw new \RuntimeException('Este email já está em uso.');
+        if (isset($data['email'])) {
+            /** @var string $newEmail */
+            $newEmail = $data['email'];
+            if ($newEmail !== $user->email) {
+                $existing = $this->userRepository->findByEmail($newEmail);
+                if ($existing) {
+                    throw new \RuntimeException('Este email já está em uso.');
+                }
             }
         }
 
@@ -70,7 +76,9 @@ class UserService implements UserServiceInterface
         }
 
         // Prevent deleting yourself
-        if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] === $id) {
+        /** @var mixed $rawUserId */
+        $rawUserId = $_SESSION['user_id'] ?? null;
+        if (is_numeric($rawUserId) && (int) $rawUserId === $id) {
             throw new \RuntimeException('Não é possível excluir o próprio usuário.');
         }
 

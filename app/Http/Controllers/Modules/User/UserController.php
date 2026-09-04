@@ -19,7 +19,7 @@ class UserController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\Response
     {
         $users = $this->userService->paginateUsers(15);
 
@@ -33,7 +33,7 @@ class UserController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): \Illuminate\Http\Response
     {
         $roles = $this->roleRepository->all();
 
@@ -46,7 +46,7 @@ class UserController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->all();
 
@@ -88,7 +88,7 @@ class UserController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
     {
         $user  = $this->userService->getUserById($id);
         $roles = $this->roleRepository->all();
@@ -108,7 +108,7 @@ class UserController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): \Illuminate\Http\RedirectResponse
     {
         $data = $request->all();
 
@@ -154,7 +154,7 @@ class UserController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): \Illuminate\Http\RedirectResponse
     {
         try {
             $this->userService->deleteUser($id);
