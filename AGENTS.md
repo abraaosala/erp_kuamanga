@@ -78,9 +78,16 @@ Comandos `make:*` geram arquivos a partir de `stubs/*.stub` (`controller.stub`, 
 
 ## Framework de skills (HotStack)
 
-- O projeto usa o **HotStack** (`.hot/`): `config.toml` vem com placeholders (`name = "my-project"`, `agents.opencode = true`) — não esteja refletido ainda e faltam respostas de contexto.
+- O projeto usa o **HotStack** (`.hot/`): `config.toml` configurado (`name = "kuamanga-erp"`, `agents.opencode = true`, língua pt, fuso `Africa/Luanda`).
 - `PROJECT.md` do HotStack é fonte de contexto para os agents; mantenha-o sincronizado com `AGENTS.md` quando algo mudar.
 - Skills locais em `.opencode/skills/{nome}/SKILL.md` (ex.: `clean-architecture`, `ddd`, `deps-upgrade`, `github-pr-workflow`, `php-psr-best-practices`, `php-84-85-features`, `branch-and-pr-workflow`) — estas são as do projeto, não as globais de `~/.agents/skills`. Para novas skills siga o formato SKILL.md destas.
+
+## GitHub / MCP
+
+- Repositório: `abraaosala/erp_kuamanga` (remote `git@github.com:abraaosala/erp_kuamanga.git`); branch padrão **`master`**. Feature branches `feat/{nome}` são mergeados em `master` (merge commit, preservando histórico — ver skill `branch-and-pr-workflow`).
+- **MCP do GitHub configurado e funcional** (via `opencode.json` → `https://api.githubcopilot.com/mcp/`). Preferir as ferramentas `github_*` (listar branches/issues/PRs, procurar código, commits, PR reviews, secret scanning) para operações no GitHub — autenticam pelo token do MCP.
+- **`gh` CLI instalado (v2.97) mas o token no keyring está inválido** — `gh auth status` falha. Verifique antes de usar `gh`; se falhar, use as ferramentas `github_*` do MCP em alternativa.
+- **Conventional Commits** (`feat:`, `fix:`, …). Referência na branch `remote/origin/master`.
 
 ## Documentação de módulos
 
@@ -90,7 +97,3 @@ Cada módulo tem um ficheiro de tracking em `docs/modules/{modulo}.md` com check
 
 - `docs/modules/rh.md` — estado do módulo RH
 - `docs/modules/accounting.md` — estado do módulo Accounting
-
-## Git / commits
-
-- Conventional Commits (`feat:`, `fix:`, …). Feature branches `feat/{nome}` são mergeados em `master`. Referência na branch `remote/origin/master`.
