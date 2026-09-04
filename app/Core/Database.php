@@ -26,20 +26,28 @@ class Database
 
         // Setup Paginator resolvers
         Paginator::currentPageResolver(function ($pageName = 'page') {
-            return (int) ($_GET[$pageName] ?? 1);
+            /** @var int|string $value */
+            $value = $_GET[$pageName] ?? 1;
+
+            return (int) $value;
         });
 
         Paginator::currentPathResolver(function () {
+            /** @var string $uri */
             $uri = $_SERVER['REQUEST_URI'] ?? '/';
+
             return strtok($uri, '?');
         });
 
+        /**
+         * @var array{default: string, connections: array<string, array<string, mixed>>} $config
+         */
         $config = config('database');
 
         $this->capsule = new Capsule();
 
-        $default = $config['default'] ?? 'mysql';
-        $connections = $config['connections'] ?? [];
+        $default = $config['default'];
+        $connections = $config['connections'];
 
         foreach ($connections as $name => $connection) {
             $this->capsule->addConnection($connection, $name);
