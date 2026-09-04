@@ -16,7 +16,7 @@ return [
         'development' => [
             'adapter' => $_ENV['DB_CONNECTION'] ?? 'mysql',
             'host'    => $_ENV['DB_HOST'] ?? '127.0.0.1',
-            'name'    => $_ENV['DB_DATABASE']                                                  ?? 'erp_database',
+            'name'    => $_ENV['DB_DATABASE']?? 'erp_database',
             'user'    => $_ENV['DB_USERNAME'] ?? 'root',
             'pass'    => $_ENV['DB_PASSWORD'] ?? '',
             'port'    => $_ENV['DB_PORT'] ?? '3306',

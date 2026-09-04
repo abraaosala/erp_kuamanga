@@ -48,6 +48,7 @@
                         <th>Saída</th>
                         <th>Pausa</th>
                         <th>Dias da Semana</th>
+                        <th>Funcionários</th>
                         <th>Status</th>
                         <th class="text-right">Ações</th>
                     </tr>
@@ -71,6 +72,11 @@
                             {{ $out ? implode(', ', $out) : '—' }}
                         </td>
                         <td>
+                            <a href="/rh/schedules/{{ $schedule->id }}/employees" class="text-xs font-medium transition-colors" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
+                                {{ $schedule->employees_count ?? 0 }} funcionário(s)
+                            </a>
+                        </td>
+                        <td>
                             @if($schedule->status == 'ativo')
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -85,6 +91,11 @@
                         </td>
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-2" x-data="{ confirm: false }">
+                                <a href="/rh/schedules/{{ $schedule->id }}/employees" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'" title="Funcionários">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </a>
                                 <a href="/rh/schedules/{{ $schedule->id }}/edit" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -103,7 +114,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
+                        <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <svg class="w-10 h-10" style="color: var(--border-color)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
