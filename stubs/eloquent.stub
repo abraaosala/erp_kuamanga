@@ -1,0 +1,282 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * Stub para análise estática (PHPStan) do Eloquent puro (Illuminate/database).
+ *
+ * Suplementa as assinaturas dos métodos dinâmicos do Eloquent (definidos via
+ * __call/__callStatic), que o PHPStan não consegue inferir sem extensões Laravel.
+ * Usado apenas para análise estática — não é executado em runtime.
+ *
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<TModel> query()
+ * @method static TModel|null find(int|string|array<int|string>|null $id, array<array-key, string> $columns = ['*'])
+ * @method static TModel findOrFail(int|string|array<int|string> $id, array<array-key, string> $columns = ['*'])
+ * @method static TModel create(array<array-key, mixed> $attributes = [])
+ * @method static \Illuminate\Database\Eloquent\Collection<int, TModel> all(array<array-key, string> $columns = ['*'])
+ * @method static TModel|null first(array<array-key, string> $columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder<TModel> where(mixed ...$args)
+ * @method static \Illuminate\Database\Eloquent\Builder<TModel> whereHas(mixed ...$args)
+ * @method static \Illuminate\Database\Eloquent\Builder<TModel> with(mixed ...$args)
+ * @method static \Illuminate\Database\Eloquent\Builder<TModel> join(mixed ...$args)
+ */
+class Model
+{
+    /**
+     * @param  array<array-key, mixed>  $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+    }
+
+    /**
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get(string $key)
+    {
+    }
+
+    /**
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set(string $key, $value): void
+    {
+    }
+
+    /**
+     * @param  string  $method
+     * @param  array<array-key, mixed>  $parameters
+     * @return mixed
+     */
+    public function __call(string $method, array $parameters)
+    {
+    }
+
+    /**
+     * @param  string  $method
+     * @param  array<array-key, mixed>  $parameters
+     * @return mixed
+     */
+    public static function __callStatic(string $method, array $parameters)
+    {
+    }
+}
+
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
+class Builder
+{
+    /**
+     * @param  array<array-key, string>  $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function get(array $columns = ['*'])
+    {
+    }
+
+    /**
+     * @param  array<array-key, string>  $columns
+     * @return TModel|null
+     */
+    public function first(array $columns = ['*'])
+    {
+    }
+
+    /**
+     * @param  array<array-key, string>  $columns
+     * @return TModel
+     */
+    public function firstOrFail(array $columns = ['*'])
+    {
+    }
+
+    /**
+     * @param  int|string|array<int|string, int|string>|null  $id
+     * @param  array<array-key, string>  $columns
+     * @return TModel|null
+     */
+    public function find($id, array $columns = ['*'])
+    {
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+    }
+
+    /**
+     * @param  string  $column
+     * @return mixed
+     */
+    public function sum(string $column)
+    {
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $values
+     * @return static<TModel>
+     */
+    public function whereIn(string $column, array $values)
+    {
+    }
+
+    /**
+     * @return static<TModel>
+     */
+    public function whereNull(string $column)
+    {
+    }
+
+    /**
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static<TModel>
+     */
+    public function whereDate(string $column, $operator, $value = null)
+    {
+    }
+
+    /**
+     * @param  string  $direction
+     * @return static<TModel>
+     */
+    public function orderBy(string $column, string $direction = 'asc')
+    {
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $columns
+     * @return static<TModel>
+     */
+    public function select(array $columns)
+    {
+    }
+
+    /**
+     * @param  array<array-key, mixed>|string  $columns
+     * @return static<TModel>
+     */
+    public function groupBy($columns)
+    {
+    }
+
+    /**
+     * @param  array<array-key, string>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, TModel>
+     */
+    public function paginate(int $perPage = 15, array $columns = ['*'], string $pageName = 'page', ?int $page = null)
+    {
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $attributes
+     * @return TModel
+     */
+    public function create(array $attributes = [])
+    {
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $values
+     * @return int
+     */
+    public function update(array $values)
+    {
+    }
+
+    /**
+     * @return int
+     */
+    public function delete()
+    {
+    }
+
+    /**
+     * @param  mixed  ...$args
+     * @return static<TModel>
+     */
+    public function where(...$args)
+    {
+    }
+
+    /**
+     * @param  mixed  ...$args
+     * @return static<TModel>
+     */
+    public function with(...$args)
+    {
+    }
+
+    /**
+     * @param  string  $method
+     * @param  array<array-key, mixed>  $parameters
+     * @return mixed
+     */
+    public function __call(string $method, array $parameters)
+    {
+    }
+}
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TKey of array-key
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Support\Collection<TKey, TModel>
+ */
+class Collection extends \Illuminate\Support\Collection
+{
+}
+
+namespace Illuminate\Support;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
+class Collection
+{
+    /**
+     * @return array<int, mixed>
+     */
+    public function all()
+    {
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+    }
+}
+
+namespace Illuminate\Contracts\Pagination;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
+interface LengthAwarePaginator
+{
+}

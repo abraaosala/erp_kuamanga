@@ -1,0 +1,8 @@
+parameters:
+    level: 9
+    paths:
+        - app
+    stubFiles:
+        - stubs/eloquent.stub
+    bootstrapFiles:
+        - bootstrap/phpstan.php
