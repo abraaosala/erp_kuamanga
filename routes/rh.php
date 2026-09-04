@@ -6,6 +6,7 @@ use App\Http\Controllers\Modules\Rh\AttendanceController;
 use App\Http\Controllers\Modules\Rh\ContractController;
 use App\Http\Controllers\Modules\Rh\DepartmentController;
 use App\Http\Controllers\Modules\Rh\EmployeeController;
+use App\Http\Controllers\Modules\Rh\EmployeeScheduleController;
 use App\Http\Controllers\Modules\Rh\HourBankEntryController;
 use App\Http\Controllers\Modules\Rh\PositionController;
 use App\Http\Controllers\Modules\Rh\WorkScheduleController;
@@ -55,6 +56,12 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/schedules/{id}/edit', [WorkScheduleController::class, 'edit'])->name('rh.schedules.edit');
     $router->post('/schedules/{id}/update', [WorkScheduleController::class, 'update'])->name('rh.schedules.update');
     $router->post('/schedules/{id}/delete', [WorkScheduleController::class, 'destroy'])->name('rh.schedules.destroy');
+
+    $router->get('/schedules/{id}/employees', [EmployeeScheduleController::class, 'index'])->name('rh.schedules.employees.index');
+    $router->get('/schedules/{id}/employees/assign', [EmployeeScheduleController::class, 'assign'])->name('rh.schedules.employees.assign');
+    $router->post('/schedules/{id}/employees', [EmployeeScheduleController::class, 'store'])->name('rh.schedules.employees.store');
+    $router->post('/schedules/{id}/employees/{employeeId}/default', [EmployeeScheduleController::class, 'setDefault'])->name('rh.schedules.employees.default');
+    $router->post('/schedules/{id}/employees/{employeeId}/delete', [EmployeeScheduleController::class, 'destroy'])->name('rh.schedules.employees.destroy');
 
     $router->get('/hour-bank', [HourBankEntryController::class, 'index'])->name('rh.hour-bank.index');
     $router->get('/hour-bank/create', [HourBankEntryController::class, 'create'])->name('rh.hour-bank.create');

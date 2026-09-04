@@ -8,6 +8,7 @@ use App\Repositories\Contracts\AttendanceRepositoryInterface;
 use App\Repositories\Contracts\ContractRepositoryInterface;
 use App\Repositories\Contracts\DepartmentRepositoryInterface;
 use App\Repositories\Contracts\EmployeeRepositoryInterface;
+use App\Repositories\Contracts\EmployeeScheduleRepositoryInterface;
 use App\Repositories\Contracts\HourBankEntryRepositoryInterface;
 use App\Repositories\Contracts\PositionRepositoryInterface;
 use App\Repositories\Contracts\WorkScheduleRepositoryInterface;
@@ -15,12 +16,14 @@ use App\Repositories\Modules\Rh\AttendanceRepository;
 use App\Repositories\Modules\Rh\ContractRepository;
 use App\Repositories\Modules\Rh\DepartmentRepository;
 use App\Repositories\Modules\Rh\EmployeeRepository;
+use App\Repositories\Modules\Rh\EmployeeScheduleRepository;
 use App\Repositories\Modules\Rh\HourBankEntryRepository;
 use App\Repositories\Modules\Rh\PositionRepository;
 use App\Repositories\Modules\Rh\WorkScheduleRepository;
 use App\Services\Contracts\AttendanceServiceInterface;
 use App\Services\Contracts\ContractServiceInterface;
 use App\Services\Contracts\DepartmentServiceInterface;
+use App\Services\Contracts\EmployeeScheduleServiceInterface;
 use App\Services\Contracts\EmployeeServiceInterface;
 use App\Services\Contracts\HourBankEntryServiceInterface;
 use App\Services\Contracts\PositionServiceInterface;
@@ -28,6 +31,7 @@ use App\Services\Contracts\WorkScheduleServiceInterface;
 use App\Services\Modules\Rh\AttendanceService;
 use App\Services\Modules\Rh\ContractService;
 use App\Services\Modules\Rh\DepartmentService;
+use App\Services\Modules\Rh\EmployeeScheduleService;
 use App\Services\Modules\Rh\EmployeeService;
 use App\Services\Modules\Rh\HourBankEntryService;
 use App\Services\Modules\Rh\PositionService;
@@ -54,6 +58,8 @@ class RhServiceProvider
         $this->container->bind(WorkScheduleServiceInterface::class, WorkScheduleService::class);
         $this->container->bind(HourBankEntryRepositoryInterface::class, HourBankEntryRepository::class);
         $this->container->bind(HourBankEntryServiceInterface::class, HourBankEntryService::class);
+        $this->container->bind(EmployeeScheduleRepositoryInterface::class, EmployeeScheduleRepository::class);
+        $this->container->bind(EmployeeScheduleServiceInterface::class, EmployeeScheduleService::class);
     }
 
     public function boot(): void
