@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use eftec\bladeone\BladeOne;
 
 if (!function_exists('app')) {
-    function app($abstract = null)
+    function app(?string $abstract = null): mixed
     {
         if (is_null($abstract)) {
             return Container::getInstance();
@@ -20,19 +20,19 @@ if (!function_exists('app')) {
 }
 
 if (!function_exists('config')) {
-    function config($key, $default = null)
+    function config(string $key, mixed $default = null): mixed
     {
         $parts = explode('.', $key);
         $file = array_shift($parts);
-        
+
         $config = app('config.' . $file);
-        
-        if (!$config) {
+
+        if (!is_array($config)) {
             return $default;
         }
 
         foreach ($parts as $part) {
-            if (!isset($config[$part])) {
+            if (!is_array($config) || !isset($config[$part])) {
                 return $default;
             }
             $config = $config[$part];
@@ -43,22 +43,29 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('response')) {
-    function response($content = '', $status = 200, array $headers = [])
+    /**
+     * @param array<string, string> $headers
+     */
+    function response(mixed $content = '', int $status = 200, array $headers = []): Response
     {
         return new Response($content, $status, $headers);
     }
 }
 
 if (!function_exists('redirect')) {
-    function redirect($url, $status = 302, $headers = [])
+    /**
+     * @param array<string, string> $headers
+     */
+    function redirect(string $url, int $status = 302, array $headers = []): RedirectResponse
     {
         return new RedirectResponse($url, $status, $headers);
     }
 }
 
 if (!function_exists('request')) {
-    function request($key = null, $default = null)
+    function request(?string $key = null, mixed $default = null): mixed
     {
+        /** @var \Illuminate\Http\Request $instance */
         $instance = app('request');
 
         if (is_null($key)) {
@@ -70,7 +77,10 @@ if (!function_exists('request')) {
 }
 
 if (!function_exists('session')) {
-    function session($key = null, $default = null)
+    /**
+     * @param array<string, mixed>|string|null $key
+     */
+    function session(array|string|null $key = null, mixed $default = null): mixed
     {
         /** @var \App\Core\Session $session */
         $session = app(\App\Core\Session::class);
@@ -91,31 +101,41 @@ if (!function_exists('session')) {
 }
 
 if (!function_exists('view')) {
-    function view($template, $data = [])
+    /**
+     * @param array<string, mixed> $data
+     */
+    function view(string $template, array $data = []): string
     {
+        /** @var \eftec\bladeone\BladeOne $blade */
         $blade = app(BladeOne::class);
         return $blade->run($template, $data);
     }
 }
 
 if (!function_exists('back')) {
-    function back()
+    function back(): RedirectResponse
     {
+        /** @var string $referer */
         $referer = $_SERVER['HTTP_REFERER'] ?? '/';
         return redirect($referer);
     }
 }
 
 if (!function_exists('current_empresa')) {
-    function current_empresa()
+    function current_empresa(): mixed
     {
-        $id = session()->empresaId();
+        /** @var \App\Core\Session $session */
+        $session = session();
+        $id = $session->empresaId();
         return \App\Models\Empresa::find($id) ?: (object)['id' => 1, 'nome' => 'Kuamanga'];
     }
 }
 
 if (!function_exists('all_empresas')) {
-    function all_empresas()
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Empresa>
+     */
+    function all_empresas(): \Illuminate\Database\Eloquent\Collection
     {
         return \App\Models\Empresa::where('status', 'ativo')->get();
     }

@@ -15,13 +15,14 @@ use Illuminate\Validation\Factory as ValidatorFactory;
 
 class Application
 {
-    protected Container $container;
+    protected ApplicationContainer $container;
     protected Router $router;
+    /** @var array<int, \Illuminate\Support\ServiceProvider> */
     protected array $providers = [];
 
     public function __construct(string $basePath)
     {
-        $this->container = new Container();
+        $this->container = new ApplicationContainer();
         Container::setInstance($this->container);
 
         $this->container->instance('app', $this->container);
@@ -35,6 +36,11 @@ class Application
             return new \App\Core\Session();
         });
 
+        $this->container->singleton(
+            \Illuminate\Contracts\Foundation\MaintenanceMode::class,
+            \App\Core\ApplicationMaintenanceMode::class
+        );
+
         $this->bootstrapConfig();
         $this->bootstrapSession();
         $this->bootstrapRouting();
@@ -46,22 +52,52 @@ class Application
 
     protected function bootstrapConfig(): void
     {
+        /** @var string $configPath */
         $configPath = $this->container->make('path.config');
-        $files = glob($configPath . '/*.php');
+        $files = glob($configPath . '/*.php') ?: [];
 
         foreach ($files as $file) {
             $name = basename($file, '.php');
             $this->container->instance('config.' . $name, require $file);
         }
 
-        $appConfig = $this->container->make('config.app');
-        date_default_timezone_set($appConfig['timezone'] ?? 'UTC');
+        date_default_timezone_set($this->appConfig()['timezone']);
+    }
+
+    /**
+     * @return array{
+     *     name: string,
+     *     env: string,
+     *     debug: bool,
+     *     url: string,
+     *     key: string,
+     *     timezone: string,
+     *     locale: string,
+     *     providers: list<class-string>,
+     *     session: array{driver: string, lifetime: int, path: string}
+     * }
+     */
+    protected function appConfig(): array
+    {
+        /** @var array{
+         *     name: string,
+         *     env: string,
+         *     debug: bool,
+         *     url: string,
+         *     key: string,
+         *     timezone: string,
+         *     locale: string,
+         *     providers: list<class-string>,
+         *     session: array{driver: string, lifetime: int, path: string}
+         * } $config */
+        $config = $this->container->make('config.app');
+
+        return $config;
     }
 
     protected function bootstrapSession(): void
     {
-        $appConfig = $this->container->make('config.app');
-        $sessionPath = $appConfig['session']['path'] ?? sys_get_temp_dir();
+        $sessionPath = $this->appConfig()['session']['path'];
 
         if (!is_dir($sessionPath)) {
             mkdir($sessionPath, 0755, true);
@@ -79,7 +115,9 @@ class Application
         (new EventServiceProvider($this->container))->register();
         (new RoutingServiceProvider($this->container))->register();
 
-        $this->router = $this->container->make('router');
+        /** @var \Illuminate\Routing\Router $router */
+        $router = $this->container->make('router');
+        $this->router = $router;
         $this->container->instance('router', $this->router);
     }
 
@@ -122,7 +160,7 @@ class Application
 
     public function getLocale(): string
     {
-        return $this->container->make('config.app')['locale'] ?? 'pt_BR';
+        return $this->appConfig()['locale'];
     }
 
     public function getFallbackLocale(): string
@@ -132,8 +170,7 @@ class Application
 
     protected function bootstrapErrorHandling(): void
     {
-        $appConfig = $this->container->make('config.app');
-        if (filter_var($appConfig['debug'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+        if ($this->appConfig()['debug']) {
             $whoops = new \Whoops\Run();
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
             $whoops->register();
@@ -142,15 +179,14 @@ class Application
 
     protected function registerProviders(): void
     {
-        $appConfig = $this->container->make('config.app');
-        $providers = $appConfig['providers'] ?? [];
+        $providers = $this->appConfig()['providers'];
 
         foreach ($providers as $providerClass) {
-            if (class_exists($providerClass)) {
-                $provider = new $providerClass($this->container);
-                $provider->register();
-                $this->providers[] = $provider;
-            }
+            /** @var class-string<\Illuminate\Support\ServiceProvider> $providerClass */
+            $provider = new $providerClass($this->container);
+
+            $provider->register();
+            $this->providers[] = $provider;
         }
 
         foreach ($this->providers as $provider) {
@@ -163,7 +199,9 @@ class Application
     public function loadRoutes(): void
     {
         $router = $this->router;
-        require $this->container->make('path.base') . '/routes/web.php';
+        /** @var string $basePath */
+        $basePath = $this->container->make('path.base');
+        require $basePath . '/routes/web.php';
     }
 
     public function run(): void
@@ -184,7 +222,7 @@ class Application
             http_response_code(405);
             echo '<h1>405 - Método não permitido</h1>';
         } catch (\Exception $e) {
-            if ($this->container->make('config.app')['debug'] ?? false) {
+            if ($this->appConfig()['debug']) {
                 throw $e;
             }
             http_response_code(500);
