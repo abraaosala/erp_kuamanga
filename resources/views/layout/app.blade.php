@@ -131,6 +131,8 @@
                         <a href="/rh/employees" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/employees*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Funcionários</a>
                         <a href="/rh/contracts" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/contracts*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Contratos</a>
                         <a href="/rh/attendance" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/attendance*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Frequência</a>
+                        <a href="/rh/schedules" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/schedules*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Escalas</a>
+                        <a href="/rh/hour-bank" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/hour-bank*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Banco de Horas</a>
                         <a href="/rh/departments" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/departments*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Departamentos</a>
                         <a href="/rh/positions" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/positions*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Cargos</a>
                     </div>
