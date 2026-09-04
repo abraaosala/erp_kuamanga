@@ -10,6 +10,9 @@ interface AuthServiceInterface
 
     public function logout(): void;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function register(array $data): \App\Models\User;
 
     public function check(): bool;

@@ -17,7 +17,7 @@ class AuthController
         protected Validator $validator
     ) {}
 
-    public function showLogin(Request $request)
+    public function showLogin(Request $request): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
     {
         if ($this->authService->check()) {
             return redirect('/dashboard');
@@ -31,7 +31,7 @@ class AuthController
         return response($html);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->all();
 
@@ -58,7 +58,7 @@ class AuthController
         return redirect('/login');
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): \Illuminate\Http\RedirectResponse
     {
         $this->authService->logout();
         $_SESSION['flash_success'] = 'Desconectado com sucesso!';

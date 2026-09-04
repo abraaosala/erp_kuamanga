@@ -13,24 +13,39 @@ class UserRepository implements UserRepositoryInterface
 {
     public function all(): Collection
     {
-        return User::with('roles')->get();
+        /** @var Collection<int, User> $result */
+        $result = User::with('roles')->get();
+
+        return $result;
     }
 
     public function findById(int $id): ?User
     {
-        return User::with('roles')->find($id);
+        /** @var \App\Models\User|null $user */
+        $user = User::with('roles')->find($id);
+
+        return $user;
     }
 
     public function findByEmail(string $email): ?User
     {
-        return User::where('email', $email)->first();
+        /** @var \App\Models\User|null $user */
+        $user = User::where('email', $email)->first();
+
+        return $user;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): User
     {
         return User::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool
     {
         $user = User::find($id);
@@ -38,7 +53,6 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
 
-        // Remove password from update if empty
         if (isset($data['password']) && empty($data['password'])) {
             unset($data['password']);
         }
@@ -52,7 +66,9 @@ class UserRepository implements UserRepositoryInterface
         if (!$user) {
             return false;
         }
-        return $user->delete();
+        /** @var bool $deleted */
+        $deleted = $user->delete();
+        return $deleted;
     }
 
     public function paginate(int $perPage = 15): LengthAwarePaginator
