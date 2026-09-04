@@ -19,22 +19,34 @@ class AccountRepository implements AccountRepositoryInterface
 
     public function allByEmpresa(int $empresaId): Collection
     {
-        return $this->model->where('empresa_id', $empresaId)->orderBy('code')->get();
+        /** @var \Illuminate\Support\Collection<int, \App\Models\AccountPlan> $result */
+        $result = $this->model->where('empresa_id', $empresaId)->orderBy('code')->get();
+
+        return $result;
     }
 
     public function findById(int $id): ?AccountPlan
     {
-        return $this->model->find($id);
+        /** @var \App\Models\AccountPlan|null $account */
+        $account = $this->model->find($id);
+
+        return $account;
     }
 
     public function findByCode(int $empresaId, string $code): ?AccountPlan
     {
-        return $this->model->where('empresa_id', $empresaId)->where('code', $code)->first();
+        /** @var \App\Models\AccountPlan|null $account */
+        $account = $this->model->where('empresa_id', $empresaId)->where('code', $code)->first();
+
+        return $account;
     }
 
     public function create(array $data): AccountPlan
     {
-        return $this->model->create($data);
+        /** @var \App\Models\AccountPlan $account */
+        $account = $this->model->create($data);
+
+        return $account;
     }
 
     public function update(int $id, array $data): bool
@@ -57,11 +69,14 @@ class AccountRepository implements AccountRepositoryInterface
 
     public function getHierarchy(int $empresaId): Collection
     {
-        return $this->model->where('empresa_id', $empresaId)
-            ->whereNull('parent_id')
-            ->with('children')
-            ->orderBy('code')
-            ->get();
+        $query = AccountPlan::query();
+        /** @var \Illuminate\Database\Eloquent\Builder<AccountPlan> $query */
+        $query->where('empresa_id', $empresaId)->whereNull('parent_id');
+
+        /** @var \Illuminate\Support\Collection<int, \App\Models\AccountPlan> $result */
+        $result = $query->with('children')->orderBy('code')->get();
+
+        return $result;
     }
 
     public function transaction(\Closure $callback): mixed
