@@ -80,7 +80,7 @@ Comandos `make:*` geram arquivos a partir de `stubs/*.stub` (`controller.stub`, 
 
 - O projeto usa o **HotStack** (`.hot/`): `config.toml` vem com placeholders (`name = "my-project"`, `agents.opencode = true`) — não esteja refletido ainda e faltam respostas de contexto.
 - `PROJECT.md` do HotStack é fonte de contexto para os agents; mantenha-o sincronizado com `AGENTS.md` quando algo mudar.
-- Skills locais em `.hot/skills/{nome}/SKILL.md` (ex.: `clean-architecture`, `ddd`, `deps-upgrade`, `github-pr-workflow`, `php-psr-best-practices`, `php-84-85-features`) — estas são as do projeto, não as globais de `~/.agents/skills`. Para novas skills siga o formato SKILL.md destas.
+- Skills locais em `.opencode/skills/{nome}/SKILL.md` (ex.: `clean-architecture`, `ddd`, `deps-upgrade`, `github-pr-workflow`, `php-psr-best-practices`, `php-84-85-features`, `branch-and-pr-workflow`) — estas são as do projeto, não as globais de `~/.agents/skills`. Para novas skills siga o formato SKILL.md destas.
 
 ## Documentação de módulos
 
