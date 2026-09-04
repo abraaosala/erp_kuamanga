@@ -7,7 +7,9 @@ namespace App\Http\Controllers\Modules\Rh;
 use App\Services\Contracts\DepartmentServiceInterface;
 use App\Services\Contracts\PositionServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class PositionController
@@ -19,10 +21,14 @@ class PositionController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search  = $request->get('search');
-        $perPage = (int) $request->get('perPage', 15);
+        $perPageRaw = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage   = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw = $request->get('search');
+        /** @var string|null $search */
+        $search    = is_string($searchRaw) ? $searchRaw : null;
         $positions = $this->positionService->paginate($perPage, $search);
 
         $html = $this->blade->run('rh.positions.index', [
@@ -37,7 +43,7 @@ class PositionController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $departments = $this->departmentService->getAll();
 
@@ -50,7 +56,7 @@ class PositionController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->all();
 
@@ -83,7 +89,7 @@ class PositionController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $position = $this->positionService->getById($id);
 
@@ -104,7 +110,7 @@ class PositionController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = $request->all();
 
@@ -137,7 +143,7 @@ class PositionController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->positionService->delete($id);

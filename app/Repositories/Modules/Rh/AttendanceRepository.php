@@ -13,29 +13,43 @@ class AttendanceRepository implements AttendanceRepositoryInterface
 {
     protected function empresaId(): int
     {
-        return current_empresa()->id;
+        /** @var \App\Models\Empresa $empresa */
+        $empresa = current_empresa();
+        return $empresa->id;
     }
 
     public function all(): Collection
     {
-        return Attendance::with('employee')
+        /** @var Collection<int, Attendance> $result */
+        $result = Attendance::with('employee')
             ->where('empresa_id', $this->empresaId())
             ->get();
+
+        return $result;
     }
 
     public function findById(int $id): ?Attendance
     {
-        return Attendance::with('employee')
+        /** @var \App\Models\Attendance|null $attendance */
+        $attendance = Attendance::with('employee')
             ->where('empresa_id', $this->empresaId())
             ->find($id);
+
+        return $attendance;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Attendance
     {
         $data['empresa_id'] ??= $this->empresaId();
         return Attendance::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool
     {
         $attendance = $this->findById($id);

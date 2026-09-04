@@ -8,7 +8,9 @@ use App\Services\Contracts\DepartmentServiceInterface;
 use App\Services\Contracts\EmployeeServiceInterface;
 use App\Services\Contracts\PositionServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class EmployeeController
@@ -21,11 +23,15 @@ class EmployeeController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search  = $request->get('search');
-        $perPage = (int) $request->get('perPage', 15);
-        $employees = $this->employeeService->paginate($perPage, $search);
+        $perPageRaw = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage    = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw  = $request->get('search');
+        /** @var string|null $search */
+        $search     = is_string($searchRaw) ? $searchRaw : null;
+        $employees  = $this->employeeService->paginate($perPage, $search);
         $html = $this->blade->run('rh.employees.index', [
             'employees' => $employees,
             'search'    => $search,
@@ -38,7 +44,7 @@ class EmployeeController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $departments = $this->departmentService->getAll();
         $positions   = $this->positionService->getAll();
@@ -53,7 +59,7 @@ class EmployeeController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->all();
 
@@ -88,7 +94,7 @@ class EmployeeController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $employee = $this->employeeService->getById($id);
 
@@ -112,7 +118,7 @@ class EmployeeController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = $request->all();
         $validation = $this->validator->make($data, [
@@ -146,7 +152,7 @@ class EmployeeController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->employeeService->delete($id);

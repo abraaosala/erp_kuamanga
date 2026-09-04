@@ -13,29 +13,43 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 {
     protected function empresaId(): int
     {
-        return current_empresa()->id;
+        /** @var \App\Models\Empresa $empresa */
+        $empresa = current_empresa();
+        return $empresa->id;
     }
 
     public function all(): Collection
     {
-        return Employee::with('position', 'department')
+        /** @var Collection<int, Employee> $result */
+        $result = Employee::with('position', 'department')
             ->where('empresa_id', $this->empresaId())
             ->get();
+
+        return $result;
     }
 
     public function findById(int $id): ?Employee
     {
-        return Employee::with('position', 'department')
+        /** @var \App\Models\Employee|null $employee */
+        $employee = Employee::with('position', 'department')
             ->where('empresa_id', $this->empresaId())
             ->find($id);
+
+        return $employee;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Employee
     {
         $data['empresa_id'] ??= $this->empresaId();
         return Employee::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool
     {
         $employee = $this->findById($id);

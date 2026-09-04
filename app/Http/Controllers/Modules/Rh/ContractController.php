@@ -7,7 +7,9 @@ namespace App\Http\Controllers\Modules\Rh;
 use App\Services\Contracts\ContractServiceInterface;
 use App\Services\Contracts\EmployeeServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class ContractController
@@ -19,10 +21,14 @@ class ContractController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search  = $request->get('search');
-        $perPage = (int) $request->get('perPage', 15);
+        $perPageRaw = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage   = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw = $request->get('search');
+        /** @var string|null $search */
+        $search    = is_string($searchRaw) ? $searchRaw : null;
         $contracts = $this->contractService->paginate($perPage, $search);
 
         $html = $this->blade->run('rh.contracts.index', [
@@ -37,7 +43,7 @@ class ContractController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $employees = $this->employeeService->getAll();
 
@@ -50,7 +56,7 @@ class ContractController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
@@ -85,7 +91,7 @@ class ContractController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $contract = $this->contractService->getById($id);
 
@@ -106,7 +112,7 @@ class ContractController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
@@ -141,7 +147,7 @@ class ContractController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->contractService->delete($id);

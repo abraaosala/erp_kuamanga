@@ -10,15 +10,27 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface EmployeeRepositoryInterface
 {
+    /**
+     * @return Collection<int, Employee>
+     */
     public function all(): Collection;
 
     public function findById(int $id): ?Employee;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Employee;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool;
 
     public function delete(int $id): bool;
 
+    /**
+     * @return LengthAwarePaginator<int, Employee>
+     */
     public function paginate(int $perPage = 15, ?string $search = null): LengthAwarePaginator;
 }

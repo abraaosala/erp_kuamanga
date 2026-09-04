@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Modules\Rh;
 
 use App\Services\Contracts\DepartmentServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class DepartmentController
@@ -17,10 +19,14 @@ class DepartmentController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search  = $request->get('search');
-        $perPage = (int) $request->get('perPage', 15);
+        $perPageRaw  = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage     = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw   = $request->get('search');
+        /** @var string|null $search */
+        $search      = is_string($searchRaw) ? $searchRaw : null;
         $departments = $this->departmentService->paginate($perPage, $search);
 
         $html = $this->blade->run('rh.departments.index', [
@@ -35,7 +41,7 @@ class DepartmentController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $html = $this->blade->run('rh.departments.create', [
             'error' => $_SESSION['flash_error'] ?? null,
@@ -45,7 +51,7 @@ class DepartmentController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->all();
 
@@ -72,7 +78,7 @@ class DepartmentController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $department = $this->departmentService->getById($id);
 
@@ -90,7 +96,7 @@ class DepartmentController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = $request->all();
 
@@ -117,7 +123,7 @@ class DepartmentController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->departmentService->delete($id);

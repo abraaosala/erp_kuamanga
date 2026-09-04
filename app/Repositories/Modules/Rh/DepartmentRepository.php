@@ -13,25 +13,39 @@ class DepartmentRepository implements DepartmentRepositoryInterface
 {
     protected function empresaId(): int
     {
-        return current_empresa()->id;
+        /** @var \App\Models\Empresa $empresa */
+        $empresa = current_empresa();
+        return $empresa->id;
     }
 
     public function all(): Collection
     {
-        return Department::where('empresa_id', $this->empresaId())->orderBy('name')->get();
+        /** @var Collection<int, Department> $departments */
+        $departments = Department::where('empresa_id', $this->empresaId())->orderBy('name')->get();
+
+        return $departments;
     }
 
     public function findById(int $id): ?Department
     {
-        return Department::where('empresa_id', $this->empresaId())->find($id);
+        /** @var \App\Models\Department|null $department */
+        $department = Department::where('empresa_id', $this->empresaId())->find($id);
+
+        return $department;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Department
     {
         $data['empresa_id'] ??= $this->empresaId();
         return Department::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool
     {
         $model = $this->findById($id);
