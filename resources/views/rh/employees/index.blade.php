@@ -44,6 +44,8 @@
                 <thead>
                     <tr>
                         <th>Funcionário</th>
+                        <th>BI</th>
+                        <th>INSS</th>
                         <th>Email</th>
                         <th>Cargo</th>
                         <th>Departamento</th>
@@ -62,6 +64,8 @@
                                 <span class="font-medium" style="color: var(--text-main)">{{ $employee->name }}</span>
                             </div>
                         </td>
+                        <td style="color: var(--text-muted)">{{ $employee->bi ?? '—' }}</td>
+                        <td style="color: var(--text-muted)">{{ $employee->inss ?? '—' }}</td>
                         <td style="color: var(--text-muted)">{{ $employee->email ?? '—' }}</td>
                         <td style="color: var(--text-muted)">{{ $employee->position->name ?? '—' }}</td>
                         <td style="color: var(--text-muted)">{{ $employee->department->name ?? '—' }}</td>
@@ -80,6 +84,12 @@
                         </td>
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-2" x-data="{ confirm: false }">
+                                <a href="/rh/employees/{{ $employee->id }}" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'" title="Ver perfil">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </a>
                                 <a href="/rh/employees/{{ $employee->id }}/edit" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -98,7 +108,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
+                        <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <svg class="w-10 h-10" style="color: var(--border-color)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>

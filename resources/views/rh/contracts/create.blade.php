@@ -24,7 +24,7 @@
                     <select name="employee_id" required class="form-input">
                         <option value="">— Selecione —</option>
                         @foreach($employees as $emp)
-                            <option value="{{ $emp->id }}">{{ $emp->name }}</option>
+                            <option value="{{ $emp->id }}" {{ ($selectedEmployeeId ?? null) == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
                         @endforeach
                     </select>
                 </div>

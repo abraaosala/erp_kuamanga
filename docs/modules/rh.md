@@ -38,12 +38,33 @@
 ### 3. Funcionários
 
 - [x] Migration `employees` + alterações (add department_id/position_id, remove salary/position/department legacy)
+- [x] Camposs `bi` e `inss` (números de identificação) na tabela `employees`
 - [x] Model `Employee` (SoftDeletes, belongsTo department/position, hasMany contracts)
 - [x] Repository interface + implementation (eager-loads position+department)
 - [x] Service interface + implementation
 - [x] Controller `EmployeeController` (CRUD completo)
-- [x] Views `rh.employees.*` (index/create/edit)
+- [x] View de perfil `rh.employees.show` — dados pessoais, resumo, contratos, escalas, documentos e saldo de horas
+- [x] Rota `GET /rh/employees/{id}` + ícone de perfil na listagem
+- [x] Views `rh.employees.*` (index/create/edit) — inclui campos BI/INSS
+- [x] Inputs com ícones (lucide) + máscaras JS: BI (`999999999AB000`), telefone (`+244 9XX XXX XXX`), INSS (só números)
+- [x] Validação back-end de formato: BI (`^[0-9]{9}[A-Za-z]{2}[0-9]{3}$`), INSS (`digits_between:6,12`)
+- [x] Upload de documento inicial opcional no formulário de criação
 - [x] Seed — 17 funcionários de exemplo
+
+### 3.1 Documentos do Funcionário
+
+- [x] Migration `employee_documents` (employee_id, empresa_id, document_type, document_number, file_path, file_name, file_size, mime_type)
+- [x] Model `EmployeeDocument` (belongsTo employee/empresa)
+- [x] Relação `documents()` no Model `Employee` (hasMany)
+- [x] Repository + Service (`EmployeeDocumentRepository`/`EmployeeDocumentService`)
+- [x] Controller `EmployeeDocumentController` (upload/download/remove)
+- [x] Rotas em `routes/rh.php` (3 rotas de documentos)
+- [x] Helpers `upload_file` / `download_file` em `app/Core/helpers.php`
+- [x] Storage — `storage/uploads/employees/{id}/` (fora do `public/`)
+- [x] Tipos de documento: BI, INSS, Contrato, Atestado médico, Certificado, Foto (vários por tipo)
+- [x] Upload/remoção integrados na view `rh.employees.edit` e documento inicial na `rh.employees.create`
+- [x] Validação: PDF/JPG/PNG, máx. 2MB
+- [x] RhServiceProvider — bindings registados
 
 ### 4. Contratos
 
@@ -163,7 +184,7 @@
 - **Total de ficheiros RH:** 78 (1 provider, 1 routes, 7 controllers, 14 interfaces, 14 implementations, 7 models, 11 migrations, 2 seeds, 21 views)
 - **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`
 - **Soft deletes** em todos os models
-- **Nenhum teste unitário** — directório `tests/` não existe
+- **Nenhum teste unitário** — directório `tests/` não existe (apenas `EmployeeScheduleTest.php`)
 - **PHPStan nível 5** — único QA operacional
 
 ---

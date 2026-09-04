@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $position_id
  * @property \Illuminate\Support\Carbon|null $hire_date
  * @property string|null $status
+ * @property string|null $bi
+ * @property string|null $inss
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Position|null $position
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Contract> $contracts
  * @property-read \Illuminate\Database\Eloquent\Collection<int, WorkSchedule> $schedules
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, EmployeeDocument> $documents
  *
  * @method static \App\Models\Employee create(array<array-key, mixed> $attributes = [])
  *
@@ -49,6 +52,8 @@ class Employee extends Model
         'position_id',
         'hire_date',
         'status',
+        'bi',
+        'inss',
     ];
 
     /** @var array<string, string> */
@@ -89,5 +94,11 @@ class Employee extends Model
         return $this->belongsToMany(WorkSchedule::class, 'employee_schedules', 'employee_id', 'work_schedule_id')
             ->withPivot(['is_default', 'start_date', 'end_date', 'empresa_id'])
             ->withTimestamps();
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<EmployeeDocument, $this> */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(EmployeeDocument::class);
     }
 }
