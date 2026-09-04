@@ -15,6 +15,15 @@ window.lucideIcons = icons;
 
 document.addEventListener('DOMContentLoaded', () => {
     createIcons({ icons });
+
+    $('select:not(.no-select2)').each(function () {
+        const $el = $(this);
+        $el.select2({
+            width: '100%',
+            language: 'pt_BR',
+            theme: 'default',
+        });
+    });
 });
 
 Alpine.start();

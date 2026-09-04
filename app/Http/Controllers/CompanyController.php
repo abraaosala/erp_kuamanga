@@ -16,7 +16,7 @@ class CompanyController
         protected Validator $validator
     ) {}
 
-    public function index()
+    public function index(): \Illuminate\Http\Response
     {
         $companies = Empresa::all();
 
@@ -30,7 +30,7 @@ class CompanyController
         return response($html);
     }
 
-    public function create()
+    public function create(): \Illuminate\Http\Response
     {
         $html = $this->blade->run('companies.create', [
             'error' => $_SESSION['flash_error'] ?? null,
@@ -40,7 +40,7 @@ class CompanyController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->all();
 
@@ -78,7 +78,7 @@ class CompanyController
         }
     }
 
-    public function edit(int $id)
+    public function edit(int $id): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
     {
         $company = Empresa::find($id);
 
@@ -96,7 +96,7 @@ class CompanyController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): \Illuminate\Http\RedirectResponse
     {
         $company = Empresa::find($id);
 
@@ -141,7 +141,7 @@ class CompanyController
         }
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
     {
         $company = Empresa::find($id);
 
@@ -160,13 +160,16 @@ class CompanyController
         return redirect('/companies');
     }
 
-    public function switch(Request $request)
+    public function switch(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $empresaId = $request->input('empresa_id') ?? $_POST['empresa_id'] ?? 0;
-        $empresaId = (int)$empresaId;
+        $rawEmpresaId = $request->input('empresa_id') ?? $_POST['empresa_id'] ?? 0;
+        /** @var int $empresaId */
+        $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 0;
 
         if ($empresaId > 0) {
-            session()->empresaId($empresaId);
+            /** @var \App\Core\Session $session */
+            $session = session();
+            $session->empresaId($empresaId);
             $_SESSION['flash_success'] = 'Empresa alterada com sucesso!';
         }
 

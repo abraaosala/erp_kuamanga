@@ -1,228 +1,171 @@
-# Manual do Utilizador: Módulo de RH
+# Módulo RH — Estado de Implementação
 
-Bem-vindo ao **Módulo de Recursos Humanos (RH)** do Kuamanga ERP.
-Este módulo foi criado para centralizar a gestão de todos os colaboradores da empresa, desde o registo inicial até ao controlo de dados funcionais e salariais.
-
-Abaixo detalhamos todas as ferramentas disponíveis e como utilizá-las no teu dia a dia.
+> Última actualização: 2026-09-04
 
 ---
 
-## 1. Seleção de Empresa (Multi-Empresa)
-O ERP suporta múltiplas empresas em simultâneo.
-*   **Atenção:** Antes de registares qualquer funcionário, deves **sempre** garantir que a empresa correcta está selecionada.
-*   Podes alternar a empresa ativa a qualquer momento clicando no botão no topo do menu lateral (Sidebar). Todos os registos de RH refletirão *apenas* dados da empresa selecionada.
+## Infraestrutura base
+
+- [x] `RhServiceProvider` — regista 7 repos + 7 services (14 bindings)
+- [x] Rotas CRUD em `routes/rh.php` (42 rotas, prefixo `rh`, middleware `auth`)
+- [x] Multi-empresa — scoping por `current_empresa()` em todos os repositories
+- [x] Sidebar menu — 7 itens RH no layout
 
 ---
 
-## 2. Departamentos
+## Submódulos implementados
 
-O submódulo de Departamentos permite gerir a estrutura organizacional da empresa.
+### 1. Departamentos
 
-*   **Aceder a:** `RH > Departamentos`
+- [x] Migration `departments`
+- [x] Model `Department` (SoftDeletes)
+- [x] Repository interface + implementation
+- [x] Service interface + implementation
+- [x] Controller `DepartmentController` (CRUD completo)
+- [x] Views `rh.departments.*` (index/create/edit)
+- [x] Seed — 7 departamentos de exemplo
 
-### 2.1. Lista de Departamentos
-Tabela com todos os departamentos registados: **Nome**, **Descrição**, **Status** (Ativo/Inativo). Botões de **Editar** e **Excluir** (com confirmação) em cada linha.
+### 2. Cargos (Positions)
 
-### 2.2. Cadastrar Novo Departamento
-*   **Aceder a:** `RH > Departamentos > Novo Departamento`
+- [x] Migration `positions`
+- [x] Model `Position` (SoftDeletes, belongsTo department)
+- [x] Repository interface + implementation (`findByDepartment`)
+- [x] Service interface + implementation (`getByDepartment`)
+- [x] Controller `PositionController` (CRUD completo)
+- [x] Views `rh.positions.*` (index/create/edit)
+- [x] Seed — 18 cargos de exemplo
 
-| Campo       | Obrigatório | Descrição                     |
-|-------------|-------------|-------------------------------|
-| Nome        | Sim         | Ex: Contabilidade, RH         |
-| Descrição   | Não         | Breve descrição do departamento|
+### 3. Funcionários
 
-### 2.3. Editar Departamento
-Permite alterar nome, descrição e status (Ativo/Inativo).
+- [x] Migration `employees` + alterações (add department_id/position_id, remove salary/position/department legacy)
+- [x] Model `Employee` (SoftDeletes, belongsTo department/position, hasMany contracts)
+- [x] Repository interface + implementation (eager-loads position+department)
+- [x] Service interface + implementation
+- [x] Controller `EmployeeController` (CRUD completo)
+- [x] Views `rh.employees.*` (index/create/edit)
+- [x] Seed — 17 funcionários de exemplo
 
-### 2.4. Remover Departamento
-Clique no ícone de lixeira e confirme. A exclusão é lógica (soft delete).
+### 4. Contratos
 
----
+- [x] Migration `contracts` + alteração (remove funcao)
+- [x] Model `Contract` (SoftDeletes, belongsTo employee, casts dates)
+- [x] Repository interface + implementation (`findByEmployee`, search by employee name)
+- [x] Service interface + implementation (`getByEmployee`)
+- [x] Controller `ContractController` (CRUD completo)
+- [x] Views `rh.contracts.*` (index/create/edit) — badges de status, @switch tipo_contrato
 
-## 3. Cargos
+### 5. Assiduidade (Ponto)
 
-O submódulo de Cargos define as funções e faixas salariais dentro da empresa, opcionalmente associadas a um departamento.
+- [x] Migration `attendance`
+- [x] Model `Attendance` (SoftDeletes, belongsTo employee)
+- [x] Repository interface + implementation
+- [x] Service interface + implementation
+- [x] Controller `AttendanceController` (CRUD completo)
+- [x] Views `rh.attendance.*` (index/create/edit) — @switch status
 
-*   **Aceder a:** `RH > Cargos`
+### 6. Escalas de Trabalho
 
-### 3.1. Lista de Cargos
-Tabela com: **Nome**, **Departamento**, **Faixa Salarial**, **Status**. Botões de **Editar** e **Excluir** em cada linha.
+- [x] Migration `work_schedules`
+- [x] Model `WorkSchedule` (SoftDeletes)
+- [x] Repository interface + implementation
+- [x] Service interface + implementation
+- [x] Controller `WorkScheduleController` (CRUD completo)
+- [x] Views `rh.schedules.*` (index/create/edit) — checkboxes dias da semana
 
-### 3.2. Cadastrar Novo Cargo
-*   **Aceder a:** `RH > Cargos > Novo Cargo`
+### 7. Banco de Horas
 
-| Campo             | Obrigatório | Descrição                                |
-|-------------------|-------------|------------------------------------------|
-| Nome              | Sim         | Ex: Contabilista Sénior                  |
-| Descrição         | Não         | Responsabilidades do cargo               |
-| Departamento      | Não         | Departamento ao qual o cargo pertence    |
-| Salário Mínimo    | Não         | Limite inferior da faixa (AOA)           |
-| Salário Máximo    | Não         | Limite superior da faixa (AOA)           |
-
-### 3.3. Editar Cargo
-Permite alterar todos os campos, incluindo status (Ativo/Inativo).
-
-### 3.4. Remover Cargo
-Clique no ícone de lixeira e confirme. A exclusão é lógica (soft delete).
-
----
-
-## 4. Funcionários
-
-O submódulo de Funcionários é o bloco fundamental do RH. Aqui podes cadastrar, editar, consultar e remover colaboradores, agora com vínculo direto a departamentos e cargos.
-
-*   **Aceder a:** `RH > Funcionários`
-
-### 4.1. Lista de Funcionários
-Ao entrares no submódulo, és recebido por uma tabela com todos os colaboradores registados.
-
-*   A tabela mostra: **Nome**, **Email**, **Cargo**, **Departamento** e **Status** (Ativo / Inativo).
-*   Cada linha tem botões de **Editar** (ícone de lápis) e **Excluir** (ícone de lixeira com confirmação).
-*   No topo da tabela, o total de registos e a paginação (se houver mais de 15 funcionários) ajudam-te a navegar.
-
-### 4.2. Cadastrar Novo Funcionário
-*   **Aceder a:** `RH > Funcionários > Novo Funcionário` (botão no topo da lista)
-
-Preenche os seguintes campos:
-
-| Campo             | Obrigatório | Descrição                                |
-|-------------------|-------------|------------------------------------------|
-| Nome completo     | Sim         | Nome do colaborador                      |
-| Email             | Não         | Endereço de correio eletrónico           |
-| Telefone          | Não         | Contacto telefónico                      |
-| Departamento      | Não         | Selecionar da lista de departamentos     |
-| Cargo             | Não         | Selecionar da lista de cargos            |
-| Data de Admissão  | Não         | Data em que o colaborador iniciou funções|
-
-Após preencher, clica em **Salvar**. Serás redirecionado de volta à lista com uma mensagem de sucesso.
-
-### 4.3. Editar Funcionário
-*   **Aceder a:** Clica no ícone de editar (lápis) ao lado do funcionário na lista.
-
-Podes alterar qualquer campo do registo, incluindo o **Status** (Ativo / Inativo) e a associação a departamento/cargo. Clica em **Atualizar** para guardar as alterações.
-
-### 4.4. Remover Funcionário
-*   Na lista, clica no ícone de lixeira.
-*   O botão muda para **Confirmar** — clica novamente para confirmares a exclusão.
-*   A exclusão é lógica (soft delete): o registo fica oculto, mas pode ser recuperado se necessário.
+- [x] Migration `hour_bank_entries`
+- [x] Model `HourBankEntry` (SoftDeletes, belongsTo employee)
+- [x] Repository interface + implementation (`balanceByEmployee`, `summary`)
+- [x] Service interface + implementation
+- [x] Controller `HourBankEntryController` (CRUD completo + summary)
+- [x] Views `rh.hour_bank.*` (index/create/edit) — grid de saldos por funcionário
 
 ---
 
-## 5. Contratos
+## O que NÃO existe ainda
 
-O submódulo de Contratos regista os contratos de trabalho de cada colaborador, incluindo tipo, vigência e dados salariais.
+### 8. Vínculo Escala ↔ Funcionário
 
-*   **Aceder a:** `RH > Contratos`
+- [x] Migration `employee_schedules` (pivot)
+- [x] Relação no Model `Employee` (`belongsToMany WorkSchedule`)
+- [x] Relação no Model `WorkSchedule` (`belongsToMany Employee`)
+- [x] Repository + Service (`EmployeeScheduleRepository`/`EmployeeScheduleService`)
+- [x] Controller `EmployeeScheduleController` (dedicado)
+- [x] Rotas em `routes/rh.php` (5 rotas)
+- [x] Views `rh.employee_schedules.*` (index, assign)
+- [x] RhServiceProvider — bindings registados
 
-### 5.1. Lista de Contratos
-Tabela com os contratos registados: **Funcionário**, **Tipo de Contrato**, **Data de Início**, **Data de Fim**, **Salário Base**, **Status**. Botões de **Editar** e **Excluir** em cada linha, além de pesquisa e paginação.
+### 9. Folha Salarial (Payroll)
 
-### 5.2. Cadastrar Novo Contrato
-*   **Aceder a:** `RH > Contratos > Novo Contrato`
+- [ ] Migration `payslips` / `payroll_runs`
+- [ ] Models (`PayrollRun`, `Payslip`)
+- [ ] Repository + Service (cálculo salarial)
+- [ ] Controller + Views
+- [ ] Integração com contratos (salário_base)
+- [ ] Integração com banco de horas (horas extra)
+- [ ] Integração com assiduidade (faltas/descontos)
+- [ ] Geração de recibos de vencimento (PDF)
+- [ ] Gestão de IRT / descontos legais
 
-| Campo           | Obrigatório | Descrição                                    |
-|-----------------|-------------|----------------------------------------------|
-| Funcionário     | Sim         | Selecionar da lista de funcionários          |
-| Tipo de Contrato| Sim         | Ex: Termo certo, Indeterminado, Estágio      |
-| Data de Início  | Sim         | Início da vigência do contrato               |
-| Data de Fim     | Não         | Deve ser igual ou posterior à data de início |
-| Salário Base (AOA)| Não       | Salário contratual em Kwanzas                |
-| Carga Horária   | Não         | Ex: 40h/semanais                            |
-| Observações     | Não         | Notas adicionais do contrato                 |
+### 10. Férias e Licenças
 
-### 5.3. Editar Contrato
-Permite alterar todos os campos do contrato, incluindo o **Status** (Ativo / Inativo).
+- [ ] Migration `leaves` / `leave_requests`
+- [ ] Model + Repository + Service
+- [ ] Controller + Views
+- [ ] Workflow de pedido → aprovação/rejeição
+- [ ] Saldo de férias por funcionário
+- [ ] Regras legais (dias por antiguidade)
 
-### 5.4. Remover Contrato
-A exclusão é lógica (soft delete).
+### 11. Benefícios
 
----
+- [ ] Migration `benefits` / `employee_benefits`
+- [ ] Model + Repository + Service
+- [ ] Controller + Views
+- [ ] Regras de elegibilidade (cargo, departamento, antiguidade)
 
-## 6. Assiduidade (Ponto)
+### 12. Recrutamento e Seleção
 
-O submódulo de Assiduidade regista a presença diária dos colaboradores, incluindo entradas, saídas e faltas.
+- [ ] Migration `job_openings`, `candidates`, `interviews`
+- [ ] Models + Repository + Service
+- [ ] Controller + Views
+- [ ] Pipeline: vaga → candidatura → entrevista → decisão
+- [ ] Banco de talentos
 
-*   **Aceder a:** `RH > Assiduidade`
+### 13. Avaliação de Desempenho
 
-### 6.1. Lista de Assiduidade
-Tabela com os registos de ponto: **Funcionário**, **Data**, **Entrada**, **Saída**, **Status** (Presente/Atrasado/Falta/Justificado). Botões de **Editar** e **Excluir** em cada linha, além de pesquisa e paginação.
+- [ ] Migration `performance_reviews`, `goals`
+- [ ] Models + Repository + Service
+- [ ] Controller + Views
+- [ ] Avaliações periódicas / 360º
+- [ ] PDI (Plano de Desenvolvimento Individual)
 
-### 6.2. Cadastrar Novo Registo de Ponto
-*   **Aceder a:** `RH > Assiduidade > Novo Registo`
+### 14. Portal do Colaborador
 
-| Campo           | Obrigatório | Descrição                                    |
-|-----------------|-------------|----------------------------------------------|
-| Funcionário     | Sim         | Selecionar da lista de funcionários          |
-| Data            | Sim         | Data do registo de ponto                     |
-| Entrada         | Não         | Hora de entrada (formato HH:mm)              |
-| Saída           | Não         | Hora de saída (formato HH:mm)                |
-| Status          | Sim         | Presente / Atrasado / Falta / Justificado    |
-| Observações     | Não         | Notas do registo                             |
+- [ ] Área autenticada do colaborador (self-service)
+- [ ] Consulta de dados pessoais, documentos, recibos
+- [ ] Pedido de férias / ausências
+- [ ] Consulta de ponto e banco de horas
+- [ ] Comunicados internos
 
-### 6.3. Editar Registo de Ponto
-Permite alterar todos os campos do registo.
+### 15. Relatórios e Indicadores
 
-### 6.4. Remover Registo de Ponto
-A exclusão é lógica (soft delete).
-
----
-
-## 7. Visão / Roadmap do Módulo de RH
-
-O módulo de RH já cobre a **gestão de colaboradores** (departamentos, cargos, funcionários, contratos) e a **assiduidade** (ponto). A seguir está a visão completa do módulo, com as áreas a desenvolver nas próximas versões:
-
-### 7.1. Recrutamento e seleção
-- Publicação e gestão de vagas
-- Receção e triagem de candidaturas
-- Agendamento de entrevistas
-- Registo de avaliações e criação de banco de talentos
-
-### 7.2. Admissão e onboarding
-- Recolha de documentos do novo colaborador
-- Assinatura de contratos e termos
-- Checklists de integração
-- Atribuição de acessos, equipamentos e formação inicial
-
-### 7.3. Ponto, presença e férias
-- Registo de entradas, saídas, atrasos e horas extras
-- Gestão de escalas e banco de horas
-- Solicitação, aprovação e controlo de férias
-- Registo de faltas, licenças e justificações
-
-### 7.4. Folha salarial
-- Cálculo de salários, subsídios, descontos e horas extras
-- Geração de recibos de vencimento
-- Gestão de impostos (IRT), contribuições e obrigações legais aplicáveis
-- Exportação ou integração com sistemas contabilísticos e bancários
-
-### 7.5. Benefícios
-- Gestão de subsídio de alimentação, transporte, seguro e outros benefícios
-- Regras de elegibilidade por cargo, departamento ou antiguidade
-- Consulta de benefícios pelo colaborador
-
-### 7.6. Avaliação e desenvolvimento
-- Definição de metas e indicadores
-- Avaliações de desempenho periódicas ou 360 graus
-- Feedback entre gestor e colaborador
-- Plano de Desenvolvimento Individual (PDI), cursos e certificações
-
-### 7.7. Portal do colaborador
-- Consulta de dados pessoais, documentos e recibos
-- Pedido de férias e atualização de informações
-- Consulta de ponto, benefícios e avaliações
-- Comunicação de avisos internos
-
-### 7.8. Relatórios e indicadores
-- Número de colaboradores por departamento
-- Rotatividade (*turnover*)
-- Absenteísmo
-- Custos com pessoal
-- Férias pendentes, horas extras e desempenho
+- [ ] Dashboard de RH (headcount, turnover, absenteísmo)
+- [ ] Relatório de custos com pessoal
+- [ ] Relatório de férias pendentes
+- [ ] Relatório de horas extras
+- [ ] Exportação (PDF/Excel)
 
 ---
 
-## Próximos Passos
+## Notas técnicas
 
-Continua a acompanhar as actualizações do Kuamanga ERP para novidades no módulo de RH. Novos submódulos serão activados automaticamente na sidebar à medida que forem disponibilizados.
+- **Total de ficheiros RH:** 78 (1 provider, 1 routes, 7 controllers, 14 interfaces, 14 implementations, 7 models, 11 migrations, 2 seeds, 21 views)
+- **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`
+- **Soft deletes** em todos os models
+- **Nenhum teste unitário** — directório `tests/` não existe
+- **PHPStan nível 5** — único QA operacional
 
-*(Fim do Manual. Kuamanga - 2026).*
+---
+
+*(Kuamanga ERP — 2026)*

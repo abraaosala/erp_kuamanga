@@ -13,3 +13,4 @@ Thumbs.db
 .opencode/
 .cursorrules
 ./AGENTS.md
+database/test.sqlite

@@ -19,9 +19,19 @@ Este é um micro-framework **custom** construído sobre componentes Illuminate a
 - **Duplicação de comandos**: existem classes antigas com sufixo `*Command.php` (`DbSeedCommand`, `MigrateCommand`, `MakeControllerCommand`…) e versões novas sem sufixo (`DbSeed`, `Migrate`, `MakeController`…). O `console` registra as novas via instanciação direta + apenas `DbSeedCommand` (a antiga, conflito `db:seed`). Ao adicionar um comando, registre-o explicitamente em `console` — seguindo o padrão das versões novas.
 - `make:migration` delega ao `phinx create`; migrations ficam em `database/migrations`, seeds em `database/seeds`.
 
-## Testes
+## Testes / QA estático
 
-- `composer test` → `php console test`, mas **o comando `test` NÃO está registado** em `console` e não há diretório `tests/` nem config phpunit/pest (Pest está apenas em `require-dev`). **Rodar testes hoje falha** — não assuma que o pipeline de teste funciona; verifique antes de prometer cobertura.
+Ferramentas dev **instaladas** em `require-dev`:
+- **Pest ^5.0** — framework de testes. Binário: `./vendor/bin/pest` (ou `pest` no Windows).
+- **PHPStan ^2.2** — análise estática. Binário: `./vendor/bin/phpstan`.
+
+Estado atual (verificar antes de confiar):
+- **Não há comando `test`** registado em `console` (o `composer test` → `php console test` não roda nada).
+- **Não existe diretório `tests/`** nem `phpunit.xml`/`pest.php`; rodar `pest` hoje falha com "The test directory does not exist" (+ erro de resolução do plugin `Pest\Plugins\Tia\Contracts\State`).
+- **PHPStan está configurado e verde (nível 9)**: `phpstan.neon` (nível 9) + `bootstrap/phpstan.php` (define `BASE_PATH`) + stub `stubs/eloquent.stub`. Rode com `./vendor/bin/phpstan analyse` (sem erros hoje; use `--no-progress --memory-limit=1G` se estourar o pagefile do Windows). O stub suplementa os métodos dinâmicos do Eloquent puro (Model/Builder/shells de Collection) — `@template TModel` + relations genéricas. Regras praticadas no nível 9: models declaram `@extends \Illuminate\Database\Eloquent\Model<self>` + `@var array<string, string>` no `$casts` + `@return BelongsTo/HasMany/BelongsToMany<X, self>` nas relations; repos/services (interface + impl) declaram `@param array<string, mixed> $data` e `@return Collection<int, X>` / `LengthAwarePaginator<int, X>` / `array<string, mixed>`; chains Eloquent cujo Builder não infere o tipo concreto tipam com variável intermediária + `@var` no repositório/service (padrão aprovado do projeto — NÃO é `@phpstan-ignore`); controllers declaram return `string` (blade/vie), `\Illuminate\Http\Response`, `\Illuminate\Http\RedirectResponse` ou `never` (header+exit). Valores `mixed` de `config()`/`env()`/`session()`/`request()`/`make('config.x')`/`$_SESSION`/`$_SERVER`/`$_GET` são tipados com variável intermediária `@var` (array shape/list/class) + guards reais (`is_string`, `is_numeric`, `is_array`, `instanceof`); queries com `join`+`selectRaw` que o PHPStan infere `mixed` tipam como `@var \Illuminate\Support\Collection<int, \stdClass>` antes do `foreach`; `(int)`/`(float)`/`(string)` direto em `mixed` são substituídos por guards (`is_numeric(...) ? (int)... : default`). Cuidados do nível 9 em funções nativas: `glob()`/`file_get_contents()`/`query()` retornam `false` além do tipo — verifique antes de iterar/retornar; `session_name()` retorna `string|false`; `new $providerClass(...)` precisa de `@var class-string<\Illuminate\Support\ServiceProvider>` em variável local (não no parâmetro, para não vazar o narrow pros callers). Não usar `(string) mixed` — sempre guard/filtrar antes. Não substituir o Builder por stub separado — causa OOM no Windows.
+- **`App\Core\Application` usa `App\Core\ApplicationContainer`** (extends `Illuminate\Container\Container`, implements `Illuminate\Contracts\Foundation\Application`) como container — resolve os type-hints de `Facade::setFacadeApplication()` e construtores de `EventServiceProvider`/`RoutingServiceProvider` sem mascarar. Mantém o comportamento de container puro para providers de módulo (que tipam `Illuminate\Container\Container`).
+
+**Não assuma que o pipeline de teste funciona** — Pest não está operacional (sem `tests/`); PHPStan sim. Verifique antes de prometer.
 
 ## Módulos (convenção de camadas)
 
@@ -71,6 +81,15 @@ Comandos `make:*` geram arquivos a partir de `stubs/*.stub` (`controller.stub`, 
 - O projeto usa o **HotStack** (`.hot/`): `config.toml` vem com placeholders (`name = "my-project"`, `agents.opencode = true`) — não esteja refletido ainda e faltam respostas de contexto.
 - `PROJECT.md` do HotStack é fonte de contexto para os agents; mantenha-o sincronizado com `AGENTS.md` quando algo mudar.
 - Skills locais em `.hot/skills/{nome}/SKILL.md` (ex.: `clean-architecture`, `ddd`, `deps-upgrade`, `github-pr-workflow`, `php-psr-best-practices`, `php-84-85-features`) — estas são as do projeto, não as globais de `~/.agents/skills`. Para novas skills siga o formato SKILL.md destas.
+
+## Documentação de módulos
+
+Cada módulo tem um ficheiro de tracking em `docs/modules/{modulo}.md` com checkboxes `[x]`/`[ ]` que reflectem o estado de implementação.
+
+**REGRA OBRIGATÓRIA:** Sempre que houver mudança no código de um módulo (novo controller, migration, model, route, view, etc.), actualizar o correspondente `docs/modules/{modulo}.md` — marcar items como `[x]`, adicionar novos items, ou criar novas secções conforme necessário.
+
+- `docs/modules/rh.md` — estado do módulo RH
+- `docs/modules/accounting.md` — estado do módulo Accounting
 
 ## Git / commits
 
