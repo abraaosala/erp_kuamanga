@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Modules\Accounting;
 
+use App\Core\Session;
 use App\Services\Contracts\AccountServiceInterface;
 use eftec\bladeone\BladeOne;
 use Illuminate\Http\Request;
@@ -19,9 +20,10 @@ class JournalController
         $this->blade = $blade;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\Response
     {
-        $empresaId = (int)($_SESSION['empresa_id'] ?? 1);
+        $rawEmpresaId = $_SESSION['empresa_id'] ?? 1;
+        $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 1;
         $entries = $this->accountService->getJournalEntries($empresaId);
         
         $html = $this->blade->run('accounting.journal.index', [
@@ -31,9 +33,10 @@ class JournalController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): \Illuminate\Http\Response
     {
-        $empresaId = (int)($_SESSION['empresa_id'] ?? 1);
+        $rawEmpresaId = $_SESSION['empresa_id'] ?? 1;
+        $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 1;
         $accounts = $this->accountService->getAccountsByEmpresa($empresaId);
         
         $html = $this->blade->run('accounting.journal.create', [
@@ -43,12 +46,14 @@ class JournalController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $empresaId = (int)($_SESSION['empresa_id'] ?? 1);
-        
+        $rawEmpresaId = $_SESSION['empresa_id'] ?? 1;
+        $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 1;
 
-    
+        /** @var Session $session */
+        $session = session();
+
         // Ensure we capture items correctly from either Request or $_POST
         $data = $request->all();
         if (empty($data) || !isset($data['items'])) {
@@ -58,10 +63,10 @@ class JournalController
         try {
             // Validation and logic happens in Service
             $this->accountService->createJournalEntry($empresaId, $data);
-            session()->flash('success', "Lançamento registrado com sucesso!");
+            $session->flash('success', "Lançamento registrado com sucesso!");
             return redirect('/accounting/journal');
         } catch (\Exception $e) {
-            session()->flash('error', "Erro ao registrar lançamento: " . $e->getMessage());
+            $session->flash('error', "Erro ao registrar lançamento: " . $e->getMessage());
             return redirect('/accounting/journal/create');
         }
     }

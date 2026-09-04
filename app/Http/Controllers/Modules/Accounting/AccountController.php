@@ -15,7 +15,7 @@ class AccountController
         protected BladeOne $blade
     ) {}
 
-    public function index()
+    public function index(): string
     {
         $empresaId = 1;
         $accounts = $this->accountService->getFullChart($empresaId);
@@ -25,7 +25,7 @@ class AccountController
         ]);
     }
 
-    public function create()
+    public function create(): string
     {
         $empresaId = 1;
         $parentAccounts = $this->accountService->getAccountsByEmpresa($empresaId);
@@ -35,7 +35,7 @@ class AccountController
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): never
     {
         $this->accountService->createAccount(1, $request->all());
 
@@ -43,7 +43,7 @@ class AccountController
         exit;
     }
 
-    public function edit($id)
+    public function edit(int|string $id): string
     {
         $account = $this->accountService->getAccountById((int)$id);
         $empresaId = 1;
@@ -55,7 +55,7 @@ class AccountController
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update(int|string $id, Request $request): never
     {
         $this->accountService->updateAccount((int)$id, $request->all());
 
@@ -63,7 +63,7 @@ class AccountController
         exit;
     }
 
-    public function destroy($id)
+    public function destroy(int|string $id): never
     {
         $this->accountService->deleteAccount((int)$id);
 

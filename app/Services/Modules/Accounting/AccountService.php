@@ -29,9 +29,9 @@ class AccountService implements AccountServiceInterface
     {
         $data['empresa_id'] = $empresaId;
         
-        // Logical check: if parent_id is provided, verify it exists and belongs to the same empresa
-        if (isset($data['parent_id']) && $data['parent_id']) {
-            $parent = $this->accountRepository->findById((int)$data['parent_id']);
+        $parentId = $data['parent_id'] ?? null;
+        if ($parentId !== null && is_numeric($parentId)) {
+            $parent = $this->accountRepository->findById((int) $parentId);
             if (!$parent || $parent->empresa_id !== $empresaId) {
                 throw new \InvalidArgumentException('Parent account invalid.');
             }
@@ -47,7 +47,6 @@ class AccountService implements AccountServiceInterface
 
     public function deleteAccount(int $id): bool
     {
-        // Check if account has children
         $account = $this->accountRepository->findById($id);
         if ($account && $account->children()->count() > 0) {
             throw new \LogicException('Cannot delete an account that has sub-accounts.');
@@ -68,14 +67,19 @@ class AccountService implements AccountServiceInterface
         }
 
         return $this->accountRepository->transaction(function () use ($empresaId, $data) {
-            $totalDebit = 0;
-            $totalCredit = 0;
+            $totalDebit = 0.0;
+            $totalCredit = 0.0;
 
-            foreach ($data['items'] as $item) {
-                if ($item['type'] === 'debit') {
-                    $totalDebit += $item['amount'];
+            /** @var array<int, array<string, mixed>> $items */
+            $items = $data['items'];
+
+            foreach ($items as $item) {
+                $itemType = $item['type'] ?? '';
+                $itemAmount = $item['amount'] ?? 0;
+                if ($itemType === 'debit') {
+                    $totalDebit += is_numeric($itemAmount) ? (float) $itemAmount : 0.0;
                 } else {
-                    $totalCredit += $item['amount'];
+                    $totalCredit += is_numeric($itemAmount) ? (float) $itemAmount : 0.0;
                 }
             }
 
@@ -83,6 +87,7 @@ class AccountService implements AccountServiceInterface
                 throw new \LogicException("Journal entry is not balanced. Total Debit: {$totalDebit}, Total Credit: {$totalCredit}");
             }
 
+            /** @var JournalEntry $entry */
             $entry = JournalEntry::create([
                 'empresa_id'  => $empresaId,
                 'date'        => $data['date'],
@@ -90,7 +95,7 @@ class AccountService implements AccountServiceInterface
                 'reference'   => $data['reference'] ?? null,
             ]);
 
-            foreach ($data['items'] as $item) {
+            foreach ($items as $item) {
                 $entry->items()->create([
                     'account_id' => $item['account_id'],
                     'type'       => $item['type'],
@@ -104,11 +109,14 @@ class AccountService implements AccountServiceInterface
 
     public function getJournalEntries(int $empresaId): Collection
     {
-        return JournalEntry::with(['items.account'])
+        /** @var \Illuminate\Support\Collection<int, \App\Models\JournalEntry> $result */
+        $result = JournalEntry::with(['items.account'])
             ->where('empresa_id', $empresaId)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->get();
+
+        return $result;
     }
 
     public function getLedger(int $empresaId, ?int $accountId = null, ?string $startDate = null, ?string $endDate = null): array
@@ -130,14 +138,18 @@ class AccountService implements AccountServiceInterface
             ->orderBy('journal_items.id', 'asc')
             ->get();
 
-        $runningBalance = 0;
+        $runningBalance = 0.0;
         $ledger = [];
 
         foreach ($items as $item) {
-            if ($item->type === 'debit') {
-                $runningBalance += (float)$item->amount;
+            /** @var \stdClass $item */
+            $itemType = is_string($item->type) ? $item->type : '';
+            $itemAmount = is_numeric($item->amount) ? (float) $item->amount : 0.0;
+
+            if ($itemType === 'debit') {
+                $runningBalance += $itemAmount;
             } else {
-                $runningBalance -= (float)$item->amount;
+                $runningBalance -= $itemAmount;
             }
 
             $item->running_balance = $runningBalance;
@@ -161,24 +173,31 @@ class AccountService implements AccountServiceInterface
 
         $balances = [];
         foreach ($items as $item) {
-            if (!isset($balances[$item->account_id])) {
-                $balances[$item->account_id] = [
-                    'debit' => 0,
-                    'credit' => 0,
+            /** @var \stdClass $item */
+            $itemAccountId = $item->account_id;
+
+            if (!isset($balances[$itemAccountId])) {
+                $balances[$itemAccountId] = [
+                    'debit' => 0.0,
+                    'credit' => 0.0,
                 ];
             }
-            if ($item->type === 'debit') {
-                $balances[$item->account_id]['debit'] += (float)$item->total;
+
+            $itemType = is_string($item->type) ? $item->type : '';
+            $itemTotal = is_numeric($item->total) ? (float) $item->total : 0.0;
+
+            if ($itemType === 'debit') {
+                $balances[$itemAccountId]['debit'] += $itemTotal;
             } else {
-                $balances[$item->account_id]['credit'] += (float)$item->total;
+                $balances[$itemAccountId]['credit'] += $itemTotal;
             }
         }
         
         $accounts = $this->getAccountsByEmpresa($empresaId)->keyBy('id');
         
         $trialBalance = [];
-        $totalDebit = 0;
-        $totalCredit = 0;
+        $totalDebit = 0.0;
+        $totalCredit = 0.0;
         
         foreach ($balances as $accountId => $totals) {
             $account = $accounts->get($accountId);
@@ -186,8 +205,8 @@ class AccountService implements AccountServiceInterface
             
             $balance = $totals['debit'] - $totals['credit'];
             
-            $finalDebit = $balance > 0 ? $balance : 0;
-            $finalCredit = $balance < 0 ? abs($balance) : 0;
+            $finalDebit = $balance > 0 ? $balance : 0.0;
+            $finalCredit = $balance < 0 ? abs($balance) : 0.0;
             
             $trialBalance[] = [
                 'account' => $account,
@@ -202,7 +221,11 @@ class AccountService implements AccountServiceInterface
         }
         
         usort($trialBalance, function ($a, $b) {
-            return strcmp($a['account']->code, $b['account']->code);
+            /** @var \App\Models\AccountPlan $aAccount */
+            $aAccount = $a['account'];
+            /** @var \App\Models\AccountPlan $bAccount */
+            $bAccount = $b['account'];
+            return strcmp($aAccount->code, $bAccount->code);
         });
 
         return [
@@ -214,7 +237,6 @@ class AccountService implements AccountServiceInterface
 
     public function getDashboardMetrics(int $empresaId, int $year, int $month): array
     {
-        // For dashboard we need Year-To-Date (YTD) info to build sparklines or charts
         $items = JournalItem::join('journal_entries', 'journal_items.entry_id', '=', 'journal_entries.id')
             ->join('account_plans', 'journal_items.account_id', '=', 'account_plans.id')
             ->where('journal_entries.empresa_id', $empresaId)
@@ -229,26 +251,32 @@ class AccountService implements AccountServiceInterface
             ->get();
 
         $metrics = [
-            'total_assets' => 0,
-            'total_liabilities' => 0,
-            'revenue_month' => 0,
-            'expenses_month' => 0,
-            'net_income_month' => 0,
-            'monthly_revenue' => array_fill(1, 12, 0),
-            'monthly_expenses' => array_fill(1, 12, 0),
-            'expense_breakdown' => []
+            'total_assets' => 0.0,
+            'total_liabilities' => 0.0,
+            'revenue_month' => 0.0,
+            'expenses_month' => 0.0,
+            'net_income_month' => 0.0,
+            'monthly_revenue' => array_fill(1, 12, 0.0),
+            'monthly_expenses' => array_fill(1, 12, 0.0),
+            'expense_breakdown' => [],
         ];
 
         foreach ($items as $item) {
-            $class = substr($item->code, 0, 1);
-            $amount = (float)$item->amount;
-            $m = (int)$item->month;
+            /** @var \stdClass $item */
+            $code = is_string($item->code) ? $item->code : '';
+            $class = $code !== '' ? substr($code, 0, 1) : false;
+            if ($class === false) {
+                continue;
+            }
+
+            $amount = is_numeric($item->amount) ? (float) $item->amount : 0.0;
+            $m = is_numeric($item->month) ? (int) $item->month : 0;
+            if ($m < 1 || $m > 12) {
+                continue;
+            }
             
-            // Value sign rules
-            // Assets (1,2,3,4) & Expenses (6): Debit is +, Credit is -
-            // Liabilities/Equity (5,8) & Revenue (7): Credit is +, Debit is -
-            
-            $isDebit = $item->type === 'debit';
+            $itemType = is_string($item->type) ? $item->type : '';
+            $isDebit = $itemType === 'debit';
             
             if (in_array($class, ['1', '2', '3', '4'])) {
                 $metrics['total_assets'] += $isDebit ? $amount : -$amount;
@@ -260,12 +288,11 @@ class AccountService implements AccountServiceInterface
                 
                 if ($m === $month) {
                     $metrics['expenses_month'] += $expenseVal;
-                    // Group breakdown by class 6 sub-account (e.g. 61, 62, etc)
-                    $groupCode = substr($item->code, 0, 2);
+                    $groupCode = substr($code, 0, 2);
                     if (!isset($metrics['expense_breakdown'][$groupCode])) {
                         $metrics['expense_breakdown'][$groupCode] = [
                             'name' => 'Conta ' . $groupCode,
-                            'value' => 0
+                            'value' => 0.0,
                         ];
                     }
                     $metrics['expense_breakdown'][$groupCode]['value'] += $expenseVal;
@@ -282,7 +309,6 @@ class AccountService implements AccountServiceInterface
         
         $metrics['net_income_month'] = $metrics['revenue_month'] - $metrics['expenses_month'];
         
-        // Convert Breakdown to array 
         $metrics['expense_breakdown'] = array_values($metrics['expense_breakdown']);
 
         return $metrics;
@@ -306,43 +332,44 @@ class AccountService implements AccountServiceInterface
 
         $items = $query->get();
 
-        // Assets = 1, 2, 3, 4
-        // Liabilities = 5
-        // Equity = 5 (Capital), 8 (Results) + Current Net Income 
-        // Note: For simplicity we group 1-4 as Assets, and 5 & 8 as Liabilities/Equity
         $assets = [];
         $liabilitiesAndEquity = [];
-        $totalAssets = 0;
-        $totalLiabilitiesAndEquity = 0;
+        $totalAssets = 0.0;
+        $totalLiabilitiesAndEquity = 0.0;
         
-        $netIncome = 0;
+        $netIncome = 0.0;
 
         foreach ($items as $item) {
-            $class = substr($item->code, 0, 1);
-            $group2 = substr($item->code, 0, 2);
-            $amount = (float)$item->amount;
-            $isDebit = $item->type === 'debit';
+            /** @var \stdClass $item */
+            $code = is_string($item->code) ? $item->code : '';
+            $class = $code !== '' ? substr($code, 0, 1) : false;
+            if ($class === false) {
+                continue;
+            }
 
-            // Calculate Net Income (Class 6 & 7) to inject into Equity
+            $group2 = substr($code, 0, 2);
+
+            $amount = is_numeric($item->amount) ? (float) $item->amount : 0.0;
+            $itemType = is_string($item->type) ? $item->type : '';
+            $isDebit = $itemType === 'debit';
+
             if ($class === '6') {
                 $netIncome -= $isDebit ? $amount : -$amount;
             } elseif ($class === '7') {
                 $netIncome += !$isDebit ? $amount : -$amount;
             }
 
-            // Assets
             if (in_array($class, ['1', '2', '3', '4'])) {
                 if (!isset($assets[$group2])) {
-                    $assets[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0];
+                    $assets[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0.0];
                 }
                 $val = $isDebit ? $amount : -$amount;
                 $assets[$group2]['balance'] += $val;
                 $totalAssets += $val;
             } 
-            // Liabilities & Equity
             elseif (in_array($class, ['5', '8'])) {
                 if (!isset($liabilitiesAndEquity[$group2])) {
-                    $liabilitiesAndEquity[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0];
+                    $liabilitiesAndEquity[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0.0];
                 }
                 $val = !$isDebit ? $amount : -$amount;
                 $liabilitiesAndEquity[$group2]['balance'] += $val;
@@ -350,7 +377,6 @@ class AccountService implements AccountServiceInterface
             }
         }
 
-        // Inject current net income into Equity (Resultados Transitados/Exercício)
         $totalLiabilitiesAndEquity += $netIncome;
 
         ksort($assets);
@@ -389,25 +415,33 @@ class AccountService implements AccountServiceInterface
 
         $revenues = [];
         $expenses = [];
-        $totalRevenues = 0;
-        $totalExpenses = 0;
+        $totalRevenues = 0.0;
+        $totalExpenses = 0.0;
 
         foreach ($items as $item) {
-            $class = substr($item->code, 0, 1);
-            $group2 = substr($item->code, 0, 2);
-            $amount = (float)$item->amount;
-            $isDebit = $item->type === 'debit';
+            /** @var \stdClass $item */
+            $code = is_string($item->code) ? $item->code : '';
+            $class = $code !== '' ? substr($code, 0, 1) : false;
+            if ($class === false) {
+                continue;
+            }
 
-            if ($class === '7') { // Revenues (Proveitos)
+            $group2 = substr($code, 0, 2);
+
+            $amount = is_numeric($item->amount) ? (float) $item->amount : 0.0;
+            $itemType = is_string($item->type) ? $item->type : '';
+            $isDebit = $itemType === 'debit';
+
+            if ($class === '7') {
                 if (!isset($revenues[$group2])) {
-                    $revenues[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0];
+                    $revenues[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0.0];
                 }
                 $val = !$isDebit ? $amount : -$amount;
                 $revenues[$group2]['balance'] += $val;
                 $totalRevenues += $val;
-            } elseif ($class === '6') { // Expenses (Custos)
+            } elseif ($class === '6') {
                 if (!isset($expenses[$group2])) {
-                    $expenses[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0];
+                    $expenses[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0.0];
                 }
                 $val = $isDebit ? $amount : -$amount;
                 $expenses[$group2]['balance'] += $val;

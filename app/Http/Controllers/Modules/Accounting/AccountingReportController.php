@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Modules\Accounting;
 
+use App\Core\Session;
 use App\Services\Contracts\AccountServiceInterface;
 use eftec\bladeone\BladeOne;
 use Illuminate\Http\Request;
@@ -15,32 +16,29 @@ class AccountingReportController
         protected BladeOne $blade
     ) {}
 
-    public function ledger(Request $request)
+    public function ledger(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
-        // Must have an active enterprise
-        $empresaId = session()->empresaId();
+        /** @var Session $session */
+        $session = session();
+        $empresaId = $session->empresaId();
         if (!$empresaId) {
-            session()->flash('error', 'Selecione uma empresa primeiro.');
+            $session->flash('error', 'Selecione uma empresa primeiro.');
             return redirect('/dashboard');
         }
 
-        $accountId = $request->input('account_id');
-        if (is_numeric($accountId)) {
-            $accountId = (int)$accountId;
-        } else {
-            $accountId = null;
-        }
+        $accountIdValue = $request->input('account_id');
+        $accountId = is_numeric($accountIdValue) ? (int) $accountIdValue : null;
 
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $startDateValue = $request->input('start_date');
+        $startDate = is_string($startDateValue) && $startDateValue !== '' ? $startDateValue : null;
 
-        // Fetch all accounts for the dropdown
+        $endDateValue = $request->input('end_date');
+        $endDate = is_string($endDateValue) && $endDateValue !== '' ? $endDateValue : null;
+
         $accounts = $this->accountService->getAccountsByEmpresa($empresaId);
-        
-        // Fetch ledger data
+
         $ledger = $this->accountService->getLedger($empresaId, $accountId, $startDate, $endDate);
-        
-        // Find selected account if any
+
         $selectedAccount = $accountId ? $accounts->firstWhere('id', $accountId) : null;
 
         $html = $this->blade->run('accounting.reports.ledger', [
@@ -56,16 +54,21 @@ class AccountingReportController
         return response($html);
     }
 
-    public function trialBalance(Request $request)
+    public function trialBalance(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
-        $empresaId = session()->empresaId();
+        /** @var Session $session */
+        $session = session();
+        $empresaId = $session->empresaId();
         if (!$empresaId) {
-            session()->flash('error', 'Selecione uma empresa primeiro.');
+            $session->flash('error', 'Selecione uma empresa primeiro.');
             return redirect('/dashboard');
         }
 
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $startDateValue = $request->input('start_date');
+        $startDate = is_string($startDateValue) && $startDateValue !== '' ? $startDateValue : null;
+
+        $endDateValue = $request->input('end_date');
+        $endDate = is_string($endDateValue) && $endDateValue !== '' ? $endDateValue : null;
 
         $report = $this->accountService->getTrialBalance($empresaId, $startDate, $endDate);
 
@@ -79,15 +82,18 @@ class AccountingReportController
         return response($html);
     }
 
-    public function balanceSheet(Request $request)
+    public function balanceSheet(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
-        $empresaId = session()->empresaId();
+        /** @var Session $session */
+        $session = session();
+        $empresaId = $session->empresaId();
         if (!$empresaId) {
-            session()->flash('error', 'Selecione uma empresa.');
+            $session->flash('error', 'Selecione uma empresa.');
             return redirect('/dashboard');
         }
 
-        $endDate = $request->input('end_date', date('Y-12-31'));
+        $endDateValue = $request->input('end_date', date('Y-12-31'));
+        $endDate = is_string($endDateValue) && $endDateValue !== '' ? $endDateValue : null;
 
         $data = $this->accountService->getBalanceSheet($empresaId, $endDate);
 
@@ -100,17 +106,23 @@ class AccountingReportController
         return response($html);
     }
 
-    public function incomeStatement(Request $request)
+    public function incomeStatement(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
-        $empresaId = session()->empresaId();
+        /** @var Session $session */
+        $session = session();
+        $empresaId = $session->empresaId();
         if (!$empresaId) {
-            session()->flash('error', 'Selecione uma empresa.');
+            $session->flash('error', 'Selecione uma empresa.');
             return redirect('/dashboard');
         }
 
         $year = date('Y');
-        $startDate = $request->input('start_date', "$year-01-01");
-        $endDate = $request->input('end_date', "$year-12-31");
+
+        $startDateValue = $request->input('start_date', "$year-01-01");
+        $startDate = is_string($startDateValue) && $startDateValue !== '' ? $startDateValue : null;
+
+        $endDateValue = $request->input('end_date', "$year-12-31");
+        $endDate = is_string($endDateValue) && $endDateValue !== '' ? $endDateValue : null;
 
         $data = $this->accountService->getIncomeStatement($empresaId, $startDate, $endDate);
 

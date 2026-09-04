@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Modules\Accounting;
 
+use App\Core\Session;
 use App\Services\Contracts\AccountServiceInterface;
 use eftec\bladeone\BladeOne;
 use Illuminate\Http\Request;
@@ -15,16 +16,21 @@ class AccountingDashboardController
         protected BladeOne $blade
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
-        $empresaId = session()->empresaId();
+        /** @var Session $session */
+        $session = session();
+        $empresaId = $session->empresaId();
         if (!$empresaId) {
-            session()->flash('error', 'Selecione uma empresa para aceder à Contabilidade.');
+            $session->flash('error', 'Selecione uma empresa para aceder à Contabilidade.');
             return redirect('/dashboard');
         }
 
-        $year = (int)$request->input('year', date('Y'));
-        $month = (int)$request->input('month', date('n'));
+        $yearValue = $request->input('year', date('Y'));
+        $year = is_numeric($yearValue) ? (int) $yearValue : (int) date('Y');
+
+        $monthValue = $request->input('month', date('n'));
+        $month = is_numeric($monthValue) ? (int) $monthValue : (int) date('n');
 
         $metrics = $this->accountService->getDashboardMetrics($empresaId, $year, $month);
 
