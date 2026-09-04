@@ -3,10 +3,11 @@
     "description": "O projecto da Geralda Bartolomeu para o final do curso",
     "type": "project",
     "require": {
-        "php": "^8.1",
+        "php": "^8.3",
         "dompdf/dompdf": "^3.1",
         "eftec/bladeone": "^4.10",
         "filp/whoops": "^2.15",
+        "illuminate/config": "^12.69",
         "illuminate/container": "^12.0",
         "illuminate/database": "^12.0",
         "illuminate/events": "^12.0",
@@ -22,8 +23,14 @@
             "App\\": "app/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "scripts": {
-        "test": "php console test"
+        "test": "php console test",
+        "lnt":"vendor/bin/phpstan"
     },
     "authors": [
         {
@@ -41,6 +48,6 @@
     },
     "require-dev": {
         "pestphp/pest": "^5.0",
-        "phpstan/phpstan": "*"
+        "phpstan/phpstan": "^2.2"
     }
 }

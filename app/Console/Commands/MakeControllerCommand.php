@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MakeControllerCommand extends Command
 {
-    protected static $defaultName = 'make:controller';
+    protected static ?string $defaultName = 'make:controller';
 
     protected function configure(): void
     {
@@ -22,6 +22,7 @@ class MakeControllerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string $name */
         $name = $input->getArgument('name');
         if (!str_ends_with($name, 'Controller')) {
             $name .= 'Controller';

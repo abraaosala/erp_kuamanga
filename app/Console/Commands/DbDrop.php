@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\DatabaseManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'db:drop', description: 'Elimina a base de dados definida em DB_DATABASE')]
 class DbDrop extends Command
 {
-    protected static $defaultName = 'db:drop';
-    protected static $defaultDescription = 'Elimina a base de dados definida em DB_DATABASE';
-
     public function __construct(
         private DatabaseManager $db,
     ) {
@@ -22,7 +21,8 @@ class DbDrop extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $database = (string) env('DB_DATABASE', '');
+        $dbEnv = env('DB_DATABASE', '');
+        $database = is_string($dbEnv) ? $dbEnv : '';
         $this->db->assertValidName($database);
         $this->db->drop($database);
 

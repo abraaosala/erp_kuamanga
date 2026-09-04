@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MakeModelCommand extends Command
 {
-    protected static $defaultName = 'make:model';
+    protected static ?string $defaultName = 'make:model';
 
     protected function configure(): void
     {
@@ -22,6 +22,7 @@ class MakeModelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string $name */
         $name = $input->getArgument('name');
         $path = BASE_PATH . "/app/Models/{$name}.php";
 

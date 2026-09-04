@@ -11,7 +11,7 @@ use PDO;
 
 class DbCreateCommand extends Command
 {
-    protected static $defaultName = 'db:create';
+    protected static ?string $defaultName = 'db:create';
 
     protected function configure(): void
     {
@@ -20,19 +20,20 @@ class DbCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var array{default: string, connections: array<string, array<string, mixed>>} $config */
         $config = config('database');
         $conn = $config['connections'][$config['default']];
 
-        if ($conn['driver'] !== 'mysql') {
+        if (!is_string($conn['driver']) || $conn['driver'] !== 'mysql') {
             $output->writeln("<error>Este comando suporta apenas drivers MySQL no momento.</error>");
             return Command::FAILURE;
         }
 
-        $host = $conn['host'];
-        $port = $conn['port'];
-        $user = $conn['username'];
-        $pass = $conn['password'];
-        $db   = $conn['database'];
+        $host = is_string($conn['host']) ? $conn['host'] : '127.0.0.1';
+        $port = is_numeric($conn['port']) ? (int) $conn['port'] : 3306;
+        $user = is_string($conn['username']) ? $conn['username'] : '';
+        $pass = is_string($conn['password']) ? $conn['password'] : '';
+        $db   = is_string($conn['database']) ? $conn['database'] : '';
 
         try {
             $pdo = new PDO("mysql:host={$host};port={$port}", $user, $pass);

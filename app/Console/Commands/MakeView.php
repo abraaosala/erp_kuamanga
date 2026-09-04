@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\StubService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'make:view', description: 'Cria uma View Blade')]
 class MakeView extends Command
 {
-    protected static $defaultName = 'make:view';
-    protected static $defaultDescription = 'Cria uma View Blade';
-
     public function __construct(
         private StubService $stubs,
     ) {
@@ -28,7 +27,9 @@ class MakeView extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($input->getArgument('name') as $name) {
+        /** @var array<int, string> $names */
+        $names = $input->getArgument('name');
+        foreach ($names as $name) {
             $path = dirname(__DIR__, 3) . '/resources/views/' . str_replace('.', '/', $name) . '.blade.php';
 
             $content = $this->stubs->renderStub('view', []);

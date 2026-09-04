@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\PhinxRunner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'rollback', description: 'Reverte a última migração')]
 class MigrateRollback extends Command
 {
-    protected static $defaultName = 'rollback';
-    protected static $defaultDescription = 'Reverte a última migração';
-
     public function __construct(
         private PhinxRunner $phinx,
     ) {

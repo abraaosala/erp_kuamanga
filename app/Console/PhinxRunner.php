@@ -6,6 +6,9 @@ namespace App\Console;
 
 class PhinxRunner
 {
+    /**
+     * @param array<string> $extra
+     */
     public function run(string $action, ?string $name = null, array $extra = []): void
     {
         $phinx = escapeshellarg(dirname(__DIR__, 2) . '/vendor/bin/phinx');
