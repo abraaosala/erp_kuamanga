@@ -140,3 +140,72 @@ if (!function_exists('all_empresas')) {
         return \App\Models\Empresa::where('status', 'ativo')->get();
     }
 }
+
+if (!function_exists('storage_uploads_path')) {
+    function storage_uploads_path(string $relative = ''): string
+    {
+        $base = defined('BASE_PATH') ? BASE_PATH : dirname(__DIR__, 2);
+        $path = $base . '/storage/uploads';
+        if ($relative !== '') {
+            $path .= '/' . trim($relative, '/');
+        }
+        return $path;
+    }
+}
+
+if (!function_exists('upload_file')) {
+    /**
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string caminho relativo guardado (ex: employees/12/abc123.pdf)
+     * @throws \RuntimeException
+     */
+    function upload_file(\Illuminate\Http\UploadedFile $file, string $directory): string
+    {
+        $base = storage_uploads_path();
+        $dir = storage_uploads_path($directory);
+
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0o775, true);
+        }
+
+        if (!is_dir($dir)) {
+            throw new \RuntimeException('Não foi possível criar o directório de upload.');
+        }
+
+        $extension = $file->getClientOriginalExtension();
+        $filename = bin2hex(random_bytes(16)) . ($extension !== '' ? '.' . $extension : '');
+        $relative = trim($directory, '/') . '/' . $filename;
+        $dest = $base . '/' . $relative;
+
+        $file->move(dirname($dest), basename($dest));
+
+        return $relative;
+    }
+}
+
+if (!function_exists('download_file')) {
+    /**
+     * @return \Illuminate\Http\Response
+     */
+    function download_file(string $relative, string $downloadName, bool $inline = false): \Illuminate\Http\Response
+    {
+        $base = storage_uploads_path();
+        $full = $base . '/' . ltrim($relative, '/');
+
+        if (!is_file($full)) {
+            $_SESSION['flash_error'] = 'Ficheiro não encontrado.';
+            return response('Ficheiro não encontrado.', 404);
+        }
+
+        $size = filesize($full);
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($full);
+        $mime = is_string($mime) ? $mime : 'application/octet-stream';
+
+        return response(file_get_contents($full) ?: '', 200, [
+            'Content-Type'        => $mime,
+            'Content-Disposition' => $inline ? 'inline' : 'attachment; filename="' . $downloadName . '"',
+            'Content-Length'      => (string) ($size !== false ? $size : 0),
+        ]);
+    }
+}

@@ -6,6 +6,7 @@ use App\Http\Controllers\Modules\Rh\AttendanceController;
 use App\Http\Controllers\Modules\Rh\ContractController;
 use App\Http\Controllers\Modules\Rh\DepartmentController;
 use App\Http\Controllers\Modules\Rh\EmployeeController;
+use App\Http\Controllers\Modules\Rh\EmployeeDocumentController;
 use App\Http\Controllers\Modules\Rh\EmployeeScheduleController;
 use App\Http\Controllers\Modules\Rh\HourBankEntryController;
 use App\Http\Controllers\Modules\Rh\PositionController;
@@ -25,9 +26,14 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/employees', [EmployeeController::class, 'index'])->name('rh.employees.index');
     $router->get('/employees/create', [EmployeeController::class, 'create'])->name('rh.employees.create');
     $router->post('/employees', [EmployeeController::class, 'store'])->name('rh.employees.store');
+    $router->get('/employees/{id}', [EmployeeController::class, 'show'])->name('rh.employees.show');
     $router->get('/employees/{id}/edit', [EmployeeController::class, 'edit'])->name('rh.employees.edit');
     $router->post('/employees/{id}/update', [EmployeeController::class, 'update'])->name('rh.employees.update');
     $router->post('/employees/{id}/delete', [EmployeeController::class, 'destroy'])->name('rh.employees.destroy');
+
+    $router->post('/employees/{id}/documents', [EmployeeDocumentController::class, 'store'])->name('rh.employees.documents.store');
+    $router->get('/employees/{id}/documents/{docId}/download', [EmployeeDocumentController::class, 'download'])->name('rh.employees.documents.download');
+    $router->post('/employees/{id}/documents/{docId}/delete', [EmployeeDocumentController::class, 'destroy'])->name('rh.employees.documents.destroy');
 
     $router->get('/departments', [DepartmentController::class, 'index'])->name('rh.departments.index');
     $router->get('/departments/create', [DepartmentController::class, 'create'])->name('rh.departments.create');

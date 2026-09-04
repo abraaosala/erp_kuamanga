@@ -47,9 +47,14 @@ class ContractController
     {
         $employees = $this->employeeService->getAll();
 
+        /** @var string|null $employeeIdRaw */
+        $employeeIdRaw = $request->get('employee_id');
+        $selectedEmployeeId = is_numeric($employeeIdRaw) ? (int) $employeeIdRaw : null;
+
         $html = $this->blade->run('rh.contracts.create', [
-            'employees' => $employees,
-            'error'     => $_SESSION['flash_error'] ?? null,
+            'employees'          => $employees,
+            'selectedEmployeeId' => $selectedEmployeeId,
+            'error'              => $_SESSION['flash_error'] ?? null,
         ]);
         unset($_SESSION['flash_error']);
 
