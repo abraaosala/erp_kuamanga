@@ -51,6 +51,9 @@ class HourBankEntryService implements HourBankEntryServiceInterface
         return $this->hourBankEntryRepository->balanceByEmployee($employeeId);
     }
 
+    /**
+     * @return array<int, array{employee: string, balance: float}>
+     */
     public function summary(): array
     {
         return $this->hourBankEntryRepository->summary();

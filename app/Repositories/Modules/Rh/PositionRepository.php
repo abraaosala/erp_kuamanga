@@ -13,25 +13,39 @@ class PositionRepository implements PositionRepositoryInterface
 {
     protected function empresaId(): int
     {
-        return current_empresa()->id;
+        /** @var \App\Models\Empresa $empresa */
+        $empresa = current_empresa();
+        return $empresa->id;
     }
 
     public function all(): Collection
     {
-        return Position::with('department')->where('empresa_id', $this->empresaId())->orderBy('name')->get();
+        /** @var Collection<int, Position> $positions */
+        $positions = Position::with('department')->where('empresa_id', $this->empresaId())->orderBy('name')->get();
+
+        return $positions;
     }
 
     public function findById(int $id): ?Position
     {
-        return Position::where('empresa_id', $this->empresaId())->find($id);
+        /** @var \App\Models\Position|null $position */
+        $position = Position::where('empresa_id', $this->empresaId())->find($id);
+
+        return $position;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): Position
     {
         $data['empresa_id'] ??= $this->empresaId();
         return Position::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool
     {
         $model = $this->findById($id);
@@ -66,9 +80,12 @@ class PositionRepository implements PositionRepositoryInterface
 
     public function findByDepartment(int $departmentId): Collection
     {
-        return Position::with('department')
+        /** @var Collection<int, Position> $positions */
+        $positions = Position::with('department')
             ->where('empresa_id', $this->empresaId())
             ->where('department_id', $departmentId)
             ->orderBy('name')->get();
+
+        return $positions;
     }
 }

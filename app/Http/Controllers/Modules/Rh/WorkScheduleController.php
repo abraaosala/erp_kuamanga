@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Modules\Rh;
 
 use App\Services\Contracts\WorkScheduleServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class WorkScheduleController
@@ -17,11 +19,15 @@ class WorkScheduleController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search      = $request->get('search');
-        $perPage     = (int) $request->get('perPage', 15);
-        $schedules   = $this->workScheduleService->paginate($perPage, $search);
+        $perPageRaw = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage    = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw  = $request->get('search');
+        /** @var string|null $search */
+        $search     = is_string($searchRaw) ? $searchRaw : null;
+        $schedules  = $this->workScheduleService->paginate($perPage, $search);
 
         $html = $this->blade->run('rh.schedules.index', [
             'schedules' => $schedules,
@@ -35,7 +41,7 @@ class WorkScheduleController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $html = $this->blade->run('rh.schedules.create', [
             'error' => $_SESSION['flash_error'] ?? null,
@@ -45,12 +51,14 @@ class WorkScheduleController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         if (is_array($data['days_of_week'] ?? null)) {
-            $data['days_of_week'] = implode(',', $data['days_of_week']);
+            /** @var array<int, mixed> $daysList */
+            $daysList = $data['days_of_week'];
+            $data['days_of_week'] = implode(',', array_map(fn($d) => is_string($d) ? $d : '', $daysList));
         }
 
         $validation = $this->validator->make($data, [
@@ -78,7 +86,7 @@ class WorkScheduleController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $schedule = $this->workScheduleService->getById($id);
 
@@ -96,12 +104,14 @@ class WorkScheduleController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         if (is_array($data['days_of_week'] ?? null)) {
-            $data['days_of_week'] = implode(',', $data['days_of_week']);
+            /** @var array<int, mixed> $daysList */
+            $daysList = $data['days_of_week'];
+            $data['days_of_week'] = implode(',', array_map(fn($d) => is_string($d) ? $d : '', $daysList));
         }
 
         $validation = $this->validator->make($data, [
@@ -129,7 +139,7 @@ class WorkScheduleController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->workScheduleService->delete($id);

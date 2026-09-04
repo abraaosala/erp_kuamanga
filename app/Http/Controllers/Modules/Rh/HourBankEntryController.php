@@ -7,7 +7,9 @@ namespace App\Http\Controllers\Modules\Rh;
 use App\Services\Contracts\EmployeeServiceInterface;
 use App\Services\Contracts\HourBankEntryServiceInterface;
 use eftec\bladeone\BladeOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Factory as Validator;
 
 class HourBankEntryController
@@ -19,11 +21,15 @@ class HourBankEntryController
         protected Validator $validator
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $search  = $request->get('search');
-        $perPage = (int) $request->get('perPage', 15);
-        $entries = $this->hourBankEntryService->paginate($perPage, $search);
+        $perPageRaw = $request->get('perPage', 15);
+        /** @var int $perPage */
+        $perPage   = is_numeric($perPageRaw) ? (int) $perPageRaw : 15;
+        $searchRaw = $request->get('search');
+        /** @var string|null $search */
+        $search    = is_string($searchRaw) ? $searchRaw : null;
+        $entries   = $this->hourBankEntryService->paginate($perPage, $search);
         $summary = $this->hourBankEntryService->summary();
 
         $html = $this->blade->run('rh.hour_bank.index', [
@@ -39,7 +45,7 @@ class HourBankEntryController
         return response($html);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         $employees = $this->employeeService->getAll();
 
@@ -52,7 +58,7 @@ class HourBankEntryController
         return response($html);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
@@ -85,7 +91,7 @@ class HourBankEntryController
         }
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id): Response|RedirectResponse
     {
         $entry = $this->hourBankEntryService->getById($id);
 
@@ -106,7 +112,7 @@ class HourBankEntryController
         return response($html);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
@@ -139,7 +145,7 @@ class HourBankEntryController
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
             $this->hourBankEntryService->delete($id);

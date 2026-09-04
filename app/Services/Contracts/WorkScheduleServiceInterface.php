@@ -10,15 +10,27 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface WorkScheduleServiceInterface
 {
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\WorkSchedule>
+     */
     public function getAll(): Collection;
 
     public function getById(int $id): ?WorkSchedule;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): WorkSchedule;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): bool;
 
     public function delete(int $id): bool;
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, \App\Models\WorkSchedule>
+     */
     public function paginate(int $perPage = 15, ?string $search = null): LengthAwarePaginator;
 }
