@@ -16,15 +16,22 @@ class StubService
         return str_replace(' ', '', $value);
     }
 
+    /**
+     * @param array<string, string> $replacements
+     */
     public function renderStub(string $stubName, array $replacements): string
     {
         $stubPath = dirname(__DIR__, 2) . '/stubs/' . $stubName . '.stub';
 
         if (!file_exists($stubPath)) {
-            throw new RuntimeException("Stub n\u{00e3}o encontrado: {$stubPath}");
+            throw new RuntimeException("Stub não encontrado: {$stubPath}");
         }
 
         $content = file_get_contents($stubPath);
+
+        if ($content === false) {
+            throw new RuntimeException("Não foi possível ler o stub: {$stubPath}");
+        }
 
         foreach ($replacements as $key => $value) {
             $content = str_replace('{{ ' . $key . ' }}', $value, $content);
@@ -42,7 +49,7 @@ class StubService
         }
 
         if (file_exists($path)) {
-            $output->writeln("<comment>Ficheiro j\u{00e1} existe: {$path}</comment>");
+            $output->writeln("<comment>Ficheiro já existe: {$path}</comment>");
             return;
         }
 

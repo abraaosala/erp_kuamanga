@@ -3,54 +3,93 @@
 
 declare(strict_types=1);
 
-/**
- * ERP Console CLI - Entry Point
- * Based on Symphony Console and decoupled Illuminate components
- */
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
-// Bootstrap the application
-$app = require __DIR__ . '/bootstrap/app.php';
+require __DIR__ . '/vendor/autoload.php';
 
+use Dotenv\Dotenv;
+use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Container\Container;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Symfony\Component\Console\Application;
-use App\Console\DatabaseManager;
-use App\Console\PhinxRunner;
-use App\Console\StubService;
 
-$application = new Application('ERP Console', '1.0.0');
+// Carrega variáveis de ambiente
+if (file_exists(__DIR__ . '/.env')) {
+    Dotenv::createImmutable(__DIR__)->load();
+}
 
-// Register Commands resolved from container (existing ERP commands)
-$containerCommands = [
-    \App\Console\Commands\DbSeedCommand::class,   // db:seed (ERP)
-];
-
-foreach ($containerCommands as $commandClass) {
-    if (class_exists($commandClass)) {
-        // Resolve from container to allow DI in commands
-        $application->add($app->getContainer()->make($commandClass));
+if (!function_exists('env')) {
+    function env(string $key, mixed $default = null): mixed {
+        $value = $_ENV[$key] ?? $_SERVER[$key] ?? null;
+        return $value === null ? $default : $value;
     }
 }
 
-// Create shared service instances for new commands
-$dbManager = new DatabaseManager();
-$phinxRunner = new PhinxRunner();
-$stubService = new StubService();
+// Inicializa Container
+$container = new Container();
+Container::setInstance($container);
 
-// Register new commands (direct instantiation)
-$application->add(new \App\Console\Commands\DbCreate($dbManager));
-$application->add(new \App\Console\Commands\DbDrop($dbManager));
-$application->add(new \App\Console\Commands\DbSeed($phinxRunner));
-$application->add(new \App\Console\Commands\MakeController($stubService));
-$application->add(new \App\Console\Commands\MakeMiddleware($stubService));
-$application->add(new \App\Console\Commands\MakeMigration($phinxRunner));
-$application->add(new \App\Console\Commands\MakeModel($stubService));
-$application->add(new \App\Console\Commands\MakeRepository($stubService));
-$application->add(new \App\Console\Commands\MakeSeed($phinxRunner));
-$application->add(new \App\Console\Commands\MakeService($stubService));
-$application->add(new \App\Console\Commands\MakeView($stubService));
-$application->add(new \App\Console\Commands\Migrate($dbManager, $phinxRunner));
-$application->add(new \App\Console\Commands\MigrateBreakpoint($phinxRunner));
-$application->add(new \App\Console\Commands\MigrateRollback($phinxRunner));
-$application->add(new \App\Console\Commands\MigrateStatus($phinxRunner));
-$application->add(new \App\Console\Commands\Serve());
+// Config
+$configPath = __DIR__ . '/config';
+$configFiles = glob($configPath . '/*.php') ?: [];
+$configData = [];
+foreach ($configFiles as $file) {
+    $name = basename($file, '.php');
+    $configData[$name] = require $file;
+}
+$config = new ConfigRepository($configData);
+$container->instance('config', $config);
+
+// Database / Eloquent
+$capsule = new Capsule($container);
+$defaultConnection = $config->get('database.default') ?: env('DB_CONNECTION', 'mysql');
+if (!is_string($defaultConnection)) {
+    $defaultConnection = 'mysql';
+}
+$dbConfig = $config->get("database.connections.{$defaultConnection}");
+
+if (empty($dbConfig) && $defaultConnection !== 'mysql') {
+    $defaultConnection = 'mysql';
+    $dbConfig = $config->get("database.connections.mysql");
+}
+
+if (is_array($dbConfig)) {
+    $capsule->addConnection($dbConfig);
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
+}
+
+$application = new Application('ERP Kuamanga Console', env('APP_VERSION', '1.0.0') . ' (PHP ' . PHP_VERSION . ')' . ' - ' . PHP_OS);
+
+// Serviços partilhados
+$dbManager = new \App\Console\DatabaseManager();
+$phinxRunner = new \App\Console\PhinxRunner();
+$stubService = new \App\Console\StubService();
+
+// Comandos sem dependências
+$application->addCommand(new \App\Console\Commands\Serve());
+
+// Comandos com DatabaseManager
+$application->addCommand(new \App\Console\Commands\DbCreate($dbManager));
+$application->addCommand(new \App\Console\Commands\DbDrop($dbManager));
+
+// Comandos com PhinxRunner
+$application->addCommand(new \App\Console\Commands\DbSeed($phinxRunner));
+$application->addCommand(new \App\Console\Commands\MigrateRollback($phinxRunner));
+$application->addCommand(new \App\Console\Commands\MigrateStatus($phinxRunner));
+$application->addCommand(new \App\Console\Commands\MigrateBreakpoint($phinxRunner));
+$application->addCommand(new \App\Console\Commands\MakeMigration($phinxRunner));
+$application->addCommand(new \App\Console\Commands\MakeSeed($phinxRunner));
+
+// Comandos com StubService
+$application->addCommand(new \App\Console\Commands\MakeController($stubService));
+$application->addCommand(new \App\Console\Commands\MakeModel($stubService));
+$application->addCommand(new \App\Console\Commands\MakeService($stubService));
+$application->addCommand(new \App\Console\Commands\MakeMiddleware($stubService));
+$application->addCommand(new \App\Console\Commands\MakeRepository($stubService));
+$application->addCommand(new \App\Console\Commands\MakeView($stubService));
+
+// Comandos com dependências múltiplas
+$application->addCommand(new \App\Console\Commands\Migrate($dbManager, $phinxRunner));
 
 $application->run();

@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'serve', description: 'Serve the application on the PHP development server')]
 class Serve extends Command
 {
-    protected static $defaultName = 'serve';
 
     protected function configure(): void
     {
@@ -23,8 +24,10 @@ class Serve extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $host = $input->getOption('host');
-        $port = $input->getOption('port');
+        $hostOpt = $input->getOption('host');
+        $portOpt = $input->getOption('port');
+        $host = is_string($hostOpt) ? $hostOpt : '127.0.0.1';
+        $port = is_string($portOpt) ? $portOpt : '8000';
 
         $output->writeln("<info>Starting Development Server:</info> http://{$host}:{$port}");
         $output->writeln("<comment>Press Ctrl+C to stop the server</comment>");

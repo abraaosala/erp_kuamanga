@@ -6,16 +6,15 @@ namespace App\Console\Commands;
 
 use App\Console\DatabaseManager;
 use App\Console\PhinxRunner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'migrate', description: 'Executa migrações pendentes')]
 class Migrate extends Command
 {
-    protected static $defaultName = 'migrate';
-    protected static $defaultDescription = 'Executa migrações pendentes';
-
     public function __construct(
         private DatabaseManager $db,
         private PhinxRunner $phinx,
@@ -38,7 +37,8 @@ class Migrate extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $database = (string) env('DB_DATABASE', '');
+        $dbEnv = env('DB_DATABASE', '');
+        $database = is_string($dbEnv) ? $dbEnv : '';
         $this->db->assertValidName($database);
 
         try {
@@ -51,7 +51,8 @@ class Migrate extends Command
         $extra = [];
 
         foreach (['target', 'date', 'environment', 'configuration', 'parser'] as $opt) {
-            if ($value = $input->getOption($opt)) {
+            $value = $input->getOption($opt);
+            if (is_string($value) && $value !== '') {
                 $extra[] = sprintf('--%s=%s', $opt, escapeshellarg($value));
             }
         }

@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\PhinxRunner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'seed:run', description: 'Executa os seeders')]
 class DbSeed extends Command
 {
-    protected static $defaultName = 'seed:run';
-    protected static $defaultDescription = 'Executa os seeders';
-
     public function __construct(
         private PhinxRunner $phinx,
     ) {
@@ -36,13 +35,19 @@ class DbSeed extends Command
         $extra = [];
 
         foreach (['environment', 'configuration', 'parser'] as $opt) {
-            if ($value = $input->getOption($opt)) {
+            $value = $input->getOption($opt);
+            if (is_string($value) && $value !== '') {
                 $extra[] = sprintf('--%s=%s', $opt, escapeshellarg($value));
             }
         }
 
-        foreach ($input->getOption('seed') as $seed) {
-            $extra[] = sprintf('--seed=%s', escapeshellarg($seed));
+        $seeds = $input->getOption('seed');
+        if (is_array($seeds)) {
+            foreach ($seeds as $seed) {
+                if (is_string($seed)) {
+                    $extra[] = sprintf('--seed=%s', escapeshellarg($seed));
+                }
+            }
         }
 
         if ($input->getOption('no-info')) {

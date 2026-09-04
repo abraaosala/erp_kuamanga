@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DbSeedCommand extends Command
 {
-    protected static $defaultName = 'db:seed';
+    protected static ?string $defaultName = 'db:seed';
 
     protected function configure(): void
     {

@@ -32,7 +32,7 @@ class DatabaseManager
             'SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ' . $this->pdo()->quote($name)
         );
 
-        return (bool) $stmt->fetchColumn();
+        return $stmt !== false && (bool) $stmt->fetchColumn();
     }
 
     public function create(string $name): void
@@ -71,20 +71,25 @@ class DatabaseManager
     private function pdo(): PDO
     {
         if ($this->pdo === null) {
-            $driver = (string) env('DB_CONNECTION', 'mysql');
+            $driver = env('DB_CONNECTION', 'mysql');
 
             if ($driver !== 'mysql') {
                 throw new RuntimeException("Apenas o driver 'mysql' é suportado.");
             }
 
+            $host = env('DB_HOST', '127.0.0.1');
+            $port = env('DB_PORT', 3306);
+            $user = env('DB_USERNAME', 'root');
+            $password = env('DB_PASSWORD', '');
+
             $this->pdo = new PDO(
                 sprintf(
                     'mysql:host=%s;port=%d;charset=utf8mb4',
-                    (string) env('DB_HOST', '127.0.0.1'),
-                    (int) env('DB_PORT', 3306),
+                    is_string($host) ? $host : '127.0.0.1',
+                    is_numeric($port) ? (int) $port : 3306,
                 ),
-                (string) env('DB_USERNAME', 'root'),
-                (string) env('DB_PASSWORD', ''),
+                is_string($user) ? $user : 'root',
+                is_string($password) ? $password : '',
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
             );
         }

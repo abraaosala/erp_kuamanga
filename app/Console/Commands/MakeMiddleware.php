@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\StubService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'make:middleware', description: 'Cria um Middleware')]
 class MakeMiddleware extends Command
 {
-    protected static $defaultName = 'make:middleware';
-    protected static $defaultDescription = 'Cria um Middleware';
-
     public function __construct(
         private StubService $stubs,
     ) {
@@ -28,7 +27,9 @@ class MakeMiddleware extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach ($input->getArgument('name') as $name) {
+        /** @var array<int, string> $names */
+        $names = $input->getArgument('name');
+        foreach ($names as $name) {
             $class = $this->stubs->studly($name);
 
             if (!str_ends_with($class, 'Middleware')) {
