@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $status
  * @property string|null $bi
  * @property string|null $inss
+ * @property string|null $photo
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -54,6 +55,7 @@ class Employee extends Model
         'status',
         'bi',
         'inss',
+        'photo',
     ];
 
     /** @var array<string, string> */

@@ -16,6 +16,28 @@
     @endif
 
     <form method="POST" action="/rh/employees" enctype="multipart/form-data" class="glass-card rounded-2xl p-6 space-y-6" x-data="{ submitting: false }" @submit="submitting = true">
+        <div x-data="{ photoUrl: '' }">
+            <h3 class="text-sm font-semibold mb-4" style="color: var(--text-main)">Foto do Funcionário</h3>
+            <div class="flex items-center gap-5">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0 overflow-hidden">
+                    <template x-if="photoUrl">
+                        <img :src="photoUrl" alt="Foto do funcionário" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!photoUrl">
+                        <span><i data-lucide="user" class="w-10 h-10"></i></span>
+                    </template>
+                </div>
+                <div class="space-y-2">
+                    <label class="btn-secondary px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Escolher foto
+                        <input type="file" name="photo" accept=".jpg,.jpeg,.png" class="hidden" @change="const f = $event.target.files[0]; if (f) photoUrl = URL.createObjectURL(f)">
+                    </label>
+                    <p class="field-hint">JPG ou PNG — máx. 2MB</p>
+                </div>
+            </div>
+        </div>
+
         <div>
             <h3 class="text-sm font-semibold mb-4" style="color: var(--text-main)">Dados do Funcionário</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,7 +136,6 @@
                             <option value="medical">Atestado médico</option>
                             <option value="certificate">Certificado</option>
                             <option value="cv">CV</option>
-                            <option value="photo">Foto</option>
                         </select>
                     </div>
                     <div class="flex-1">

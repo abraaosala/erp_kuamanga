@@ -31,7 +31,6 @@ class EmployeeDocumentController
         'medical'     => 'Atestado médico',
         'certificate' => 'Certificado',
         'cv'          => 'CV',
-        'photo'       => 'Foto',
     ];
 
     public function __construct(

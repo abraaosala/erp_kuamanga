@@ -27,6 +27,7 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/employees/create', [EmployeeController::class, 'create'])->name('rh.employees.create');
     $router->post('/employees', [EmployeeController::class, 'store'])->name('rh.employees.store');
     $router->get('/employees/{id}', [EmployeeController::class, 'show'])->name('rh.employees.show');
+    $router->get('/employees/{id}/photo', [EmployeeController::class, 'photo'])->name('rh.employees.photo');
     $router->get('/employees/{id}/edit', [EmployeeController::class, 'edit'])->name('rh.employees.edit');
     $router->post('/employees/{id}/update', [EmployeeController::class, 'update'])->name('rh.employees.update');
     $router->post('/employees/{id}/delete', [EmployeeController::class, 'destroy'])->name('rh.employees.destroy');

@@ -80,6 +80,7 @@ class EmployeeController
             'hire_date'     => 'nullable|date',
             'bi'            => 'nullable|regex:/^[0-9]{9}[A-Za-z]{2}[0-9]{3}$/',
             'inss'          => 'nullable|digits_between:6,12',
+            'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'name.required'          => 'O nome do funcionário é obrigatório.',
             'name.min'               => 'O nome deve ter pelo menos 2 caracteres.',
@@ -89,6 +90,9 @@ class EmployeeController
             'position_id.exists'     => 'Cargo selecionado não existe.',
             'bi.regex'               => 'Formato de BI inválido (9 dígitos + 2 letras + 3 dígitos).',
             'inss.digits_between'    => 'O INSS deve conter apenas números (6 a 12 dígitos).',
+            'photo.image'            => 'A foto deve ser uma imagem (JPG ou PNG).',
+            'photo.mimes'            => 'A foto deve ser um ficheiro JPG, JPEG ou PNG.',
+            'photo.max'              => 'A foto não pode exceder 2MB.',
         ]);
 
         if ($validation->fails()) {
@@ -100,9 +104,17 @@ class EmployeeController
         $docFiles = $request->file('document_files', []);
         unset($data['docs']);
 
+        unset($data['photo']);
+
         try {
             /** @var \App\Models\Employee $employee */
             $employee = $this->employeeService->create($data);
+
+            $photoFile = $request->file('photo');
+            if ($photoFile instanceof \Illuminate\Http\UploadedFile && $photoFile->isValid()) {
+                $relativePath = upload_file($photoFile, 'employees/' . $employee->id);
+                $this->employeeService->update((int) $employee->id, ['photo' => $relativePath]);
+            }
 
             if (is_array($docFiles)) {
                 foreach ($docFiles as $index => $file) {
@@ -129,7 +141,7 @@ class EmployeeController
     {
         $typeString = is_string($type) ? $type : '';
         $allowedTypes = [
-            'bi', 'inss', 'contract', 'medical', 'certificate', 'cv', 'photo',
+            'bi', 'inss', 'contract', 'medical', 'certificate', 'cv',
         ];
         if (!in_array($typeString, $allowedTypes, true)) {
             $typeString = 'bi';
@@ -246,6 +258,7 @@ class EmployeeController
             'hire_date'     => 'nullable|date',
             'bi'            => 'nullable|regex:/^[0-9]{9}[A-Za-z]{2}[0-9]{3}$/',
             'inss'          => 'nullable|digits_between:6,12',
+            'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'name.required'          => 'O nome do funcionário é obrigatório.',
             'name.min'               => 'O nome deve ter pelo menos 2 caracteres.',
@@ -255,6 +268,9 @@ class EmployeeController
             'position_id.exists'     => 'Cargo selecionado não existe.',
             'bi.regex'               => 'Formato de BI inválido (9 dígitos + 2 letras + 3 dígitos).',
             'inss.digits_between'    => 'O INSS deve conter apenas números (6 a 12 dígitos).',
+            'photo.image'            => 'A foto deve ser uma imagem (JPG ou PNG).',
+            'photo.mimes'            => 'A foto deve ser um ficheiro JPG, JPEG ou PNG.',
+            'photo.max'              => 'A foto não pode exceder 2MB.',
         ]);
 
         if ($validation->fails()) {
@@ -262,8 +278,28 @@ class EmployeeController
             return redirect('/rh/employees/' . $id . '/edit');
         }
 
+        $photoFile = $request->file('photo');
+        unset($data['photo']);
+
         try {
             $this->employeeService->update($id, $data);
+
+            if ($photoFile instanceof \Illuminate\Http\UploadedFile && $photoFile->isValid()) {
+                $employee = $this->employeeService->getById($id);
+                if ($employee) {
+                    $oldPhoto = $employee->photo;
+                    $relativePath = upload_file($photoFile, 'employees/' . $id);
+                    $this->employeeService->update($id, ['photo' => $relativePath]);
+
+                    if (is_string($oldPhoto) && $oldPhoto !== '') {
+                        $full = storage_uploads_path($oldPhoto);
+                        if (is_file($full)) {
+                            @unlink($full);
+                        }
+                    }
+                }
+            }
+
             $_SESSION['flash_success'] = 'Funcionário atualizado com sucesso!';
             return redirect('/rh/employees');
         } catch (\Exception $e) {
@@ -275,6 +311,17 @@ class EmployeeController
     public function destroy(Request $request, int $id): RedirectResponse
     {
         try {
+            $employee = $this->employeeService->getById($id);
+            if ($employee) {
+                $photo = $employee->photo;
+                if (is_string($photo) && $photo !== '') {
+                    $full = storage_uploads_path($photo);
+                    if (is_file($full)) {
+                        @unlink($full);
+                    }
+                }
+            }
+
             $this->employeeService->delete($id);
             $_SESSION['flash_success'] = 'Funcionário removido com sucesso!';
         } catch (\Exception $e) {
@@ -282,5 +329,16 @@ class EmployeeController
         }
 
         return redirect('/rh/employees');
+    }
+
+    public function photo(Request $request, int $id): Response
+    {
+        $employee = $this->employeeService->getById($id);
+        if (!$employee || !is_string($employee->photo) || $employee->photo === '') {
+            $_SESSION['flash_error'] = 'Foto não encontrada.';
+            return response('Foto não encontrada.', 404);
+        }
+
+        return download_file($employee->photo, 'foto.jpg', true);
     }
 }
