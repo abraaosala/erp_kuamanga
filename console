@@ -68,6 +68,7 @@ $stubService = new \App\Console\StubService();
 
 // Comandos sem dependências
 $application->addCommand(new \App\Console\Commands\Serve());
+$application->addCommand(new \App\Console\Commands\Test());
 
 // Comandos com DatabaseManager
 $application->addCommand(new \App\Console\Commands\DbCreate($dbManager));
