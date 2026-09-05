@@ -49,6 +49,7 @@
 - [x] Inputs com ícones (lucide) + máscaras JS: BI (`999999999AB000`), telefone (`+244 9XX XXX XXX`), INSS (só números)
 - [x] Validação back-end de formato: BI (`^[0-9]{9}[A-Za-z]{2}[0-9]{3}$`), INSS (`digits_between:6,12`)
 - [x] Upload de documento inicial opcional no formulário de criação
+- [x] Foto de perfil do funcionário: campo `photo` em `employees`, input de preview (Alpine `URL.createObjectURL`) em create/edit, avatar em index/show, rota `GET /rh/employees/{id}/photo`, upload JPG/PNG máx 2MB (storage/uploads/employees/{id}/), remoção do ficheiro em update/destroy
 - [x] Seed — 17 funcionários de exemplo
 
 ### 3.1 Documentos do Funcionário
@@ -61,7 +62,7 @@
 - [x] Rotas em `routes/rh.php` (3 rotas de documentos)
 - [x] Helpers `upload_file` / `download_file` em `app/Core/helpers.php`
 - [x] Storage — `storage/uploads/employees/{id}/` (fora do `public/`)
-- [x] Tipos de documento: BI, INSS, Contrato, Atestado médico, Certificado, Foto (vários por tipo)
+- [x] Tipos de documento: BI, INSS, Contrato, Atestado médico, Certificado (vários por tipo)
 - [x] Upload/remoção integrados na view `rh.employees.edit` e documento inicial na `rh.employees.create`
 - [x] Validação: PDF/JPG/PNG, máx. 2MB
 - [x] RhServiceProvider — bindings registados

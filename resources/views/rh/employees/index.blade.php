@@ -58,9 +58,15 @@
                     <tr>
                         <td>
                             <div class="flex items-center gap-3">
+                                @if(!empty($employee->photo))
+                                <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                                    <img src="/rh/employees/{{ $employee->id }}/photo" alt="{{ $employee->name }}" class="w-full h-full object-cover">
+                                </div>
+                                @else
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                                     {{ strtoupper(substr($employee->name, 0, 1)) }}
                                 </div>
+                                @endif
                                 <span class="font-medium" style="color: var(--text-main)">{{ $employee->name }}</span>
                             </div>
                         </td>

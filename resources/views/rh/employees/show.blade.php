@@ -30,9 +30,15 @@
 
     <div class="glass-card rounded-2xl p-6">
         <div class="flex items-center gap-5">
+            @if(!empty($employee->photo))
+            <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+                <img src="/rh/employees/{{ $employee->id }}/photo" alt="{{ $employee->name }}" class="w-full h-full object-cover">
+            </div>
+            @else
             <div class="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
                 {{ strtoupper(substr($employee->name, 0, 1)) }}
             </div>
+            @endif
             <div class="min-w-0">
                 <h3 class="text-xl font-bold truncate" style="color: var(--text-main)">{{ $employee->name }}</h3>
                 <div class="flex flex-wrap items-center gap-2 mt-1.5">
@@ -198,7 +204,6 @@
                 'medical'     => 'Atestado médico',
                 'certificate' => 'Certificado',
                 'cv'          => 'CV',
-                'photo'       => 'Foto',
             ];
             $grouped = [];
             foreach ($documents as $doc) {

@@ -105,6 +105,7 @@ abstract class TestCase extends BaseTestCase
             $table->unsignedInteger('department_id')->nullable();
             $table->unsignedInteger('position_id')->nullable();
             $table->date('hire_date')->nullable();
+            $table->string('photo')->nullable();
             $table->string('status', 20)->default('active');
             $table->timestamps();
             $table->softDeletes();
