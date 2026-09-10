@@ -36,6 +36,8 @@ interface HourBankEntryRepositoryInterface
 
     public function balanceByEmployee(int $employeeId): float;
 
+    public function overtimeHoursBetween(int $employeeId, string $startDate, string $endDate): float;
+
     /**
      * @return array<int, array{employee: string, balance: float}>
      */

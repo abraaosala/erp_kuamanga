@@ -1,15 +1,15 @@
 # Módulo RH — Estado de Implementação
 
-> Última actualização: 2026-09-04
+> Última actualização: 2026-09-05
 
 ---
 
 ## Infraestrutura base
 
-- [x] `RhServiceProvider` — regista 7 repos + 7 services (14 bindings)
-- [x] Rotas CRUD em `routes/rh.php` (42 rotas, prefixo `rh`, middleware `auth`)
+- [x] `RhServiceProvider` — regista 8 repos + 8 services (16 bindings)
+- [x] Rotas CRUD em `routes/rh.php` (57 rotas, prefixo `rh`, middleware `auth`)
 - [x] Multi-empresa — scoping por `current_empresa()` em todos os repositories
-- [x] Sidebar menu — 7 itens RH no layout
+- [x] Sidebar menu — 8 itens RH no layout
 
 ---
 
@@ -120,13 +120,16 @@
 
 ### 9. Folha Salarial (Payroll)
 
-- [ ] Migration `payslips` / `payroll_runs`
-- [ ] Models (`PayrollRun`, `Payslip`)
-- [ ] Repository + Service (cálculo salarial)
-- [ ] Controller + Views
-- [ ] Integração com contratos (salário_base)
-- [ ] Integração com banco de horas (horas extra)
-- [ ] Integração com assiduidade (faltas/descontos)
+- [x] Migration `payroll_runs` (período, status, totais, employee_count)
+- [x] Migration `payslips` (salário base, horas extra, faltas, líquido)
+- [x] Models (`PayrollRun`, `Payslip`) + relação `payslips()` no `Employee`
+- [x] Repository + Service (interface + impl, bindings no `RhServiceProvider`)
+- [x] Controller `PayrollController` + Views (`rh.payroll.*` index/create/show) + rotas em `routes/rh.php`
+- [x] Cálculo salarial (`PayrollService::runFromContracts`): salário base do contrato ativo + horas extra do banco de horas (tipo `horas_extra`, taxa x1.5) − descontos por faltas (assiduidade, status `falta`, diária = salário/30)
+- [x] Guarda sem funcionários elegíveis: `hasActiveEligiblePayroll()` bloqueia geração sem contrato activo com salário base, com aviso na view e botão desabilitado
+- [x] Seeder `EmployeeContractSeeder` — 25 funcionários demo com contrato de 5 anos (`data_fim` = `data_inicio` + 5 anos, `tipo_contrato` `determinado`, `status` `active`)
+- [x] Integração com contratos (`findActiveByEmployee`), banco de horas (`overtimeHoursBetween`) e assiduidade (`absentDaysBetween`)
+- [x] Testes Pest (6 novos em `tests/Modules/Rh/PayrollTest.php`)
 - [ ] Geração de recibos de vencimento (PDF)
 - [ ] Gestão de IRT / descontos legais
 
@@ -182,11 +185,11 @@
 
 ## Notas técnicas
 
-- **Total de ficheiros RH:** 78 (1 provider, 1 routes, 7 controllers, 14 interfaces, 14 implementations, 7 models, 11 migrations, 2 seeds, 21 views)
+- **Total de ficheiros RH:** 1 provider, 1 routes (57 rotas), 10 controllers, 10 repos (interface+impl), 10 services (interface+impl), 10 models, 13 migrations, 3 seeds, 27 views
 - **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`
 - **Soft deletes** em todos os models
-- **Nenhum teste unitário** — directório `tests/` não existe (apenas `EmployeeScheduleTest.php`)
-- **PHPStan nível 5** — único QA operacional
+- **Testes Pest operacionais** — 16 testes em `tests/Modules/Rh/` (`EmployeeScheduleTest.php`, `PayrollTest.php`); rode com `php console test`
+- **PHPStan nível 9** — verde (`./vendor/bin/phpstan analyse --no-progress --memory-limit=1G`)
 
 ---
 

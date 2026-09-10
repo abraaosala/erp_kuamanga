@@ -1,8 +1,8 @@
 @extends('layout.app')
 
-@section('title', 'Funcionários')
-@section('page-title', 'Gestão de Funcionários')
-@section('page-subtitle', 'Gerenciar colaboradores da empresa')
+@section('title', 'Folha Salarial')
+@section('page-title', 'Folha Salarial')
+@section('page-subtitle', 'Processamento de salários dos colaboradores')
 
 @section('content')
 <div>
@@ -26,7 +26,7 @@
 
     <div class="table-container">
         <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: var(--border-color)">
-            <h3 class="text-sm font-semibold" style="color: var(--text-main)">Lista de Funcionários</h3>
+            <h3 class="text-sm font-semibold" style="color: var(--text-main)">Processamentos</h3>
             <div class="flex items-center gap-3">
                 <form method="GET" class="relative" x-data="{ s: '{{ $search ?? '' }}' }">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--text-muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,8 +34,8 @@
                     </svg>
                     <input type="text" name="search" x-model="s" x-on:input.debounce.300ms="if (s.length >= 2 || s.length === 0) $root.submit()" placeholder="Pesquisar..." class="w-48 pl-10 pr-4 py-2 rounded-xl text-sm outline-none transition-all duration-200" style="background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
                 </form>
-                <a href="/rh/employees/create" class="btn-primary px-3 py-1.5 text-xs">+ Novo</a>
-                <span class="text-xs" style="color: var(--text-muted)">{{ $employees->total() }} funcionário(s) registrados</span>
+                <a href="/rh/payroll/create" class="btn-primary px-3 py-1.5 text-xs">+ Novo Processamento</a>
+                <span class="text-xs" style="color: var(--text-muted)">{{ $runs->total() }} processamento(s)</span>
             </div>
         </div>
 
@@ -43,63 +43,48 @@
             <table class="app-table">
                 <thead>
                     <tr>
-                        <th>Funcionário</th>
-                        <th>BI</th>
-                        <th>INSS</th>
-                        <th>Email</th>
-                        <th>Cargo</th>
+                        <th>Período</th>
+                        <th>Descrição</th>
+                        <th>Funcionários</th>
+                        <th>Total Bruto (AOA)</th>
+                        <th>Descontos (AOA)</th>
+                        <th>Total Líquido (AOA)</th>
                         <th>Status</th>
                         <th class="text-right">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($employees->items() as $employee)
+                    @forelse($runs->items() as $run)
                     <tr>
                         <td>
-                            <div class="flex items-center gap-3">
-                                @if(!empty($employee->photo))
-                                <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                    <img src="/rh/employees/{{ $employee->id }}/photo" alt="{{ $employee->name }}" class="w-full h-full object-cover">
-                                </div>
-                                @else
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                                    {{ strtoupper(substr($employee->name, 0, 1)) }}
-                                </div>
-                                @endif
-                                <span class="font-medium" style="color: var(--text-main)">{{ $employee->name }}</span>
-                            </div>
+                            <span class="font-medium" style="color: var(--text-main)">{{ $run->period_start->format('d/m/Y') }} — {{ $run->period_end->format('d/m/Y') }}</span>
                         </td>
-                        <td style="color: var(--text-muted)">{{ $employee->bi ?? '—' }}</td>
-                        <td style="color: var(--text-muted)">{{ $employee->inss ?? '—' }}</td>
-                        <td style="color: var(--text-muted)">{{ $employee->email ?? '—' }}</td>
-                        <td style="color: var(--text-muted)">{{ $employee->position->name ?? '—' }}</td>
+                        <td style="color: var(--text-muted)">{{ $run->description ?: '—' }}</td>
                         <td>
-                            @if($employee->status === 'active')
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                Ativo
-                            </span>
-                            @else
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-gray-500/10 text-gray-500 border border-gray-500/20">
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                                Inativo
-                            </span>
-                            @endif
+                            <span class="font-bold" style="color: var(--text-main)">{{ $run->payslips_count }}</span>
+                        </td>
+                        <td style="color: var(--text-muted)">{{ number_format((float)$run->total_gross, 2, ',', '.') }}</td>
+                        <td class="{{ (float)$run->total_deductions > 0 ? 'text-red-500' : '' }}">{{ number_format((float)$run->total_deductions, 2, ',', '.') }}</td>
+                        <td>
+                            <span class="font-bold text-emerald-600">{{ number_format((float)$run->total_net, 2, ',', '.') }}</span>
+                        </td>
+                        <td>
+                            @switch($run->status)
+                                @case('processado')
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">Processado</span>
+                                @break
+                                @default
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-slate-500/10 text-slate-600 border border-slate-500/20">{{ ucfirst($run->status) }}</span>
+                            @endswitch
                         </td>
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-2" x-data="{ confirm: false }">
-                                <a href="/rh/employees/{{ $employee->id }}" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'" title="Ver perfil">
+                                <a href="/rh/payroll/{{ $run->id }}" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
                                 </a>
-                                <a href="/rh/employees/{{ $employee->id }}/edit" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='var(--accent)'; this.style.backgroundColor='var(--accent-soft)'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </a>
-                                <form method="POST" action="/rh/employees/{{ $employee->id }}/delete" @submit.prevent="confirm ? $el.submit() : (confirm = true)">
+                                <form method="POST" action="/rh/payroll/{{ $run->id }}/delete" @submit.prevent="confirm ? $el.submit() : (confirm = true)">
                                     <button type="submit" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='#ef4444'; this.style.backgroundColor='#fef2f2'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'" :title="confirm ? 'Clique para confirmar' : 'Excluir'">
                                         <svg x-show="!confirm" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -115,10 +100,10 @@
                         <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <svg class="w-10 h-10" style="color: var(--border-color)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M6.512 15.69c-1.08.572-1.756 1.407-1.756 2.31 0 1.657 3.582 3 8 3s8-1.343 8-3c0-.903-.676-1.738-1.756-2.31"/>
                                 </svg>
-                                <p style="color: var(--text-muted)">Nenhum funcionário encontrado</p>
-                                <a href="/rh/employees/create" class="font-medium" style="color: var(--accent)">Cadastrar primeiro funcionário</a>
+                                <p style="color: var(--text-muted)">Nenhum processamento salarial encontrado</p>
+                                <a href="/rh/payroll/create" class="font-medium" style="color: var(--accent)">Processar primeira folha</a>
                             </div>
                         </td>
                     </tr>
@@ -127,7 +112,7 @@
             </table>
         </div>
 
-        @php $employees->appends(request()->query()) @endphp
+        @php $runs->appends(request()->query()) @endphp
         <div class="px-6 py-4 border-t flex items-center justify-between" style="border-color: var(--border-color)">
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2" x-data>
@@ -140,19 +125,18 @@
                     </select>
                 </div>
                 <p class="text-xs" style="color: var(--text-muted)">
-                    Mostrando {{ $employees->firstItem() }}–{{ $employees->lastItem() }} de {{ $employees->total() }} registrados
+                    Mostrando {{ $runs->firstItem() }}–{{ $runs->lastItem() }} de {{ $runs->total() }} processamentos
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                @if(!$employees->onFirstPage())
-                <a href="{{ $employees->previousPageUrl() }}" class="btn-secondary px-3 py-1.5 text-xs">← Anterior</a>
+                @if(!$runs->onFirstPage())
+                <a href="{{ $runs->previousPageUrl() }}" class="btn-secondary px-3 py-1.5 text-xs">← Anterior</a>
                 @endif
-                @if($employees->hasMorePages())
-                <a href="{{ $employees->nextPageUrl() }}" class="btn-secondary px-3 py-1.5 text-xs">Próximo →</a>
+                @if($runs->hasMorePages())
+                <a href="{{ $runs->nextPageUrl() }}" class="btn-secondary px-3 py-1.5 text-xs">Próximo →</a>
                 @endif
             </div>
         </div>
-    </div>
     </div>
 </div>
 @endsection

@@ -38,4 +38,12 @@ interface ContractRepositoryInterface
      * @return Collection<int, Contract>
      */
     public function findByEmployee(int $employeeId): Collection;
+
+    public function findActiveByEmployee(int $employeeId): ?Contract;
+
+    /**
+     * Verifica se existe pelo menos um contrato activo elegível para processamento
+     * de folha salarial (salário base > 0, sem data de fim ou com fim futuro).
+     */
+    public function hasActiveEligiblePayroll(): bool;
 }

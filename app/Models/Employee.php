@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Contract> $contracts
  * @property-read \Illuminate\Database\Eloquent\Collection<int, WorkSchedule> $schedules
  * @property-read \Illuminate\Database\Eloquent\Collection<int, EmployeeDocument> $documents
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Payslip> $payslips
  *
  * @method static \App\Models\Employee create(array<array-key, mixed> $attributes = [])
  *
@@ -102,5 +103,11 @@ class Employee extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(EmployeeDocument::class);
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<Payslip, $this> */
+    public function payslips(): HasMany
+    {
+        return $this->hasMany(Payslip::class);
     }
 }

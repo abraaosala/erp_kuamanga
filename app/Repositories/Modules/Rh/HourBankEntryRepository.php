@@ -92,6 +92,18 @@ class HourBankEntryRepository implements HourBankEntryRepositoryInterface
         return is_numeric($sum) ? (float) $sum : 0.0;
     }
 
+    public function overtimeHoursBetween(int $employeeId, string $startDate, string $endDate): float
+    {
+        /** @var mixed $sum */
+        $sum = HourBankEntry::where('empresa_id', $this->empresaId())
+            ->where('employee_id', $employeeId)
+            ->where('type', 'horas_extra')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('hours');
+
+        return is_numeric($sum) ? (float) $sum : 0.0;
+    }
+
     /**
      * @return array<int, array{employee: string, balance: float}>
      */
