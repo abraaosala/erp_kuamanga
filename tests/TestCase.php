@@ -111,6 +111,46 @@ abstract class TestCase extends BaseTestCase
             $table->softDeletes();
         });
 
+        $schema->create('contracts', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->string('tipo_contrato', 50);
+            $table->date('data_inicio')->nullable();
+            $table->date('data_fim')->nullable();
+            $table->decimal('salario_base', 12, 2)->nullable();
+            $table->string('carga_horaria', 50)->nullable();
+            $table->text('observacoes')->nullable();
+            $table->string('status', 20)->default('active');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $schema->create('attendance', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->date('date');
+            $table->time('check_in')->nullable();
+            $table->time('check_out')->nullable();
+            $table->string('status', 20)->default('presente');
+            $table->text('observations')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $schema->create('hour_bank_entries', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->date('date');
+            $table->decimal('hours', 8, 2);
+            $table->string('type', 30)->default('ajuste');
+            $table->text('observations')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
         $schema->create('work_schedules', function ($table) {
             $table->id();
             $table->unsignedInteger('empresa_id')->nullable();
@@ -134,6 +174,38 @@ abstract class TestCase extends BaseTestCase
             $table->date('end_date')->nullable();
             $table->timestamps();
             $table->unique(['employee_id', 'work_schedule_id']);
+        });
+
+        $schema->create('payroll_runs', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->date('period_start');
+            $table->date('period_end');
+            $table->string('description')->nullable();
+            $table->string('status', 20)->default('rascunho');
+            $table->decimal('total_gross', 14, 2)->default(0);
+            $table->decimal('total_deductions', 14, 2)->default(0);
+            $table->decimal('total_net', 14, 2)->default(0);
+            $table->unsignedInteger('employee_count')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $schema->create('payslips', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('payroll_run_id');
+            $table->unsignedInteger('employee_id');
+            $table->decimal('gross_salary', 14, 2)->default(0);
+            $table->decimal('base_salary', 14, 2)->default(0);
+            $table->decimal('overtime_amount', 14, 2)->default(0);
+            $table->decimal('overtime_hours', 8, 2)->default(0);
+            $table->decimal('absent_days', 8, 2)->default(0);
+            $table->decimal('absent_deduction', 14, 2)->default(0);
+            $table->decimal('net_salary', 14, 2)->default(0);
+            $table->string('status', 20)->default('rascunho');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

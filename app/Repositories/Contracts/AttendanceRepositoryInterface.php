@@ -33,4 +33,6 @@ interface AttendanceRepositoryInterface
      * @return LengthAwarePaginator<int, Attendance>
      */
     public function paginate(int $perPage = 15, ?string $search = null): LengthAwarePaginator;
+
+    public function absentDaysBetween(int $employeeId, string $startDate, string $endDate): float;
 }

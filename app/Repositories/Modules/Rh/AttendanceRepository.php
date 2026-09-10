@@ -81,4 +81,17 @@ class AttendanceRepository implements AttendanceRepositoryInterface
 
         return $q->orderBy('date', 'desc')->paginate($perPage);
     }
+
+    public function absentDaysBetween(int $employeeId, string $startDate, string $endDate): float
+    {
+        /** @var mixed $count */
+        $count = Attendance::where('empresa_id', $this->empresaId())
+            ->where('employee_id', $employeeId)
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->where('status', 'falta')
+            ->count();
+
+        return is_numeric($count) ? (float) $count : 0.0;
+    }
 }

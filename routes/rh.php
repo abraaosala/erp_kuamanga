@@ -9,6 +9,7 @@ use App\Http\Controllers\Modules\Rh\EmployeeController;
 use App\Http\Controllers\Modules\Rh\EmployeeDocumentController;
 use App\Http\Controllers\Modules\Rh\EmployeeScheduleController;
 use App\Http\Controllers\Modules\Rh\HourBankEntryController;
+use App\Http\Controllers\Modules\Rh\PayrollController;
 use App\Http\Controllers\Modules\Rh\PositionController;
 use App\Http\Controllers\Modules\Rh\WorkScheduleController;
 use Illuminate\Routing\Router;
@@ -76,4 +77,10 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/hour-bank/{id}/edit', [HourBankEntryController::class, 'edit'])->name('rh.hour-bank.edit');
     $router->post('/hour-bank/{id}/update', [HourBankEntryController::class, 'update'])->name('rh.hour-bank.update');
     $router->post('/hour-bank/{id}/delete', [HourBankEntryController::class, 'destroy'])->name('rh.hour-bank.destroy');
+
+    $router->get('/payroll', [PayrollController::class, 'index'])->name('rh.payroll.index');
+    $router->get('/payroll/create', [PayrollController::class, 'create'])->name('rh.payroll.create');
+    $router->post('/payroll', [PayrollController::class, 'store'])->name('rh.payroll.store');
+    $router->get('/payroll/{id}', [PayrollController::class, 'show'])->name('rh.payroll.show');
+    $router->post('/payroll/{id}/delete', [PayrollController::class, 'destroy'])->name('rh.payroll.destroy');
 });

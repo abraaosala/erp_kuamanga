@@ -11,6 +11,7 @@ use App\Repositories\Contracts\EmployeeDocumentRepositoryInterface;
 use App\Repositories\Contracts\EmployeeRepositoryInterface;
 use App\Repositories\Contracts\EmployeeScheduleRepositoryInterface;
 use App\Repositories\Contracts\HourBankEntryRepositoryInterface;
+use App\Repositories\Contracts\PayrollRepositoryInterface;
 use App\Repositories\Contracts\PositionRepositoryInterface;
 use App\Repositories\Contracts\WorkScheduleRepositoryInterface;
 use App\Repositories\Modules\Rh\AttendanceRepository;
@@ -20,6 +21,7 @@ use App\Repositories\Modules\Rh\EmployeeDocumentRepository;
 use App\Repositories\Modules\Rh\EmployeeRepository;
 use App\Repositories\Modules\Rh\EmployeeScheduleRepository;
 use App\Repositories\Modules\Rh\HourBankEntryRepository;
+use App\Repositories\Modules\Rh\PayrollRepository;
 use App\Repositories\Modules\Rh\PositionRepository;
 use App\Repositories\Modules\Rh\WorkScheduleRepository;
 use App\Services\Contracts\AttendanceServiceInterface;
@@ -29,6 +31,7 @@ use App\Services\Contracts\EmployeeDocumentServiceInterface;
 use App\Services\Contracts\EmployeeScheduleServiceInterface;
 use App\Services\Contracts\EmployeeServiceInterface;
 use App\Services\Contracts\HourBankEntryServiceInterface;
+use App\Services\Contracts\PayrollServiceInterface;
 use App\Services\Contracts\PositionServiceInterface;
 use App\Services\Contracts\WorkScheduleServiceInterface;
 use App\Services\Modules\Rh\AttendanceService;
@@ -38,6 +41,7 @@ use App\Services\Modules\Rh\EmployeeDocumentService;
 use App\Services\Modules\Rh\EmployeeScheduleService;
 use App\Services\Modules\Rh\EmployeeService;
 use App\Services\Modules\Rh\HourBankEntryService;
+use App\Services\Modules\Rh\PayrollService;
 use App\Services\Modules\Rh\PositionService;
 use App\Services\Modules\Rh\WorkScheduleService;
 use Illuminate\Container\Container;
@@ -66,6 +70,8 @@ class RhServiceProvider
         $this->container->bind(EmployeeScheduleServiceInterface::class, EmployeeScheduleService::class);
         $this->container->bind(EmployeeDocumentRepositoryInterface::class, EmployeeDocumentRepository::class);
         $this->container->bind(EmployeeDocumentServiceInterface::class, EmployeeDocumentService::class);
+        $this->container->bind(PayrollRepositoryInterface::class, PayrollRepository::class);
+        $this->container->bind(PayrollServiceInterface::class, PayrollService::class);
     }
 
     public function boot(): void

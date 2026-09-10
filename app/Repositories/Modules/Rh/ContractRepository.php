@@ -94,4 +94,32 @@ class ContractRepository implements ContractRepositoryInterface
 
         return $contracts;
     }
+
+    public function findActiveByEmployee(int $employeeId): ?Contract
+    {
+        /** @var \App\Models\Contract|null $contract */
+        $contract = Contract::with('employee.position')
+            ->where('empresa_id', $this->empresaId())
+            ->where('employee_id', $employeeId)
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('data_fim')->orWhere('data_fim', '>=', date('Y-m-d'));
+            })
+            ->orderBy('data_inicio', 'desc')
+            ->first();
+
+        return $contract;
+    }
+
+    public function hasActiveEligiblePayroll(): bool
+    {
+        return Contract::query()
+            ->where('empresa_id', $this->empresaId())
+            ->where('status', 'active')
+            ->where('salario_base', '>', 0)
+            ->where(function ($q) {
+                $q->whereNull('data_fim')->orWhere('data_fim', '>=', date('Y-m-d'));
+            })
+            ->exists();
+    }
 }
