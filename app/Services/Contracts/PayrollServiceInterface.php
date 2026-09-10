@@ -40,6 +40,8 @@ interface PayrollServiceInterface
      */
     public function getPayslipsByRun(int $payrollRunId): Collection;
 
+    public function getPayslipById(int $payslipId): ?Payslip;
+
     /**
      * Gera a folha salarial do período: calcula salário base (contrato ativo),
      * horas extra (banco de horas) e descontos por faltas (assiduidade),

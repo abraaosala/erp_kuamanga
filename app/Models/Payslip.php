@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $overtime_hours
  * @property float $absent_days
  * @property float $absent_deduction
+ * @property float $social_security
+ * @property float $irt_amount
  * @property float $net_salary
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -47,6 +49,8 @@ class Payslip extends Model
         'overtime_hours',
         'absent_days',
         'absent_deduction',
+        'social_security',
+        'irt_amount',
         'net_salary',
         'status',
     ];
@@ -59,6 +63,8 @@ class Payslip extends Model
         'overtime_hours'   => 'decimal:2',
         'absent_days'      => 'decimal:2',
         'absent_deduction' => 'decimal:2',
+        'social_security'  => 'decimal:2',
+        'irt_amount'       => 'decimal:2',
         'net_salary'       => 'decimal:2',
         'created_at'       => 'datetime',
         'updated_at'       => 'datetime',
