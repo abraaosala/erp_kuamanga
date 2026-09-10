@@ -82,5 +82,6 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/payroll/create', [PayrollController::class, 'create'])->name('rh.payroll.create');
     $router->post('/payroll', [PayrollController::class, 'store'])->name('rh.payroll.store');
     $router->get('/payroll/{id}', [PayrollController::class, 'show'])->name('rh.payroll.show');
+    $router->get('/payroll/payslip/{payslipId}/recibo', [PayrollController::class, 'recibo'])->name('rh.payroll.recibo');
     $router->post('/payroll/{id}/delete', [PayrollController::class, 'destroy'])->name('rh.payroll.destroy');
 });

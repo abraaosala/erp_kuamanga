@@ -40,6 +40,8 @@ interface PayrollRepositoryInterface
      */
     public function findPayslipsByRun(int $payrollRunId): Collection;
 
+    public function findPayslipById(int $payslipId): ?Payslip;
+
     /**
      * @param array<string, mixed> $data
      */

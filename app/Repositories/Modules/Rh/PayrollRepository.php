@@ -99,6 +99,16 @@ class PayrollRepository implements PayrollRepositoryInterface
         return $payslips;
     }
 
+    public function findPayslipById(int $payslipId): ?Payslip
+    {
+        /** @var \App\Models\Payslip|null $payslip */
+        $payslip = Payslip::with('employee.position', 'employee.department', 'payrollRun')
+            ->where('empresa_id', $this->empresaId())
+            ->find($payslipId);
+
+        return $payslip;
+    }
+
     /**
      * @param array<string, mixed> $data
      */

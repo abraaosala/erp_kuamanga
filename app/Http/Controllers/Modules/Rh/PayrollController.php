@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Modules\Rh;
 
 use App\Services\Contracts\PayrollServiceInterface;
+use App\Support\ValorExtenso;
+use Dompdf\Dompdf;
 use eftec\bladeone\BladeOne;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -120,5 +122,34 @@ class PayrollController
         }
 
         return redirect('/rh/payroll');
+    }
+
+    public function recibo(int $payslipId): Response|RedirectResponse
+    {
+        $payslip = $this->payrollService->getPayslipById($payslipId);
+
+        if (!$payslip) {
+            $_SESSION['flash_error'] = 'Recibo não encontrado.';
+            return redirect('/rh/payroll');
+        }
+
+        $valorExtenso = (new ValorExtenso())->money((float) $payslip->net_salary);
+
+        $html = $this->blade->run('rh.payroll.recibo', [
+            'payslip'     => $payslip,
+            'valorExtenso'=> $valorExtenso,
+        ]);
+
+        $dompdf = new Dompdf(['isRemoteEnabled' => true]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+
+        $fileName = 'recibo-vencimento-' . $payslip->employee->name . '-' . date('Ymd') . '.pdf';
+
+        return response($dompdf->output(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
     }
 }

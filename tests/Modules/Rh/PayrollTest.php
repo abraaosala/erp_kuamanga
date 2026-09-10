@@ -8,6 +8,7 @@ use App\Repositories\Modules\Rh\ContractRepository;
 use App\Repositories\Modules\Rh\EmployeeRepository;
 use App\Repositories\Modules\Rh\HourBankEntryRepository;
 use App\Repositories\Modules\Rh\PayrollRepository;
+use App\Services\Modules\Rh\IrtCalculator;
 use App\Services\Modules\Rh\PayrollService;
 
 beforeEach(function (): void {
@@ -50,7 +51,9 @@ it('generates a payroll run from active contract', function (): void {
     $payslips = $result['payslips'];
     expect($payslips)->toHaveCount(1);
     expect((float) $payslips->first()->base_salary)->toBe(300000.0);
-    expect((float) $payslips->first()->net_salary)->toBe(300000.0);
+    expect((float) $payslips->first()->social_security)->toBe(9000.0);
+    expect((float) $payslips->first()->irt_amount)->toBe(47630.0);
+    expect((float) $payslips->first()->net_salary)->toBe(243370.0);
 });
 
 it('skips employees without active contract', function (): void {
@@ -134,10 +137,16 @@ it('deducts absent days from net salary', function (): void {
 
     $dailyRate = 300000 / 30;
     $expectedDeduction = 2 * $dailyRate;
+    $expectedSocialSecurity = round(300000 * IrtCalculator::SOCIAL_SECURITY_RATE, 2);
+    $calculator = new IrtCalculator();
+    $expectedIrt = $calculator->tax(300000 - $expectedSocialSecurity);
+    $expectedNet = 300000 - $expectedSocialSecurity - $expectedIrt - $expectedDeduction;
 
     expect((float) $payslip->absent_days)->toBe(2.0);
     expect((float) $payslip->absent_deduction)->toBe((float) round($expectedDeduction, 2));
-    expect((float) $payslip->net_salary)->toBe((float) round(300000 - $expectedDeduction, 2));
+    expect((float) $payslip->social_security)->toBe($expectedSocialSecurity);
+    expect((float) $payslip->irt_amount)->toBe((float) round($expectedIrt, 2));
+    expect((float) $payslip->net_salary)->toBe((float) round($expectedNet, 2));
 });
 
 it('totals match across paid employees', function (): void {
@@ -164,7 +173,7 @@ it('totals match across paid employees', function (): void {
 
     expect($result['run']->employee_count)->toBe(2);
     expect((float) $result['run']->total_gross)->toBe(500000.0);
-    expect((float) $result['run']->total_net)->toBe(500000.0);
+    expect((float) $result['run']->total_net)->toBe((float) round(417830.0, 2));
     expect($result['payslips'])->toHaveCount(2);
 });
 

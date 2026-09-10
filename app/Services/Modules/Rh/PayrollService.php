@@ -25,13 +25,17 @@ class PayrollService implements PayrollServiceInterface
 
     private const OVERTIME_RATE = 1.5;
 
+    protected IrtCalculator $irtCalculator;
+
     public function __construct(
         protected PayrollRepositoryInterface $payrollRepository,
         protected EmployeeRepositoryInterface $employeeRepository,
         protected ContractRepositoryInterface $contractRepository,
         protected HourBankEntryRepositoryInterface $hourBankEntryRepository,
         protected AttendanceRepositoryInterface $attendanceRepository
-    ) {}
+    ) {
+        $this->irtCalculator = new IrtCalculator();
+    }
 
     public function getAll(): Collection
     {
@@ -77,6 +81,11 @@ class PayrollService implements PayrollServiceInterface
     public function getPayslipsByRun(int $payrollRunId): Collection
     {
         return $this->payrollRepository->findPayslipsByRun($payrollRunId);
+    }
+
+    public function getPayslipById(int $payslipId): ?Payslip
+    {
+        return $this->payrollRepository->findPayslipById($payslipId);
     }
 
     public function hasEligibleEmployees(): bool
@@ -135,10 +144,13 @@ class PayrollService implements PayrollServiceInterface
             $absentDeduction = $absentDays > 0 ? $absentDays * $dailyRate : 0.0;
 
             $gross = $baseSalary + $overtimeAmount;
-            $net = $gross - $absentDeduction;
+            $socialSecurity = $this->irtCalculator->socialSecurity($gross);
+            $taxableIncome = $gross - $socialSecurity;
+            $irt = $this->irtCalculator->tax($taxableIncome);
+            $net = $gross - $socialSecurity - $irt - $absentDeduction;
 
             $totalGross += $gross;
-            $totalDeductions += $absentDeduction;
+            $totalDeductions += $absentDeduction + $socialSecurity + $irt;
             $totalNet += $net;
 
             $payslipsData[] = [
@@ -150,6 +162,8 @@ class PayrollService implements PayrollServiceInterface
                 'overtime_hours'  => round($overtimeHours, 2),
                 'absent_days'     => round($absentDays, 2),
                 'absent_deduction'=> round($absentDeduction, 2),
+                'social_security' => round($socialSecurity, 2),
+                'irt_amount'      => round($irt, 2),
                 'net_salary'      => round($net, 2),
                 'status'          => 'rascunho',
             ];

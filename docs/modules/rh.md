@@ -1,6 +1,6 @@
 # Módulo RH — Estado de Implementação
 
-> Última actualização: 2026-09-05
+> Última actualização: 2026-09-10
 
 ---
 
@@ -130,8 +130,11 @@
 - [x] Seeder `EmployeeContractSeeder` — 25 funcionários demo com contrato de 5 anos (`data_fim` = `data_inicio` + 5 anos, `tipo_contrato` `determinado`, `status` `active`)
 - [x] Integração com contratos (`findActiveByEmployee`), banco de horas (`overtimeHoursBetween`) e assiduidade (`absentDaysBetween`)
 - [x] Testes Pest (6 novos em `tests/Modules/Rh/PayrollTest.php`)
-- [ ] Geração de recibos de vencimento (PDF)
-- [ ] Gestão de IRT / descontos legais
+- [x] Cálculo de descontos legais no `runFromContracts`: Segurança Social (3% do bruto) + IRT Grupo A 2026 (`IrtCalculator` — 11 escalões OGE 2026, Lei n.º 14/25; base = bruto − SS); campo `total_deductions` = SS + IRT + faltas; coluna `net_salary` = bruto − SS − IRT − faltas
+- [x] Migration `add_irt_social_security_to_payslips` — colunas `social_security` e `irt_amount` em `payslips` (decimal 14,2, default 0)
+- [x] Testes IRT (9 em `tests/Modules/Rh/IrtCalculatorTest.php` — limites de escalão e valores intermédios)
+- [x] Geração de recibos de vencimento (PDF via dompdf): rota `GET /rh/payroll/payslip/{id}/recibo`, método `PayrollController::recibo()`, view standalone `rh.payroll.recibo` (cabeçalho da empresa, dados do funcionário, rubricas, líquido, assinaturas); botão de recibo por linha na view `show`
+- [x] Recibo por extenso: `App\Support\ValorExtenso` (montantes em kwanzas/cêntimos, pt-AO) + testes em `tests/Modules/Rh/ValorExtensoTest.php`
 
 ### 10. Férias e Licenças
 

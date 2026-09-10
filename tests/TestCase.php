@@ -202,6 +202,8 @@ abstract class TestCase extends BaseTestCase
             $table->decimal('overtime_hours', 8, 2)->default(0);
             $table->decimal('absent_days', 8, 2)->default(0);
             $table->decimal('absent_deduction', 14, 2)->default(0);
+            $table->decimal('social_security', 14, 2)->default(0);
+            $table->decimal('irt_amount', 14, 2)->default(0);
             $table->decimal('net_salary', 14, 2)->default(0);
             $table->string('status', 20)->default('rascunho');
             $table->timestamps();
