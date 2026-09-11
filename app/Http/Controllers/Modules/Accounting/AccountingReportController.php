@@ -13,7 +13,7 @@ class AccountingReportController
 {
     public function __construct(
         protected AccountServiceInterface $accountService,
-        protected BladeOne $blade
+        protected BladeOne $blade,
     ) {}
 
     public function ledger(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
@@ -100,7 +100,7 @@ class AccountingReportController
         $html = $this->blade->run('accounting.reports.balance_sheet', [
             'title' => 'Balanço Patrimonial',
             'endDate' => $endDate,
-            'data' => $data
+            'data' => $data,
         ]);
 
         return response($html);
@@ -130,7 +130,7 @@ class AccountingReportController
             'title' => 'Demonstração de Resultados',
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'data' => $data
+            'data' => $data,
         ]);
 
         return response($html);

@@ -10,15 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property string $name
- * @property string|null $description
- * @property string|null $category
- * @property int|null $position_id
- * @property int|null $department_id
- * @property int $min_tenure_months
- * @property string|null $status
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property string                          $name
+ * @property string|null                     $description
+ * @property string|null                     $category
+ * @property int|null                        $position_id
+ * @property int|null                        $department_id
+ * @property int                             $min_tenure_months
+ * @property string|null                     $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Department|null $department
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Employee> $employees
  *
- * @method static \App\Models\Benefit create(array<array-key, mixed> $attributes = [])
+ * @method static \App\Models\Benefit                                   create(array<array-key, mixed> $attributes = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Benefit withCount($relations)
  *
  * @extends \Illuminate\Database\Eloquent\Model<self>

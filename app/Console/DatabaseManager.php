@@ -29,7 +29,7 @@ class DatabaseManager
     public function exists(string $name): bool
     {
         $stmt = $this->pdo()->query(
-            'SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ' . $this->pdo()->quote($name)
+            'SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ' . $this->pdo()->quote($name),
         );
 
         return $stmt !== false && (bool) $stmt->fetchColumn();
@@ -39,7 +39,7 @@ class DatabaseManager
     {
         $this->pdo()->exec(sprintf(
             'CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
-            $name
+            $name,
         ));
     }
 

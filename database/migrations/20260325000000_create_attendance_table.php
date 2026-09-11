@@ -23,8 +23,8 @@ final class CreateAttendanceTable extends AbstractMigration
             ->addIndex(['empresa_id'])
             ->addIndex(['employee_id'])
             ->addIndex(['date'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
-            ->addForeignKey('employee_id', 'employees', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('employee_id', 'employees', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
     }
 }

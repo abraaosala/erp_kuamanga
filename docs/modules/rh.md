@@ -1,15 +1,15 @@
 # Módulo RH — Estado de Implementação
 
-> Última actualização: 2026-09-10
+> Última actualização: 2026-09-11
 
 ---
 
 ## Infraestrutura base
 
 - [x] `RhServiceProvider` — regista 13 repos + 13 services (26 bindings)
-- [x] Rotas CRUD em `routes/rh.php` (79 rotas, prefixo `rh`, middleware `auth`)
+- [x] Rotas CRUD em `routes/rh.php` (80 rotas, prefixo `rh`, middleware `auth`)
 - [x] Multi-empresa — scoping por `current_empresa()` em todos os repositories
-- [x] Sidebar menu — 9 itens RH no layout
+- [x] Sidebar menu — 11 itens RH no layout
 
 ---
 
@@ -43,7 +43,7 @@
 - [x] Repository interface + implementation (eager-loads position+department)
 - [x] Service interface + implementation
 - [x] Controller `EmployeeController` (CRUD completo)
-- [x] View de perfil `rh.employees.show` — dados pessoais, resumo, contratos, escalas, documentos e saldo de horas
+- [x] View de perfil `rh.employees.show` — dados pessoais, resumo, contratos, escalas, documentos, saldo de horas e benefícios
 - [x] Rota `GET /rh/employees/{id}` + ícone de perfil na listagem
 - [x] Views `rh.employees.*` (index/create/edit) — inclui campos BI/INSS
 - [x] Inputs com ícones (lucide) + máscaras JS: BI (`999999999AB000`), telefone (`+244 9XX XXX XXX`), INSS (só números)
@@ -105,7 +105,7 @@
 
 ---
 
-## O que NÃO existe ainda
+## Submódulos adicionais implementados
 
 ### 8. Vínculo Escala ↔ Funcionário
 
@@ -174,6 +174,8 @@
 - [x] Benefícios do funcionário visíveis no perfil (`rh.employees.show`): secção própria com estado, categoria, data de início, link para o benefício e remoção directa
 - [x] Testes Pest (16 em `tests/Modules/Rh/BenefitTest.php`)
 
+## Pendentes — roadmap (menu RH)
+
 ### 13. Recrutamento e Seleção
 
 - [ ] Migration `job_openings`, `candidates`, `interviews`
@@ -206,11 +208,62 @@
 - [ ] Relatório de horas extras
 - [ ] Exportação (PDF/Excel)
 
+### 17. Formação
+
+- [ ] Migration `trainings` / `training_enrollments`
+- [ ] Catálogo de cursos / formações
+- [ ] Inscrições, frequência e certificados
+- [ ] Histórico de formação por funcionário
+
+### 18. Carreira e Sucessão
+
+- [ ] Planos de carreira / progressão
+- [ ] Competências e análise de gaps
+- [ ] Sucessão: talentos, matriz de prontidão, plano de substituição
+
+### 19. Gestão Disciplinar
+
+- [ ] Migration `disciplinary_records`
+- [ ] Tipos de ocorrência (advertência, suspensão, etc.)
+- [ ] Fluxo de registo → notificação → decisão
+- [ ] Histórico disciplinar por funcionário
+
+### 20. Saúde e Segurança
+
+- [ ] Atestados médicos e exames periódicos
+- [ ] Registos de acidentes de trabalho
+- [ ] EPIs e gestão de riscos
+- [ ] Brigadas / equipas de segurança
+
+### 21. Auditoria
+
+- [ ] Log de acções (quem alterou o quê e quando)
+- [ ] Trilha de auditoria por entidade RH
+- [ ] Relatório de auditoria exportável
+
+### 22. Configurações
+
+- [ ] Parâmetros gerais do módulo RH
+- [ ] Tipos de férias/licenças configuráveis
+- [ ] Fluxos de aprovação (workflow em cascata)
+- [ ] Tipos de benefícios e elegibilidade por defeito
+
+### 23. Exportação CSV
+
+- [ ] Exportação de listagens (colaboradores, assiduidade, saldos, férias, etc.)
+- [ ] Suporte a colunas selectáveis e aos filtros actuais
+
+### 24. Impressão / PDF
+
+- [ ] Impressão genérica em todas as vistas de detalhe
+- Nota: recibo de vencimento em PDF (dompdf) já implementado em `rh.payroll.recibo`
+- [ ] PDF de contratos, férias, benefícios, etc.
+
 ---
 
 ## Notas técnicas
 
-- **Total de ficheiros RH:** 1 provider, 1 routes (79 rotas), 13 controllers, 13 repos (interface+impl), 13 services (interface+impl), 15 models, 16 migrations, 4 seeds, 34 views
+- **Total de ficheiros RH:** 1 provider, 1 routes (80 rotas), 13 controllers, 13 repos (interface+impl), 13 services (interface+impl), 15 models, 20 migrations, 4 seeds, 35 views
 - **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules/rotations usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`; scheduled_shifts usa `TRABALHO`/`FOLGA`
 - **Soft deletes** em todos os models
 - **Testes Pest operacionais** — 84 testes em `tests/Modules/Rh/` (`RosterTest.php`, `EmployeeScheduleTest.php`, `PayrollTest.php`, `IrtCalculatorTest.php`, `ValorExtensoTest.php`, `LeaveTest.php`, `BenefitTest.php`); rode com `php console test`

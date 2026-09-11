@@ -24,7 +24,7 @@ class EmpresaSeeder extends AbstractSeed
                 'status'         => 'ativo',
                 'created_at'     => date('Y-m-d H:i:s'),
                 'updated_at'     => date('Y-m-d H:i:s'),
-            ]
+            ],
         ];
 
         $table = $this->table('empresas');

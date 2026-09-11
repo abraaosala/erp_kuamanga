@@ -13,7 +13,7 @@ class CompanyController
 {
     public function __construct(
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(): \Illuminate\Http\Response
@@ -66,7 +66,7 @@ class CompanyController
             return redirect('/companies/create');
         }
 
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $data);
+        $data = array_map(fn($v) => $v === '' ? null : $v, $data);
 
         try {
             Empresa::create($data);
@@ -129,7 +129,7 @@ class CompanyController
             return redirect('/companies/' . $id . '/edit');
         }
 
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $data);
+        $data = array_map(fn($v) => $v === '' ? null : $v, $data);
 
         try {
             $company->update($data);

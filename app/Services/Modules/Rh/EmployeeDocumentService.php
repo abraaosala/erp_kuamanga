@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EmployeeDocumentService implements EmployeeDocumentServiceInterface
 {
     public function __construct(
-        protected EmployeeDocumentRepositoryInterface $employeeDocumentRepository
+        protected EmployeeDocumentRepositoryInterface $employeeDocumentRepository,
     ) {}
 
     public function getByEmployee(int $employeeId): Collection

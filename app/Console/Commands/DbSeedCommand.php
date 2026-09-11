@@ -20,10 +20,10 @@ class DbSeedCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $phinxBin = BASE_PATH . '/vendor/bin/phinx';
-        
+
         $output->writeln('<info>Running database seeders...</info>');
-        
-        // Using .bat extension for Windows compatibility if needed, 
+
+        // Using .bat extension for Windows compatibility if needed,
         // but Passthru with 'php' prefix is safer
         passthru("php {$phinxBin} seed:run");
 

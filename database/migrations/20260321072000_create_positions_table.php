@@ -22,8 +22,8 @@ final class CreatePositionsTable extends AbstractMigration
             ->addColumn('deleted_at', 'timestamp', ['null' => true])
             ->addIndex(['empresa_id'])
             ->addIndex(['department_id'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
-            ->addForeignKey('department_id', 'departments', 'id', ['delete'=> 'SET_NULL', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('department_id', 'departments', 'id', ['delete' => 'SET_NULL', 'update' => 'CASCADE'])
             ->create();
     }
 }

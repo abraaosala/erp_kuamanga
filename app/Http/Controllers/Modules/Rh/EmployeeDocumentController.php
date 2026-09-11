@@ -36,7 +36,7 @@ class EmployeeDocumentController
     public function __construct(
         protected EmployeeDocumentServiceInterface $employeeDocumentService,
         protected EmployeeServiceInterface $employeeService,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function store(Request $request, int $employeeId): RedirectResponse

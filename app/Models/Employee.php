@@ -11,18 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property string $name
- * @property string|null $email
- * @property string|null $phone
- * @property int|null $department_id
- * @property int|null $position_id
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property string                          $name
+ * @property string|null                     $email
+ * @property string|null                     $phone
+ * @property int|null                        $department_id
+ * @property int|null                        $position_id
  * @property \Illuminate\Support\Carbon|null $hire_date
- * @property string|null $status
- * @property string|null $bi
- * @property string|null $inss
- * @property string|null $photo
+ * @property string|null                     $status
+ * @property string|null                     $bi
+ * @property string|null                     $inss
+ * @property string|null                     $photo
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -114,7 +114,7 @@ class Employee extends Model
         return $this->hasMany(Payslip::class);
     }
 
-/** @return \Illuminate\Database\Eloquent\Relations\HasMany<LeaveRequest, $this> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<LeaveRequest, $this> */
     public function leaveRequests(): HasMany
     {
         return $this->hasMany(LeaveRequest::class);

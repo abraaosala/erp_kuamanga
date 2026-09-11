@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EmployeeScheduleService implements EmployeeScheduleServiceInterface
 {
     public function __construct(
-        protected EmployeeScheduleRepositoryInterface $employeeScheduleRepository
+        protected EmployeeScheduleRepositoryInterface $employeeScheduleRepository,
     ) {}
 
     /**

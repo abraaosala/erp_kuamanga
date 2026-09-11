@@ -12,18 +12,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Pedido de férias/licença (workflow pendente → aprovado/rejeitado/cancelado).
  *
- * @property int $id
- * @property int $empresa_id
- * @property int $employee_id
- * @property string $leave_type
- * @property \Illuminate\Support\Carbon $start_date
- * @property \Illuminate\Support\Carbon $end_date
- * @property int $days
- * @property string|null $reason
- * @property string $status
- * @property int|null $decided_by
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int                             $employee_id
+ * @property string                          $leave_type
+ * @property \Illuminate\Support\Carbon      $start_date
+ * @property \Illuminate\Support\Carbon      $end_date
+ * @property int                             $days
+ * @property string|null                     $reason
+ * @property string                          $status
+ * @property int|null                        $decided_by
  * @property \Illuminate\Support\Carbon|null $decided_at
- * @property string|null $decision_notes
+ * @property string|null                     $decision_notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

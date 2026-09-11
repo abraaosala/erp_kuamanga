@@ -40,7 +40,7 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/employees/{id}/documents/{docId}/download', [EmployeeDocumentController::class, 'download'])->name('rh.employees.documents.download');
     $router->post('/employees/{id}/documents/{docId}/delete', [EmployeeDocumentController::class, 'destroy'])->name('rh.employees.documents.destroy');
 
-$router->post('/employees/{id}/benefits/{benefitId}/delete', [EmployeeController::class, 'removeBenefit'])->name('rh.employees.benefits.destroy');
+    $router->post('/employees/{id}/benefits/{benefitId}/delete', [EmployeeController::class, 'removeBenefit'])->name('rh.employees.benefits.destroy');
 
     $router->get('/departments', [DepartmentController::class, 'index'])->name('rh.departments.index');
     $router->get('/departments/create', [DepartmentController::class, 'create'])->name('rh.departments.create');
@@ -76,7 +76,7 @@ $router->post('/employees/{id}/benefits/{benefitId}/delete', [EmployeeController
     $router->post('/schedules/{id}/employees/{employeeId}/default', [EmployeeScheduleController::class, 'setDefault'])->name('rh.schedules.employees.default');
     $router->post('/schedules/{id}/employees/{employeeId}/delete', [EmployeeScheduleController::class, 'destroy'])->name('rh.schedules.employees.destroy');
 
-$router->get('/rosters', [RosterController::class, 'index'])->name('rh.rosters.index');
+    $router->get('/rosters', [RosterController::class, 'index'])->name('rh.rosters.index');
     $router->get('/rosters/events', [RosterController::class, 'events'])->name('rh.rosters.events');
     $router->get('/rosters/schedules/{id}/employees', [RosterController::class, 'employees'])->name('rh.rosters.schedules.employees');
     $router->post('/rosters', [RosterController::class, 'store'])->name('rh.rosters.store');
@@ -89,7 +89,7 @@ $router->get('/rosters', [RosterController::class, 'index'])->name('rh.rosters.i
     $router->post('/hour-bank/{id}/update', [HourBankEntryController::class, 'update'])->name('rh.hour-bank.update');
     $router->post('/hour-bank/{id}/delete', [HourBankEntryController::class, 'destroy'])->name('rh.hour-bank.destroy');
 
-$router->get('/leaves', [LeaveController::class, 'index'])->name('rh.leaves.index');
+    $router->get('/leaves', [LeaveController::class, 'index'])->name('rh.leaves.index');
     $router->get('/leaves/create', [LeaveController::class, 'create'])->name('rh.leaves.create');
     $router->post('/leaves', [LeaveController::class, 'store'])->name('rh.leaves.store');
     $router->post('/leaves/{id}/approve', [LeaveController::class, 'approve'])->name('rh.leaves.approve');

@@ -8,17 +8,17 @@ use App\Http\Controllers\Modules\User\AuthController;
 /** @var \Illuminate\Container\Container $container */
 
 // Auth routes (public)
-$router->get('/login',    function () use ($container) {
+$router->get('/login', function () use ($container) {
     $request = $container->make('request');
     return $container->make(AuthController::class)->showLogin($request);
 });
 
-$router->post('/login',   function () use ($container) {
+$router->post('/login', function () use ($container) {
     $request = $container->make('request');
     return $container->make(AuthController::class)->login($request);
 });
 
-$router->post('/logout',  function () use ($container) {
+$router->post('/logout', function () use ($container) {
     $request = $container->make('request');
     return $container->make(AuthController::class)->logout($request);
 });

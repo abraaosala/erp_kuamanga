@@ -41,7 +41,7 @@ class DbCreateCommand extends Command
 
             $output->writeln("<info>Criando banco de dados '{$db}' em {$host}...</info>");
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$db}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            
+
             $output->writeln("<info>Banco de dados '{$db}' criado ou já existente.</info>");
             return Command::SUCCESS;
         } catch (\PDOException $e) {

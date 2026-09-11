@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Registo efectivo de férias/licença gozada (consumo de saldo).
  *
- * @property int $id
- * @property int $empresa_id
- * @property int $employee_id
- * @property int|null $leave_request_id
- * @property string $leave_type
- * @property \Illuminate\Support\Carbon $start_date
- * @property \Illuminate\Support\Carbon $end_date
- * @property int $days
- * @property string $status
- * @property string|null $observations
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int                             $employee_id
+ * @property int|null                        $leave_request_id
+ * @property string                          $leave_type
+ * @property \Illuminate\Support\Carbon      $start_date
+ * @property \Illuminate\Support\Carbon      $end_date
+ * @property int                             $days
+ * @property string                          $status
+ * @property string|null                     $observations
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

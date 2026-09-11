@@ -19,7 +19,7 @@ class LeaveService implements LeaveServiceInterface
 
     public function __construct(
         protected LeaveRepositoryInterface $leaveRepository,
-        protected EmployeeRepositoryInterface $employeeRepository
+        protected EmployeeRepositoryInterface $employeeRepository,
     ) {
         $this->leavePolicy = new LeavePolicy();
     }
@@ -55,7 +55,7 @@ class LeaveService implements LeaveServiceInterface
 
         if ($this->leaveRepository->hasApprovedLeaveOverlapping($employeeId, $start, $end)) {
             throw new \RuntimeException(
-                'O funcionário já possui férias aprovadas num período que se sobrepõe ao pedido.'
+                'O funcionário já possui férias aprovadas num período que se sobrepõe ao pedido.',
             );
         }
 
@@ -91,7 +91,7 @@ class LeaveService implements LeaveServiceInterface
 
         $this->leaveRepository->createLeave([
             'employee_id'     => $request->employee_id,
-            'leave_request_id'=> $id,
+            'leave_request_id' => $id,
             'leave_type'      => $request->leave_type,
             'start_date'      => $request->start_date->format('Y-m-d'),
             'end_date'        => $request->end_date->format('Y-m-d'),
@@ -176,7 +176,7 @@ class LeaveService implements LeaveServiceInterface
             $result[] = $this->balanceFor($employee) + ['employee' => $employee->name];
         }
 
-        usort($result, fn (array $a, array $b): int => strcmp($a['employee'], $b['employee']));
+        usort($result, fn(array $a, array $b): int => strcmp($a['employee'], $b['employee']));
 
         return $result;
     }
@@ -189,8 +189,8 @@ class LeaveService implements LeaveServiceInterface
                 sprintf(
                     'Saldo de férias insuficiente: dispõe de %d dia(s) e o pedido é de %d dia(s).',
                     $balance['available'],
-                    $days
-                )
+                    $days,
+                ),
             );
         }
     }
@@ -231,7 +231,7 @@ class LeaveService implements LeaveServiceInterface
         return [
             'entitled' => $entitled,
             'used'     => $used,
-            'available'=> $available,
+            'available' => $available,
         ];
     }
 }

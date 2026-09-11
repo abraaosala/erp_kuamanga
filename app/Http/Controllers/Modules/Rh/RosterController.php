@@ -20,7 +20,7 @@ class RosterController
         protected WorkScheduleServiceInterface $workScheduleService,
         protected EmployeeScheduleServiceInterface $employeeScheduleService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response
@@ -67,7 +67,7 @@ class RosterController
         $employees = $this->employeeScheduleService->getEmployeesBySchedule($scheduleId);
 
         return response(json_encode([
-            'employees' => $employees->map(fn ($e) => [
+            'employees' => $employees->map(fn($e) => [
                 'id'   => $e->id,
                 'name' => $e->name . ($e->department ? ' — ' . $e->department->name : ''),
             ]),

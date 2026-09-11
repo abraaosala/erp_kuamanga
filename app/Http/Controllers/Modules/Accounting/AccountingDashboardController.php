@@ -13,7 +13,7 @@ class AccountingDashboardController
 {
     public function __construct(
         protected AccountServiceInterface $accountService,
-        protected BladeOne $blade
+        protected BladeOne $blade,
     ) {}
 
     public function index(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
@@ -38,7 +38,7 @@ class AccountingDashboardController
             'title' => 'Dashboard Analítico',
             'year' => $year,
             'month' => $month,
-            'metrics' => $metrics
+            'metrics' => $metrics,
         ]);
 
         return response($html);

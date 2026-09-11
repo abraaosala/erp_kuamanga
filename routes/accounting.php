@@ -9,7 +9,7 @@ use Illuminate\Routing\Router;
 /** @var Router $router */
 
 $router->group(['prefix' => 'accounting', 'middleware' => 'auth'], function (Router $router) {
-    
+
     // Accounts (Plano de Contas)
     $router->get('/accounts', [AccountController::class, 'index'])->name('accounting.accounts.index');
     $router->get('/accounts/create', [AccountController::class, 'create'])->name('accounting.accounts.create');
@@ -27,7 +27,7 @@ $router->group(['prefix' => 'accounting', 'middleware' => 'auth'], function (Rou
     // Accounting Reports
     $router->get('/reports/ledger', [\App\Http\Controllers\Modules\Accounting\AccountingReportController::class, 'ledger'])->name('accounting.reports.ledger');
     $router->get('/reports/trial-balance', [\App\Http\Controllers\Modules\Accounting\AccountingReportController::class, 'trialBalance'])->name('accounting.reports.trial-balance');
-    
+
     // Mapas Oficiais
     $router->get('/reports/balance-sheet', [\App\Http\Controllers\Modules\Accounting\AccountingReportController::class, 'balanceSheet'])->name('accounting.reports.balance-sheet');
     $router->get('/reports/income-statement', [\App\Http\Controllers\Modules\Accounting\AccountingReportController::class, 'incomeStatement'])->name('accounting.reports.income-statement');

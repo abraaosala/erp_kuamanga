@@ -12,7 +12,7 @@ class AccountController
 {
     public function __construct(
         protected AccountServiceInterface $accountService,
-        protected BladeOne $blade
+        protected BladeOne $blade,
     ) {}
 
     public function index(): string
@@ -21,7 +21,7 @@ class AccountController
         $accounts = $this->accountService->getFullChart($empresaId);
 
         return $this->blade->run('accounting.accounts.index', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
         ]);
     }
 
@@ -31,7 +31,7 @@ class AccountController
         $parentAccounts = $this->accountService->getAccountsByEmpresa($empresaId);
 
         return $this->blade->run('accounting.accounts.create', [
-            'parentAccounts' => $parentAccounts
+            'parentAccounts' => $parentAccounts,
         ]);
     }
 
@@ -45,19 +45,19 @@ class AccountController
 
     public function edit(int|string $id): string
     {
-        $account = $this->accountService->getAccountById((int)$id);
+        $account = $this->accountService->getAccountById((int) $id);
         $empresaId = 1;
         $parentAccounts = $this->accountService->getAccountsByEmpresa($empresaId);
 
         return $this->blade->run('accounting.accounts.edit', [
             'account' => $account,
-            'parentAccounts' => $parentAccounts
+            'parentAccounts' => $parentAccounts,
         ]);
     }
 
     public function update(int|string $id, Request $request): never
     {
-        $this->accountService->updateAccount((int)$id, $request->all());
+        $this->accountService->updateAccount((int) $id, $request->all());
 
         header('Location: /accounting/accounts');
         exit;
@@ -65,7 +65,7 @@ class AccountController
 
     public function destroy(int|string $id): never
     {
-        $this->accountService->deleteAccount((int)$id);
+        $this->accountService->deleteAccount((int) $id);
 
         header('Location: /accounting/accounts');
         exit;

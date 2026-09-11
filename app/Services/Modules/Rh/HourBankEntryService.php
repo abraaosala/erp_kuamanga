@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class HourBankEntryService implements HourBankEntryServiceInterface
 {
     public function __construct(
-        protected HourBankEntryRepositoryInterface $hourBankEntryRepository
+        protected HourBankEntryRepositoryInterface $hourBankEntryRepository,
     ) {}
 
     public function getAll(): Collection

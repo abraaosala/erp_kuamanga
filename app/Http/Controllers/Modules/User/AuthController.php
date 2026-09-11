@@ -14,7 +14,7 @@ class AuthController
     public function __construct(
         protected AuthServiceInterface $authService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function showLogin(Request $request): \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse

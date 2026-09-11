@@ -24,7 +24,7 @@ final class CreateEmployeesTable extends AbstractMigration
             ->addColumn('deleted_at', 'timestamp', ['null' => true])
             ->addIndex(['empresa_id'])
             ->addIndex(['email'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
     }
 }

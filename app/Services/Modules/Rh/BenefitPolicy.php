@@ -43,14 +43,14 @@ final class BenefitPolicy
 
         $months = $this->completedMonths(
             (string) ($employee->hire_date?->format('Y-m-d') ?? ''),
-            $referenceDate ?? date('Y-m-d')
+            $referenceDate ?? date('Y-m-d'),
         );
 
         if ($months < (int) $benefit->min_tenure_months) {
             $problems[] = sprintf(
                 'Exige antiguidade mínima de %d %s.',
                 (int) $benefit->min_tenure_months,
-                (int) $benefit->min_tenure_months === 1 ? 'mês' : 'meses'
+                (int) $benefit->min_tenure_months === 1 ? 'mês' : 'meses',
             );
         }
 

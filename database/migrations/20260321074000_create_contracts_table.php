@@ -25,8 +25,8 @@ final class CreateContractsTable extends AbstractMigration
             ->addColumn('deleted_at', 'timestamp', ['null' => true])
             ->addIndex(['empresa_id'])
             ->addIndex(['employee_id'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
-            ->addForeignKey('employee_id', 'employees', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('employee_id', 'employees', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
     }
 }

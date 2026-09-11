@@ -16,7 +16,7 @@ class DepartmentController
     public function __construct(
         protected DepartmentServiceInterface $departmentService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response

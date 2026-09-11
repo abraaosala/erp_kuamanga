@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class DepartmentService implements DepartmentServiceInterface
 {
     public function __construct(
-        protected DepartmentRepositoryInterface $departmentRepository
+        protected DepartmentRepositoryInterface $departmentRepository,
     ) {}
 
     public function getAll(): Collection

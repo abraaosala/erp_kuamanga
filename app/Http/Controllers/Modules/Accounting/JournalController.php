@@ -25,7 +25,7 @@ class JournalController
         $rawEmpresaId = $_SESSION['empresa_id'] ?? 1;
         $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 1;
         $entries = $this->accountService->getJournalEntries($empresaId);
-        
+
         $html = $this->blade->run('accounting.journal.index', [
             'entries' => $entries,
             'title'   => 'Lançamentos Diários',
@@ -38,7 +38,7 @@ class JournalController
         $rawEmpresaId = $_SESSION['empresa_id'] ?? 1;
         $empresaId = is_numeric($rawEmpresaId) ? (int) $rawEmpresaId : 1;
         $accounts = $this->accountService->getAccountsByEmpresa($empresaId);
-        
+
         $html = $this->blade->run('accounting.journal.create', [
             'accounts' => $accounts,
             'title'    => 'Novo Lançamento',
