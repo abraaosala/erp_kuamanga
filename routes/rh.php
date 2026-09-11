@@ -9,6 +9,7 @@ use App\Http\Controllers\Modules\Rh\EmployeeController;
 use App\Http\Controllers\Modules\Rh\EmployeeDocumentController;
 use App\Http\Controllers\Modules\Rh\EmployeeScheduleController;
 use App\Http\Controllers\Modules\Rh\HourBankEntryController;
+use App\Http\Controllers\Modules\Rh\LeaveController;
 use App\Http\Controllers\Modules\Rh\PayrollController;
 use App\Http\Controllers\Modules\Rh\PositionController;
 use App\Http\Controllers\Modules\Rh\WorkScheduleController;
@@ -36,6 +37,7 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->post('/employees/{id}/documents', [EmployeeDocumentController::class, 'store'])->name('rh.employees.documents.store');
     $router->get('/employees/{id}/documents/{docId}/download', [EmployeeDocumentController::class, 'download'])->name('rh.employees.documents.download');
     $router->post('/employees/{id}/documents/{docId}/delete', [EmployeeDocumentController::class, 'destroy'])->name('rh.employees.documents.destroy');
+
 
     $router->get('/departments', [DepartmentController::class, 'index'])->name('rh.departments.index');
     $router->get('/departments/create', [DepartmentController::class, 'create'])->name('rh.departments.create');
@@ -71,12 +73,22 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->post('/schedules/{id}/employees/{employeeId}/default', [EmployeeScheduleController::class, 'setDefault'])->name('rh.schedules.employees.default');
     $router->post('/schedules/{id}/employees/{employeeId}/delete', [EmployeeScheduleController::class, 'destroy'])->name('rh.schedules.employees.destroy');
 
+
     $router->get('/hour-bank', [HourBankEntryController::class, 'index'])->name('rh.hour-bank.index');
     $router->get('/hour-bank/create', [HourBankEntryController::class, 'create'])->name('rh.hour-bank.create');
     $router->post('/hour-bank', [HourBankEntryController::class, 'store'])->name('rh.hour-bank.store');
     $router->get('/hour-bank/{id}/edit', [HourBankEntryController::class, 'edit'])->name('rh.hour-bank.edit');
     $router->post('/hour-bank/{id}/update', [HourBankEntryController::class, 'update'])->name('rh.hour-bank.update');
     $router->post('/hour-bank/{id}/delete', [HourBankEntryController::class, 'destroy'])->name('rh.hour-bank.destroy');
+
+    $router->get('/leaves', [LeaveController::class, 'index'])->name('rh.leaves.index');
+    $router->get('/leaves/create', [LeaveController::class, 'create'])->name('rh.leaves.create');
+    $router->post('/leaves', [LeaveController::class, 'store'])->name('rh.leaves.store');
+    $router->post('/leaves/{id}/approve', [LeaveController::class, 'approve'])->name('rh.leaves.approve');
+    $router->post('/leaves/{id}/reject', [LeaveController::class, 'reject'])->name('rh.leaves.reject');
+    $router->post('/leaves/{id}/cancel', [LeaveController::class, 'cancel'])->name('rh.leaves.cancel');
+    $router->post('/leaves/{id}/delete', [LeaveController::class, 'destroy'])->name('rh.leaves.destroy');
+
 
     $router->get('/payroll', [PayrollController::class, 'index'])->name('rh.payroll.index');
     $router->get('/payroll/create', [PayrollController::class, 'create'])->name('rh.payroll.create');

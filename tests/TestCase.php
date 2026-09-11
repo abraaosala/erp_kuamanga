@@ -209,6 +209,38 @@ abstract class TestCase extends BaseTestCase
             $table->timestamps();
             $table->softDeletes();
         });
+
+        $schema->create('leave_requests', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->string('leave_type', 30)->default('ferias');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('days')->default(0);
+            $table->text('reason')->nullable();
+            $table->string('status', 20)->default('pendente');
+            $table->unsignedInteger('decided_by')->nullable();
+            $table->timestamp('decided_at')->nullable();
+            $table->text('decision_notes')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $schema->create('leaves', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->unsignedInteger('leave_request_id')->nullable();
+            $table->string('leave_type', 30)->default('ferias');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('days')->default(0);
+            $table->string('status', 20)->default('gozada');
+            $table->text('observations')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     protected function createEmpresa(): \App\Models\Empresa
