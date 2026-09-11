@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, WorkSchedule> $schedules
  * @property-read \Illuminate\Database\Eloquent\Collection<int, EmployeeDocument> $documents
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Payslip> $payslips
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Benefit> $benefits
  *
  * @method static \App\Models\Employee create(array<array-key, mixed> $attributes = [])
  *
@@ -109,5 +110,13 @@ class Employee extends Model
     public function payslips(): HasMany
     {
         return $this->hasMany(Payslip::class);
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Benefit, $this> */
+    public function benefits(): BelongsToMany
+    {
+        return $this->belongsToMany(Benefit::class, 'employee_benefits', 'employee_id', 'benefit_id')
+            ->withPivot(['status', 'started_at', 'notes'])
+            ->withTimestamps();
     }
 }
