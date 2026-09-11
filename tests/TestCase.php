@@ -209,6 +209,33 @@ abstract class TestCase extends BaseTestCase
             $table->timestamps();
             $table->softDeletes();
         });
+
+        $schema->create('rotations', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->string('name', 100);
+            $table->text('pattern');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('status', 20)->default('ativo');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $schema->create('scheduled_shifts', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->unsignedInteger('work_schedule_id')->nullable();
+            $table->unsignedInteger('rotation_id')->nullable();
+            $table->date('date');
+            $table->string('classification', 20)->default('TRABALHO');
+            $table->string('source', 20)->default('GERADA');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['employee_id', 'date']);
+        });
+
     }
 
     protected function createEmpresa(): \App\Models\Empresa

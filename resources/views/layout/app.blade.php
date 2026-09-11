@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
+    @yield('head-scripts')
     <script>
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -132,6 +133,7 @@
                         <a href="/rh/contracts" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/contracts*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Contratos</a>
                         <a href="/rh/attendance" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/attendance*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Frequência</a>
                         <a href="/rh/schedules" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/schedules*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Escalas</a>
+                        <a href="/rh/rosters" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/rosters*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Rosters</a>
                         <a href="/rh/hour-bank" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/hour-bank*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Banco de Horas</a>
                         <a href="/rh/payroll" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/payroll*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Folha Salarial</a>
                         <a href="/rh/departments" class="block py-1.5 text-xs font-medium transition-colors @if(request()->is('rh/departments*')) text-violet-300 @else text-indigo-300/50 hover:text-indigo-300 @endif">Departamentos</a>

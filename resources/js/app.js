@@ -2,6 +2,11 @@ import Alpine from 'alpinejs';
 import $ from 'jquery';
 import select2 from 'select2';
 import { createIcons, icons } from 'lucide';
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
+window.FullCalendar = { Calendar, dayGridPlugin, interactionPlugin };
 
 // Set up jQuery and Select2
 window.$ = window.jQuery = $;

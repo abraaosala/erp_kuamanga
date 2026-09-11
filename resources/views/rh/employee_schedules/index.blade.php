@@ -78,7 +78,7 @@
                         <td style="color: var(--text-muted)">{{ $employee->department?->name ?? '—' }}</td>
                         <td style="color: var(--text-muted)">{{ $employee->position?->name ?? '—' }}</td>
                         <td>
-                            @if($employee->pivot->is_default)
+                            @if($employee->schedules->first()?->pivot?->is_default)
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-violet-500/10 text-violet-600 border border-violet-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
                                 Principal
@@ -92,10 +92,11 @@
                             @endif
                         </td>
                         <td class="text-xs" style="color: var(--text-muted)">
-                            @if($employee->pivot->start_date || $employee->pivot->end_date)
-                                {{ $employee->pivot->start_date ? date('d/m/Y', strtotime($employee->pivot->start_date)) : '—' }}
+                            @php($pivot = $employee->schedules->first()?->pivot)
+                            @if($pivot?->start_date || $pivot?->end_date)
+                                {{ $pivot->start_date ? date('d/m/Y', strtotime($pivot->start_date)) : '—' }}
                                 –
-                                {{ $employee->pivot->end_date ? date('d/m/Y', strtotime($employee->pivot->end_date)) : '—' }}
+                                {{ $pivot->end_date ? date('d/m/Y', strtotime($pivot->end_date)) : '—' }}
                             @else
                                 Indefinida
                             @endif

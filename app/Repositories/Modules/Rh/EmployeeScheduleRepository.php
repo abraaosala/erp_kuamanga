@@ -29,7 +29,13 @@ class EmployeeScheduleRepository implements EmployeeScheduleRepositoryInterface
             ->whereHas('schedules', function ($q) use ($scheduleId) {
                 $q->where('employee_schedules.work_schedule_id', $scheduleId);
             })
-            ->with(['department', 'position'])
+            ->with([
+                'department',
+                'position',
+                'schedules' => function ($q) use ($scheduleId) {
+                    $q->where('employee_schedules.work_schedule_id', $scheduleId);
+                },
+            ])
             ->orderBy('name')
             ->get();
 
