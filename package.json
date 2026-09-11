@@ -18,6 +18,9 @@
     "tailwindcss": "^3.3.3"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.21",
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/interaction": "^6.1.21",
     "alpinejs": "^3.13.0",
     "jquery": "^4.0.0",
     "lucide": "^0.577.0",
