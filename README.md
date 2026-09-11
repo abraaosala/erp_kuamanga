@@ -1,39 +1,42 @@
-# ERP Sistema - Gestão de Usuários e Autenticação
+# Kuamanga ERP — Gestão Empresarial
 
-Este é um sistema ERP focado em gestão de usuários, implementado com uma arquitetura moderna e intuitiva.
+Sistema ERP multi-módulo construído sobre um micro-framework custom (componentes Illuminate avulsos, não Laravel). Inclui autenticação e gestão de utilizadores, contabilidade segundo o PGC Angola e um módulo de Recursos Humanos completo.
 
 ## 🚀 Funcionalidades
 
-- **Autenticação**: Sistema de login seguro com middleware de proteção.
-- **Gestão de Usuários**: CRUD completo (Criar, Ler, Editar, Excluir) de usuários.
-- **Sistema de Níveis (Roles)**: Atribuição de múltiplas funções por usuário (Administrador, Gestor, Funcionário).
+- **Autenticação**: Login seguro com middleware de proteção e sessões PHP.
+- **Gestão de Utilizadores**: CRUD completo + atribuição de múltiplas funções (Administrador, Gestor, Funcionário).
+- **Multi-empresa**: scoping por `current_empresa()` em todos os repositórios.
 - **Interface Premium**:
-  - **Tema Claro/Escuro**: Alternador de tema persistente (salvo no navegador).
-  - **Select2**: Seleção de funções com busca inteligente e múltipla escolha, integrada via npm.
-  - **Design Moderno**: Estética baseada em variáveis CSS e Tailwind CSS para uma experiência limpa e profissional.
+  - Tema claro/escuro persistente (select2, Tailwind CSS) e design moderno baseado em variáveis CSS.
+  - Alpine.js para interações.
 
 ## 📦 Módulos do Sistema
 
-A arquitetura do Kuamanga ERP está dividida por módulos orientados ao negócio. Verifique a documentação específica de cada módulo:
+A arquitetura está dividida por módulos orientados ao negócio. Documentação específica de cada módulo:
 
-- 📊 **[Módulo de Contabilidade (PGC Angola)](docs/modules/accounting.md)**: Plano de Contas, Lançamentos, Razão, Balancetes e Mapas Oficiais (Balanço & DRE).
+- 📊 **[Contabilidade — PGC Angola](docs/modules/accounting.md)**: Plano de Contas, Lançamentos, Razão, Balancetes e Mapas Oficiais (Balanço & DRE).
+- 👥 **[Recursos Humanos](docs/modules/rh.md)**: **13 submódulos implementados** — Departamentos, Cargos, Funcionários (incl. documentos digitais e foto), Contratos, Assiduidade, Escalas, Banco de Horas, Vínculo Escala↔Funcionário, Rosters/Rotação de Turnos, Folha Salarial (IRT/SS com recibos PDF), Férias e Licenças e Benefícios. Roadmap pendente em `docs/modules/rh.md`.
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend**: PHP 8.x, Illuminate components (Database, Routing, Validation, Pagination).
-- **Frontend**: BladeOne (Motor de Templates), Tailwind CSS, Alpine.js, Select2, jQuery.
-- **Banco de Dados**: Phinx (Migrações e Seeds), Eloquent ORM.
-- **Build Tool**: Esbuild (JS) e Tailwind CLI (CSS).
+- **Backend**: PHP 8.4/8.5, components Illuminate (Database/Eloquent, Routing, Validation, Pagination, Container).
+- **Frontend**: BladeOne (motor de templates), Tailwind CSS, Alpine.js, Select2, jQuery, FullCalendar.
+- **Banco de Dados**: Phinx (migrações e seeds), Eloquent ORM, MySQL/MariaDB (SQLite nos testes).
+- **Build Tool**: esbuild (JS) e Tailwind CLI (CSS).
+- **Extras**: dompdf (recibos PDF), Pest (testes), PHPStan nível 9.
 
 ## 📥 Instalação
 
 ### Pré-requisitos
-- PHP 8.x
+
+- PHP 8.4+
 - Composer
 - Node.js e NPM
 - Banco de Dados MySQL/MariaDB
 
 ### Passos
+
 1. Clone o repositório.
 2. Copie o `.env.example` para `.env` e configure as credenciais do banco de dados.
 3. Instale as dependências do PHP:
@@ -47,20 +50,30 @@ A arquitetura do Kuamanga ERP está dividida por módulos orientados ao negócio
 5. Execute as migrações e seeds:
    ```bash
    php console migrate
-   php console seed
+   php console seed:run
    ```
 6. Processe os assets do frontend:
    ```bash
    npm run build
    ```
 
-## 💻 Comandos CLI (Custom)
+## 💻 Comandos CLI
 
-- `php console db:create` - Cria o banco de dados.
-- `php console migrate` - Executa as migrações do Phinx.
-- `php console seed` - Executa os seeders do Phinx.
-- `php console make:model {Name}` - Cria um novo Model.
-- `php console make:controller {Name}` - Cria um novo Controller.
+- `php console serve` — servidor PHP + watcher npm (dev).
+- `php console test` — roda a suíte Pest (`tests/`).
+- `php console migrate` — executa as migrações do Phinx.
+- `php console rollback` — reverte a última migração.
+- `php console status` — estado das migrações.
+- `php console breakpoint` — define/redefine breakpoint de migração.
+- `php console seed:run` — executa os seeders.
+- `php console db:create|db:drop` — cria/remove o banco.
+- `php console make:controller|model|repository|service|view|migration|seed|middleware {Name}` — gera código a partir de stubs.
+
+## ✅ Qualidade
+
+- **Testes**: `php console test` (Pest, 84 testes em `tests/` no módulo RH).
+- **Análise estática**: PHPStan nível 9 (`./vendor/bin/phpstan analyse --no-progress --memory-limit=1G`).
 
 ---
+
 Desenvolvido com foco em escalabilidade e facilidade de uso.
