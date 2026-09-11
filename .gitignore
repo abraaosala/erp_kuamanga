@@ -16,3 +16,5 @@ Thumbs.db
 .cursorrules
 ./AGENTS.md
 database/test.sqlite
+
+/.php-cs-fixer.cache
