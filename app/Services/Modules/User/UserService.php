@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class UserService implements UserServiceInterface
 {
     public function __construct(
-        protected UserRepositoryInterface $userRepository
+        protected UserRepositoryInterface $userRepository,
     ) {}
 
     public function getAllUsers(): Collection

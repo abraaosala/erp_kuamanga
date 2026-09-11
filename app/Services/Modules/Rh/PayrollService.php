@@ -32,7 +32,7 @@ class PayrollService implements PayrollServiceInterface
         protected EmployeeRepositoryInterface $employeeRepository,
         protected ContractRepositoryInterface $contractRepository,
         protected HourBankEntryRepositoryInterface $hourBankEntryRepository,
-        protected AttendanceRepositoryInterface $attendanceRepository
+        protected AttendanceRepositoryInterface $attendanceRepository,
     ) {
         $this->irtCalculator = new IrtCalculator();
     }
@@ -101,7 +101,7 @@ class PayrollService implements PayrollServiceInterface
         if (!$this->contractRepository->hasActiveEligiblePayroll()) {
             throw new \RuntimeException(
                 'Não é possível gerar a folha salarial: não existem funcionários com contrato activo elegível. '
-                . 'Cadastre um contrato activo com salário base antes de processar.'
+                . 'Cadastre um contrato activo com salário base antes de processar.',
             );
         }
 
@@ -161,7 +161,7 @@ class PayrollService implements PayrollServiceInterface
                 'overtime_amount' => round($overtimeAmount, 2),
                 'overtime_hours'  => round($overtimeHours, 2),
                 'absent_days'     => round($absentDays, 2),
-                'absent_deduction'=> round($absentDeduction, 2),
+                'absent_deduction' => round($absentDeduction, 2),
                 'social_security' => round($socialSecurity, 2),
                 'irt_amount'      => round($irt, 2),
                 'net_salary'      => round($net, 2),
@@ -174,7 +174,7 @@ class PayrollService implements PayrollServiceInterface
         $run->update([
             'employee_count'  => count($payslipsData),
             'total_gross'     => round($totalGross, 2),
-            'total_deductions'=> round($totalDeductions, 2),
+            'total_deductions' => round($totalDeductions, 2),
             'total_net'       => round($totalNet, 2),
             'status'          => 'processado',
         ]);

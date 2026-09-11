@@ -18,7 +18,7 @@ class BenefitService implements BenefitServiceInterface
 
     public function __construct(
         protected BenefitRepositoryInterface $benefitRepository,
-        protected EmployeeRepositoryInterface $employeeRepository
+        protected EmployeeRepositoryInterface $employeeRepository,
     ) {
         $this->benefitPolicy = new BenefitPolicy();
     }
@@ -89,7 +89,7 @@ class BenefitService implements BenefitServiceInterface
         $benefit = $this->requireBenefit($benefitId);
 
         return $this->benefitRepository->employeesNotAssigned($benefitId)
-            ->filter(fn (Employee $employee): bool => $this->benefitPolicy->isEligible($employee, $benefit))
+            ->filter(fn(Employee $employee): bool => $this->benefitPolicy->isEligible($employee, $benefit))
             ->values();
     }
 
@@ -109,7 +109,7 @@ class BenefitService implements BenefitServiceInterface
         $violations = $this->benefitPolicy->violations($employee, $benefit);
         if ($violations !== []) {
             throw new \RuntimeException(
-                'Funcionário não elegível para o benefício: ' . implode(' ', $violations)
+                'Funcionário não elegível para o benefício: ' . implode(' ', $violations),
             );
         }
 

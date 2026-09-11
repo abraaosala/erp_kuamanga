@@ -11,8 +11,8 @@ use eftec\bladeone\BladeOne;
 /** @var \Illuminate\Container\Container $container */
 
 // Protected routes (require authentication)
-$router->group(['middleware' => [AuthMiddleware::class]], function() use ($router, $container) {
-    
+$router->group(['middleware' => [AuthMiddleware::class]], function () use ($router, $container) {
+
     // Dashboard
     $router->get('/dashboard', function () use ($container) {
         $blade   = $container->make(BladeOne::class);

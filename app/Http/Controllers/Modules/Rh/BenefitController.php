@@ -28,7 +28,7 @@ class BenefitController
         protected DepartmentServiceInterface $departmentService,
         protected PositionServiceInterface $positionService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response
@@ -79,7 +79,7 @@ class BenefitController
 
     public function store(Request $request): RedirectResponse
     {
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $request->all());
+        $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         $validation = $this->validator->make($data, [
             'name'              => 'required|max:120',
@@ -165,7 +165,7 @@ class BenefitController
 
     public function update(Request $request, int $id): RedirectResponse
     {
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $request->all());
+        $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         $validation = $this->validator->make($data, [
             'name'              => 'required|max:120',
@@ -214,7 +214,7 @@ class BenefitController
 
     public function assign(Request $request, int $id): RedirectResponse
     {
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $request->all());
+        $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         $validation = $this->validator->make($data, [
             'employee_id' => 'required|integer|exists:employees,id',

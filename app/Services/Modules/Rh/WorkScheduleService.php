@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class WorkScheduleService implements WorkScheduleServiceInterface
 {
     public function __construct(
-        protected WorkScheduleRepositoryInterface $workScheduleRepository
+        protected WorkScheduleRepositoryInterface $workScheduleRepository,
     ) {}
 
     public function getAll(): Collection

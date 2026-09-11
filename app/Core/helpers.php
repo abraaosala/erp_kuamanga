@@ -91,12 +91,12 @@ if (!function_exists('session')) {
 
         if (is_array($key)) {
             foreach ($key as $k => $v) {
-                $session->set((string)$k, $v);
+                $session->set((string) $k, $v);
             }
             return true;
         }
 
-        return $session->get((string)$key, $default);
+        return $session->get((string) $key, $default);
     }
 }
 
@@ -127,7 +127,7 @@ if (!function_exists('current_empresa')) {
         /** @var \App\Core\Session $session */
         $session = session();
         $id = $session->empresaId();
-        return \App\Models\Empresa::find($id) ?: (object)['id' => 1, 'nome' => 'Kuamanga'];
+        return \App\Models\Empresa::find($id) ?: (object) ['id' => 1, 'nome' => 'Kuamanga'];
     }
 }
 
@@ -155,8 +155,8 @@ if (!function_exists('storage_uploads_path')) {
 
 if (!function_exists('upload_file')) {
     /**
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return string caminho relativo guardado (ex: employees/12/abc123.pdf)
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @return string                        caminho relativo guardado (ex: employees/12/abc123.pdf)
      * @throws \RuntimeException
      */
     function upload_file(\Illuminate\Http\UploadedFile $file, string $directory): string

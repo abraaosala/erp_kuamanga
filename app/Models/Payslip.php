@@ -9,20 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property int $payroll_run_id
- * @property int $employee_id
- * @property float $gross_salary
- * @property float $base_salary
- * @property float $overtime_amount
- * @property float $overtime_hours
- * @property float $absent_days
- * @property float $absent_deduction
- * @property float $social_security
- * @property float $irt_amount
- * @property float $net_salary
- * @property string $status
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int                             $payroll_run_id
+ * @property int                             $employee_id
+ * @property float                           $gross_salary
+ * @property float                           $base_salary
+ * @property float                           $overtime_amount
+ * @property float                           $overtime_hours
+ * @property float                           $absent_days
+ * @property float                           $absent_deduction
+ * @property float                           $social_security
+ * @property float                           $irt_amount
+ * @property float                           $net_salary
+ * @property string                          $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

@@ -18,7 +18,7 @@ class LeaveController
         protected LeaveServiceInterface $leaveService,
         protected EmployeeServiceInterface $employeeService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response
@@ -62,7 +62,7 @@ class LeaveController
 
     public function store(Request $request): RedirectResponse
     {
-        $data = array_map(fn ($v) => $v === '' ? null : $v, $request->all());
+        $data = array_map(fn($v) => $v === '' ? null : $v, $request->all());
 
         $validation = $this->validator->make($data, [
             'employee_id' => 'required|integer|exists:employees,id',

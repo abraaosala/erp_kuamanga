@@ -10,16 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property \Illuminate\Support\Carbon $period_start
- * @property \Illuminate\Support\Carbon $period_end
- * @property string|null $description
- * @property string $status
- * @property float $total_gross
- * @property float $total_deductions
- * @property float $total_net
- * @property int $employee_count
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property \Illuminate\Support\Carbon      $period_start
+ * @property \Illuminate\Support\Carbon      $period_end
+ * @property string|null                     $description
+ * @property string                          $status
+ * @property float                           $total_gross
+ * @property float                           $total_deductions
+ * @property float                           $total_net
+ * @property int                             $employee_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -52,7 +52,7 @@ class PayrollRun extends Model
         'period_start'    => 'date',
         'period_end'      => 'date',
         'total_gross'     => 'decimal:2',
-        'total_deductions'=> 'decimal:2',
+        'total_deductions' => 'decimal:2',
         'total_net'       => 'decimal:2',
         'employee_count'  => 'integer',
         'created_at'      => 'datetime',

@@ -18,7 +18,7 @@ class PayrollController
     public function __construct(
         protected PayrollServiceInterface $payrollService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response
@@ -137,7 +137,7 @@ class PayrollController
 
         $html = $this->blade->run('rh.payroll.recibo', [
             'payslip'     => $payslip,
-            'valorExtenso'=> $valorExtenso,
+            'valorExtenso' => $valorExtenso,
         ]);
 
         $dompdf = new Dompdf(['isRemoteEnabled' => true]);

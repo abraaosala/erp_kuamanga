@@ -28,7 +28,7 @@ beforeEach(function (): void {
         $this->employeeRepo,
         $this->contractRepo,
         $this->hourBankRepo,
-        $this->attendanceRepo
+        $this->attendanceRepo,
     );
 });
 
@@ -36,7 +36,7 @@ it('generates a payroll run from active contract', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 300000.00,
         'status'       => 'active',
@@ -60,21 +60,21 @@ it('skips employees without active contract', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'termo_certo',
+        'tipo_contrato' => 'termo_certo',
         'data_inicio'  => '2026-01-01',
         'data_fim'     => '2026-03-31',
         'salario_base' => 150000.00,
         'status'       => 'inactive',
     ]);
 
-    expect(fn () => $this->service->runFromContracts('2026-08-01', '2026-08-31', 'Folha de Agosto'))
+    expect(fn() => $this->service->runFromContracts('2026-08-01', '2026-08-31', 'Folha de Agosto'))
         ->toThrow(\RuntimeException::class);
 
     expect(\App\Models\PayrollRun::count())->toBe(0);
 });
 
 it('throws when there are no employees with eligible contracts', function (): void {
-    expect(fn () => $this->service->runFromContracts('2026-08-01', '2026-08-31', 'Folha de Agosto'))
+    expect(fn() => $this->service->runFromContracts('2026-08-01', '2026-08-31', 'Folha de Agosto'))
         ->toThrow(\RuntimeException::class, 'contrato activo elegível');
 
     expect(\App\Models\PayrollRun::count())->toBe(0);
@@ -84,7 +84,7 @@ it('adds overtime from hour bank to gross salary', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 300000.00,
         'status'       => 'active',
@@ -113,7 +113,7 @@ it('deducts absent days from net salary', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 300000.00,
         'status'       => 'active',
@@ -155,7 +155,7 @@ it('totals match across paid employees', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 200000.00,
         'status'       => 'active',
@@ -163,7 +163,7 @@ it('totals match across paid employees', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $employee2->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 300000.00,
         'status'       => 'active',
@@ -181,7 +181,7 @@ it('deletes payslips when run is removed', function (): void {
     Contract::create([
         'empresa_id'   => $this->empresa->id,
         'employee_id'  => $this->employee->id,
-        'tipo_contrato'=> 'tempo_integral',
+        'tipo_contrato' => 'tempo_integral',
         'data_inicio'  => '2026-01-01',
         'salario_base' => 200000.00,
         'status'       => 'active',

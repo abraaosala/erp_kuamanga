@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class AttendanceService implements AttendanceServiceInterface
 {
     public function __construct(
-        protected AttendanceRepositoryInterface $attendanceRepository
+        protected AttendanceRepositoryInterface $attendanceRepository,
     ) {}
 
     public function getAll(): Collection

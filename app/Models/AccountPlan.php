@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property int|null $parent_id
- * @property string $code
- * @property string $name
- * @property string $type
- * @property bool $is_analytic
- * @property string|null $status
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int|null                        $parent_id
+ * @property string                          $code
+ * @property string                          $name
+ * @property string                          $type
+ * @property bool                            $is_analytic
+ * @property string|null                     $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

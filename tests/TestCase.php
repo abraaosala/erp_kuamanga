@@ -210,7 +210,7 @@ abstract class TestCase extends BaseTestCase
             $table->softDeletes();
         });
 
-$schema->create('rotations', function ($table) {
+        $schema->create('rotations', function ($table) {
             $table->id();
             $table->unsignedInteger('empresa_id')->nullable();
             $table->string('name', 100);
@@ -236,7 +236,7 @@ $schema->create('rotations', function ($table) {
             $table->softDeletes();
         });
 
-$schema->create('scheduled_shifts', function ($table) {
+        $schema->create('scheduled_shifts', function ($table) {
             $table->id();
             $table->unsignedInteger('empresa_id')->nullable();
             $table->unsignedInteger('employee_id');

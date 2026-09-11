@@ -20,7 +20,7 @@ class EmployeeScheduleController
         protected WorkScheduleServiceInterface $workScheduleService,
         protected EmployeeServiceInterface $employeeService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request, int $scheduleId): Response|RedirectResponse

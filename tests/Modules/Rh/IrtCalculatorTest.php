@@ -37,5 +37,5 @@ it('computes tax on mid-bracket values', function (float $income, float $expecte
     'bracket 2 mid' => [194000.0, 19540.0],
     'bracket 3 mid' => [291000.0, 47630.0],
     'bracket 7 mid' => [1900000.0, 380250.0],
-    'bracket 11 mid'=> [15000000.0, 3592250.0],
+    'bracket 11 mid' => [15000000.0, 3592250.0],
 ]);

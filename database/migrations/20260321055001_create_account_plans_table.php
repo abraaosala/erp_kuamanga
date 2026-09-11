@@ -23,8 +23,8 @@ final class CreateAccountPlansTable extends AbstractMigration
             ->addIndex(['empresa_id'])
             ->addIndex(['parent_id'])
             ->addIndex(['code'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
-            ->addForeignKey('parent_id', 'account_plans', 'id', ['delete'=> 'SET_NULL', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('parent_id', 'account_plans', 'id', ['delete' => 'SET_NULL', 'update' => 'CASCADE'])
             ->create();
     }
 }

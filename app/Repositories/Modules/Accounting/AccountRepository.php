@@ -64,7 +64,7 @@ class AccountRepository implements AccountRepositoryInterface
         if (!$account) {
             return false;
         }
-        return (bool)$account->delete();
+        return (bool) $account->delete();
     }
 
     public function getHierarchy(int $empresaId): Collection

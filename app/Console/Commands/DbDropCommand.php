@@ -53,7 +53,7 @@ class DbDropCommand extends Command
 
             $output->writeln("<info>Dropando banco de dados '{$db}' em {$host}...</info>");
             $pdo->exec("DROP DATABASE IF EXISTS `{$db}`");
-            
+
             $output->writeln("<info>Banco de dados '{$db}' removido com sucesso.</info>");
             return Command::SUCCESS;
         } catch (\PDOException $e) {

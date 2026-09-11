@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EmployeeService implements EmployeeServiceInterface
 {
     public function __construct(
-        protected EmployeeRepositoryInterface $employeeRepository
+        protected EmployeeRepositoryInterface $employeeRepository,
     ) {}
 
     public function getAll(): Collection

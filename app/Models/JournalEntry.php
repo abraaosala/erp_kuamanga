@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property \Illuminate\Support\Carbon $date
- * @property string|null $description
- * @property string|null $reference
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property \Illuminate\Support\Carbon      $date
+ * @property string|null                     $description
+ * @property string|null                     $reference
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *

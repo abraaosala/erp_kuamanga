@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class ContractService implements ContractServiceInterface
 {
     public function __construct(
-        protected ContractRepositoryInterface $contractRepository
+        protected ContractRepositoryInterface $contractRepository,
     ) {}
 
     public function getAll(): Collection

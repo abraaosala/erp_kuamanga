@@ -142,7 +142,7 @@ it('rejects assignment to an ineligible employee', function (): void {
         'position_id' => $this->position->id,
     ]);
 
-    expect(fn () => $this->service->assign((int) $benefit->id, (int) $this->employee->id))
+    expect(fn() => $this->service->assign((int) $benefit->id, (int) $this->employee->id))
         ->toThrow(\RuntimeException::class, 'não elegível');
 });
 
@@ -150,7 +150,7 @@ it('rejects a duplicate assignment', function (): void {
     $benefit = $this->service->create(['name' => 'Ginásio']);
     $this->service->assign((int) $benefit->id, (int) $this->employee->id);
 
-    expect(fn () => $this->service->assign((int) $benefit->id, (int) $this->employee->id))
+    expect(fn() => $this->service->assign((int) $benefit->id, (int) $this->employee->id))
         ->toThrow(\RuntimeException::class, 'já possui');
 });
 

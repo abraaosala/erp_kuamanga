@@ -85,7 +85,7 @@ class ApplicationContainer extends Container implements ApplicationContract
     }
 
     /**
-     * @param string|string[] ...$environments
+     * @param  string|string[] ...$environments
      * @return string|bool
      */
     public function environment(...$environments)
@@ -93,7 +93,7 @@ class ApplicationContainer extends Container implements ApplicationContract
         if (count($environments) > 0) {
             $names = array_map(
                 static fn(mixed $env): string => is_array($env) ? implode('|', $env) : (string) $env,
-                $environments
+                $environments,
             );
 
             return preg_match('/^' . implode('|', $names) . '$/', $this->environmentName()) === 1;
@@ -130,9 +130,7 @@ class ApplicationContainer extends Container implements ApplicationContract
         return $this->maintenanceMode()->active();
     }
 
-    public function registerConfiguredProviders(): void
-    {
-    }
+    public function registerConfiguredProviders(): void {}
 
     /**
      * @param string|\Illuminate\Support\ServiceProvider $provider
@@ -151,7 +149,7 @@ class ApplicationContainer extends Container implements ApplicationContract
     }
 
     /**
-     * @param string|\Illuminate\Support\ServiceProvider $provider
+     * @param  string|\Illuminate\Support\ServiceProvider $provider
      * @return \Illuminate\Support\ServiceProvider
      */
     public function resolveProvider($provider)
@@ -175,9 +173,7 @@ class ApplicationContainer extends Container implements ApplicationContract
         $this->isBootstrapped = true;
     }
 
-    public function booting($callback): void
-    {
-    }
+    public function booting($callback): void {}
 
     public function booted($callback): void
     {
@@ -218,9 +214,7 @@ class ApplicationContainer extends Container implements ApplicationContract
         return $this->isBootstrapped;
     }
 
-    public function loadDeferredProviders(): void
-    {
-    }
+    public function loadDeferredProviders(): void {}
 
     public function setLocale($locale): void
     {

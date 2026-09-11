@@ -9,16 +9,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property int $employee_id
- * @property string|null $tipo_contrato
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int                             $employee_id
+ * @property string|null                     $tipo_contrato
  * @property \Illuminate\Support\Carbon|null $data_inicio
  * @property \Illuminate\Support\Carbon|null $data_fim
- * @property float|null $salario_base
- * @property int|null $carga_horaria
- * @property string|null $observacoes
- * @property string|null $status
+ * @property float|null                      $salario_base
+ * @property int|null                        $carga_horaria
+ * @property string|null                     $observacoes
+ * @property string|null                     $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -50,7 +50,7 @@ class Contract extends Model
     protected $casts = [
         'data_inicio' => 'date',
         'data_fim'    => 'date',
-        'salario_base'=> 'decimal:2',
+        'salario_base' => 'decimal:2',
         'created_at'  => 'datetime',
         'updated_at'  => 'datetime',
         'deleted_at'  => 'datetime',

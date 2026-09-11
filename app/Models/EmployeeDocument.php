@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $id
- * @property int $employee_id
- * @property int|null $empresa_id
- * @property string $document_type
- * @property string|null $document_number
- * @property string $file_path
- * @property string $file_name
- * @property int|null $file_size
- * @property string|null $mime_type
+ * @property int                             $id
+ * @property int                             $employee_id
+ * @property int|null                        $empresa_id
+ * @property string                          $document_type
+ * @property string|null                     $document_number
+ * @property string                          $file_path
+ * @property string                          $file_name
+ * @property int|null                        $file_size
+ * @property string|null                     $mime_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *

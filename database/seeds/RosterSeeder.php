@@ -43,7 +43,7 @@ class RosterSeeder extends AbstractSeed
             "SELECT e.id, p.name AS position
              FROM employees e
              JOIN positions p ON p.id = e.position_id
-             ORDER BY e.id"
+             ORDER BY e.id",
         );
 
         $operationalPositions = ['Auxiliar de Armazém', 'Chefe de Logística', 'Vendedor', 'Assistente de Marketing', 'Programador', 'Analista de TI'];

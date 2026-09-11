@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $password
- * @property bool $active
- * @property string|null $remember_token
+ * @property int                             $id
+ * @property string                          $name
+ * @property string                          $email
+ * @property string                          $password
+ * @property bool                            $active
+ * @property string|null                     $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *

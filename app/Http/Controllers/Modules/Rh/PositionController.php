@@ -18,7 +18,7 @@ class PositionController
         protected PositionServiceInterface $positionService,
         protected DepartmentServiceInterface $departmentService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response
@@ -64,8 +64,8 @@ class PositionController
             'name'            => 'required|min:2|max:100',
             'description'     => 'nullable|max:255',
             'department_id'   => 'nullable|integer|exists:departments,id',
-            'salary_range_min'=> 'nullable|numeric|min:0',
-            'salary_range_max'=> 'nullable|numeric|min:0',
+            'salary_range_min' => 'nullable|numeric|min:0',
+            'salary_range_max' => 'nullable|numeric|min:0',
         ], [
             'name.required'          => 'O nome do cargo é obrigatório.',
             'name.min'               => 'O nome deve ter pelo menos 2 caracteres.',
@@ -118,8 +118,8 @@ class PositionController
             'name'            => 'required|min:2|max:100',
             'description'     => 'nullable|max:255',
             'department_id'   => 'nullable|integer|exists:departments,id',
-            'salary_range_min'=> 'nullable|numeric|min:0',
-            'salary_range_max'=> 'nullable|numeric|min:0',
+            'salary_range_min' => 'nullable|numeric|min:0',
+            'salary_range_max' => 'nullable|numeric|min:0',
         ], [
             'name.required'          => 'O nome do cargo é obrigatório.',
             'name.min'               => 'O nome deve ter pelo menos 2 caracteres.',

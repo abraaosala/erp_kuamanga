@@ -37,7 +37,7 @@ interface AccountRepositoryInterface
 
     /**
      * @template TReturn
-     * @param \Closure(): TReturn $callback
+     * @param  \Closure(): TReturn $callback
      * @return TReturn
      */
     public function transaction(\Closure $callback): mixed;

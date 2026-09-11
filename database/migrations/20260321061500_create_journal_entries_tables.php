@@ -19,7 +19,7 @@ final class CreateJournalEntriesTables extends AbstractMigration
             ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP'])
             ->addIndex(['empresa_id'])
             ->addIndex(['date'])
-            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
+            ->addForeignKey('empresa_id', 'empresas', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->create();
 
         // Journal Items (Lines)
@@ -33,8 +33,8 @@ final class CreateJournalEntriesTables extends AbstractMigration
             ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'update' => 'CURRENT_TIMESTAMP'])
             ->addIndex(['entry_id'])
             ->addIndex(['account_id'])
-            ->addForeignKey('entry_id', 'journal_entries', 'id', ['delete'=> 'CASCADE', 'update'=> 'CASCADE'])
-            ->addForeignKey('account_id', 'account_plans', 'id', ['delete'=> 'RESTRICT', 'update'=> 'CASCADE'])
+            ->addForeignKey('entry_id', 'journal_entries', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
+            ->addForeignKey('account_id', 'account_plans', 'id', ['delete' => 'RESTRICT', 'update' => 'CASCADE'])
             ->create();
     }
 }

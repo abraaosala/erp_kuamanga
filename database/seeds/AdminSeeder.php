@@ -58,12 +58,12 @@ class AdminSeeder extends AbstractSeed
         // Assign permissions to roles
         $permissionRoleTable = $this->table('permission_role');
         $prData = [];
-        
+
         // Admin gets all
         foreach ($adminPermissions as $p) {
             $prData[] = ['permission_id' => $p['id'], 'role_id' => $adminRole['id'], 'created_at' => $now];
         }
-        
+
         // Manager gets some
         foreach ($managerPermissions as $p) {
             $prData[] = ['permission_id' => $p['id'], 'role_id' => $managerRole['id'], 'created_at' => $now];
@@ -75,7 +75,7 @@ class AdminSeeder extends AbstractSeed
         // Create admin user
         $adminPassword = password_hash('admin123', PASSWORD_BCRYPT);
         $usersTable    = $this->table('users');
-        
+
         $usersTable->insert([
             [
                 'name'       => 'Administrador',

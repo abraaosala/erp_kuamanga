@@ -18,7 +18,7 @@ class RosterService implements RosterServiceInterface
 {
     public function __construct(
         protected RosterRepositoryInterface $rosterRepository,
-        protected EmployeeScheduleRepositoryInterface $employeeScheduleRepository
+        protected EmployeeScheduleRepositoryInterface $employeeScheduleRepository,
     ) {}
 
     /**
@@ -49,8 +49,8 @@ class RosterService implements RosterServiceInterface
         /** @var list<int> $pattern */
         $pattern = is_array($patternRaw)
             ? array_values(array_map(
-                fn (mixed $d): int => $this->toInt($d),
-                $patternRaw
+                fn(mixed $d): int => $this->toInt($d),
+                $patternRaw,
             ))
             : [];
 
@@ -128,7 +128,7 @@ class RosterService implements RosterServiceInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>      $data
      * @return Collection<int, Employee>
      */
     protected function resolveEmployees(array $data, int $scheduleId): Collection
@@ -136,8 +136,8 @@ class RosterService implements RosterServiceInterface
         if (!empty($data['employee_ids']) && is_array($data['employee_ids'])) {
             /** @var list<int> $ids */
             $ids = array_values(array_map(
-                fn (mixed $v): int => $this->toInt($v),
-                $data['employee_ids']
+                fn(mixed $v): int => $this->toInt($v),
+                $data['employee_ids'],
             ));
 
             /** @var \App\Models\Empresa $empresa */
@@ -156,8 +156,8 @@ class RosterService implements RosterServiceInterface
     }
 
     /**
-     * @param Collection<int, Employee> $employees
-     * @param list<int> $pattern
+     * @param  Collection<int, Employee>        $employees
+     * @param  list<int>                        $pattern
      * @return array<int, array<string, mixed>>
      */
     protected function buildShiftRows(
@@ -166,7 +166,7 @@ class RosterService implements RosterServiceInterface
         int $scheduleId,
         string $startDate,
         string $endDate,
-        array $pattern
+        array $pattern,
     ): array {
         $cycleLength = array_sum($pattern);
         if ($cycleLength <= 0) {

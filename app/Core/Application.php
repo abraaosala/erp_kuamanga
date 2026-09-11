@@ -32,13 +32,13 @@ class Application
 
         Facade::setFacadeApplication($this->container);
 
-        $this->container->singleton(\App\Core\Session::class, function() {
+        $this->container->singleton(\App\Core\Session::class, function () {
             return new \App\Core\Session();
         });
 
         $this->container->singleton(
             \Illuminate\Contracts\Foundation\MaintenanceMode::class,
-            \App\Core\ApplicationMaintenanceMode::class
+            \App\Core\ApplicationMaintenanceMode::class,
         );
 
         $this->bootstrapConfig();

@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $id
- * @property int $empresa_id
- * @property int $employee_id
- * @property \Illuminate\Support\Carbon $date
- * @property string|null $check_in
- * @property string|null $check_out
- * @property string|null $status
- * @property string|null $observations
+ * @property int                             $id
+ * @property int                             $empresa_id
+ * @property int                             $employee_id
+ * @property \Illuminate\Support\Carbon      $date
+ * @property string|null                     $check_in
+ * @property string|null                     $check_out
+ * @property string|null                     $status
+ * @property string|null                     $observations
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

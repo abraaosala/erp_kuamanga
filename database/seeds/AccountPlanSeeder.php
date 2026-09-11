@@ -31,7 +31,7 @@ class AccountPlanSeeder extends AbstractSeed
             ['empresa_id' => $empresaId, 'code' => '1', 'name' => 'MEIOS MONETÁRIOS', 'type' => 'asset', 'is_analytic' => false],
             ['empresa_id' => $empresaId, 'code' => '11', 'name' => 'Caixa', 'type' => 'asset', 'is_analytic' => true, 'parent_code' => '1'],
             ['empresa_id' => $empresaId, 'code' => '12', 'name' => 'Bancos', 'type' => 'asset', 'is_analytic' => true, 'parent_code' => '1'],
-            
+
             // Classe 2: Existências
             ['empresa_id' => $empresaId, 'code' => '2', 'name' => 'EXISTÊNCIAS', 'type' => 'asset', 'is_analytic' => false],
             ['empresa_id' => $empresaId, 'code' => '21', 'name' => 'Mercadorias', 'type' => 'asset', 'is_analytic' => true, 'parent_code' => '2'],
@@ -75,7 +75,7 @@ class AccountPlanSeeder extends AbstractSeed
                     'name'       => $item['name'],
                     'type'       => $item['type'],
                     'is_analytic' => $item['is_analytic'],
-                    'status'     => 'active'
+                    'status'     => 'active',
                 ];
                 $this->table('account_plans')->insert($row)->saveData();
                 $inserted[$item['code']] = $this->getAdapter()->getConnection()->lastInsertId();
@@ -92,7 +92,7 @@ class AccountPlanSeeder extends AbstractSeed
                     'name'       => $item['name'],
                     'type'       => $item['type'],
                     'is_analytic' => $item['is_analytic'],
-                    'status'     => 'active'
+                    'status'     => 'active',
                 ];
                 $this->table('account_plans')->insert($row)->saveData();
             }

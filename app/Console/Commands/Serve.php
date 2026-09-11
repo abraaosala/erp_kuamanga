@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'serve', description: 'Serve the application on the PHP development server')]
 class Serve extends Command
 {
-
     protected function configure(): void
     {
         $this

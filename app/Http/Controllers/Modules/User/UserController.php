@@ -16,7 +16,7 @@ class UserController
         protected UserServiceInterface $userService,
         protected RoleRepositoryInterface $roleRepository,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): \Illuminate\Http\Response

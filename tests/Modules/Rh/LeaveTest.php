@@ -53,7 +53,7 @@ it('counts leave days inclusively', function (): void {
 it('rejects an invalid leave period', function (): void {
     $policy = new LeavePolicy();
 
-    expect(fn () => $policy->inclusiveDays('2026-08-12', '2026-08-10'))
+    expect(fn() => $policy->inclusiveDays('2026-08-12', '2026-08-10'))
         ->toThrow(\InvalidArgumentException::class);
 });
 
@@ -132,7 +132,7 @@ it('prevents approving a request that is no longer pending', function (): void {
 
     $this->service->approve((int) $request->id, 5);
 
-    expect(fn () => $this->service->approve((int) $request->id, 5))
+    expect(fn() => $this->service->approve((int) $request->id, 5))
         ->toThrow(\RuntimeException::class, 'pedidos pendentes');
     expect(Leave::count())->toBe(1);
 });
@@ -140,7 +140,7 @@ it('prevents approving a request that is no longer pending', function (): void {
 it('blocks a holiday request beyond the available balance', function (): void {
     $this->employee->update(['hire_date' => '2026-08-01']);
 
-    expect(fn () => $this->service->requestLeave([
+    expect(fn() => $this->service->requestLeave([
         'employee_id' => $this->employee->id,
         'leave_type'  => LeaveRequest::TYPE_FERIAS,
         'start_date'  => '2026-10-01',
@@ -173,7 +173,7 @@ it('prevents a request that overlaps an approved leave', function (): void {
     ]);
     $this->service->approve((int) $first->id, 5);
 
-    expect(fn () => $this->service->requestLeave([
+    expect(fn() => $this->service->requestLeave([
         'employee_id' => $this->employee->id,
         'leave_type'  => LeaveRequest::TYPE_FERIAS,
         'start_date'  => '2026-09-16',

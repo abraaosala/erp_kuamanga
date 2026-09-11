@@ -28,7 +28,7 @@ class AccountService implements AccountServiceInterface
     public function createAccount(int $empresaId, array $data): AccountPlan
     {
         $data['empresa_id'] = $empresaId;
-        
+
         $parentId = $data['parent_id'] ?? null;
         if ($parentId !== null && is_numeric($parentId)) {
             $parent = $this->accountRepository->findById((int) $parentId);
@@ -36,7 +36,7 @@ class AccountService implements AccountServiceInterface
                 throw new \InvalidArgumentException('Parent account invalid.');
             }
         }
-        
+
         return $this->accountRepository->create($data);
     }
 
@@ -51,7 +51,7 @@ class AccountService implements AccountServiceInterface
         if ($account && $account->children()->count() > 0) {
             throw new \LogicException('Cannot delete an account that has sub-accounts.');
         }
-        
+
         return $this->accountRepository->delete($id);
     }
 
@@ -124,8 +124,12 @@ class AccountService implements AccountServiceInterface
         $query = JournalItem::with(['entry', 'account'])
             ->whereHas('entry', function ($q) use ($empresaId, $startDate, $endDate) {
                 $q->where('empresa_id', $empresaId);
-                if ($startDate) $q->whereDate('date', '>=', $startDate);
-                if ($endDate) $q->whereDate('date', '<=', $endDate);
+                if ($startDate) {
+                    $q->whereDate('date', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $q->whereDate('date', '<=', $endDate);
+                }
             });
 
         if ($accountId) {
@@ -162,10 +166,14 @@ class AccountService implements AccountServiceInterface
     public function getTrialBalance(int $empresaId, ?string $startDate = null, ?string $endDate = null): array
     {
         $query = JournalItem::whereHas('entry', function ($q) use ($empresaId, $startDate, $endDate) {
-                $q->where('empresa_id', $empresaId);
-                if ($startDate) $q->whereDate('date', '>=', $startDate);
-                if ($endDate) $q->whereDate('date', '<=', $endDate);
-            });
+            $q->where('empresa_id', $empresaId);
+            if ($startDate) {
+                $q->whereDate('date', '>=', $startDate);
+            }
+            if ($endDate) {
+                $q->whereDate('date', '<=', $endDate);
+            }
+        });
 
         $items = $query->selectRaw('account_id, type, SUM(amount) as total')
             ->groupBy('account_id', 'type')
@@ -192,22 +200,24 @@ class AccountService implements AccountServiceInterface
                 $balances[$itemAccountId]['credit'] += $itemTotal;
             }
         }
-        
+
         $accounts = $this->getAccountsByEmpresa($empresaId)->keyBy('id');
-        
+
         $trialBalance = [];
         $totalDebit = 0.0;
         $totalCredit = 0.0;
-        
+
         foreach ($balances as $accountId => $totals) {
             $account = $accounts->get($accountId);
-            if (!$account) continue;
-            
+            if (!$account) {
+                continue;
+            }
+
             $balance = $totals['debit'] - $totals['credit'];
-            
+
             $finalDebit = $balance > 0 ? $balance : 0.0;
             $finalCredit = $balance < 0 ? abs($balance) : 0.0;
-            
+
             $trialBalance[] = [
                 'account' => $account,
                 'total_debit' => $totals['debit'],
@@ -215,11 +225,11 @@ class AccountService implements AccountServiceInterface
                 'final_debit' => $finalDebit,
                 'final_credit' => $finalCredit,
             ];
-            
+
             $totalDebit += $finalDebit;
             $totalCredit += $finalCredit;
         }
-        
+
         usort($trialBalance, function ($a, $b) {
             /** @var \App\Models\AccountPlan $aAccount */
             $aAccount = $a['account'];
@@ -274,10 +284,10 @@ class AccountService implements AccountServiceInterface
             if ($m < 1 || $m > 12) {
                 continue;
             }
-            
+
             $itemType = is_string($item->type) ? $item->type : '';
             $isDebit = $itemType === 'debit';
-            
+
             if (in_array($class, ['1', '2', '3', '4'])) {
                 $metrics['total_assets'] += $isDebit ? $amount : -$amount;
             } elseif (in_array($class, ['5', '8'])) {
@@ -285,7 +295,7 @@ class AccountService implements AccountServiceInterface
             } elseif ($class === '6') {
                 $expenseVal = $isDebit ? $amount : -$amount;
                 $metrics['monthly_expenses'][$m] += $expenseVal;
-                
+
                 if ($m === $month) {
                     $metrics['expenses_month'] += $expenseVal;
                     $groupCode = substr($code, 0, 2);
@@ -300,15 +310,15 @@ class AccountService implements AccountServiceInterface
             } elseif ($class === '7') {
                 $revVal = !$isDebit ? $amount : -$amount;
                 $metrics['monthly_revenue'][$m] += $revVal;
-                
+
                 if ($m === $month) {
                     $metrics['revenue_month'] += $revVal;
                 }
             }
         }
-        
+
         $metrics['net_income_month'] = $metrics['revenue_month'] - $metrics['expenses_month'];
-        
+
         $metrics['expense_breakdown'] = array_values($metrics['expense_breakdown']);
 
         return $metrics;
@@ -336,7 +346,7 @@ class AccountService implements AccountServiceInterface
         $liabilitiesAndEquity = [];
         $totalAssets = 0.0;
         $totalLiabilitiesAndEquity = 0.0;
-        
+
         $netIncome = 0.0;
 
         foreach ($items as $item) {
@@ -366,8 +376,7 @@ class AccountService implements AccountServiceInterface
                 $val = $isDebit ? $amount : -$amount;
                 $assets[$group2]['balance'] += $val;
                 $totalAssets += $val;
-            } 
-            elseif (in_array($class, ['5', '8'])) {
+            } elseif (in_array($class, ['5', '8'])) {
                 if (!isset($liabilitiesAndEquity[$group2])) {
                     $liabilitiesAndEquity[$group2] = ['code' => $group2, 'name' => 'Conta ' . $group2, 'balance' => 0.0];
                 }
@@ -387,7 +396,7 @@ class AccountService implements AccountServiceInterface
             'liabilities_and_equity' => array_values($liabilitiesAndEquity),
             'total_assets' => $totalAssets,
             'total_liabilities_and_equity' => $totalLiabilitiesAndEquity,
-            'net_income' => $netIncome
+            'net_income' => $netIncome,
         ];
     }
 
@@ -457,7 +466,7 @@ class AccountService implements AccountServiceInterface
             'expenses' => array_values($expenses),
             'total_revenues' => $totalRevenues,
             'total_expenses' => $totalExpenses,
-            'net_income' => $totalRevenues - $totalExpenses
+            'net_income' => $totalRevenues - $totalExpenses,
         ];
     }
 }

@@ -11,7 +11,7 @@ use App\Services\Contracts\AuthServiceInterface;
 class AuthService implements AuthServiceInterface
 {
     public function __construct(
-        protected UserRepositoryInterface $userRepository
+        protected UserRepositoryInterface $userRepository,
     ) {}
 
     public function attempt(string $email, string $password): bool
@@ -50,7 +50,7 @@ class AuthService implements AuthServiceInterface
                     $params['path'],
                     $params['domain'],
                     $params['secure'],
-                    $params['httponly']
+                    $params['httponly'],
                 );
             }
         }
@@ -96,6 +96,6 @@ class AuthService implements AuthServiceInterface
         session_regenerate_id(true);
         $_SESSION['user_id']   = $user->id;
         $_SESSION['user_name'] = $user->name;
-        $_SESSION['user_email']= $user->email;
+        $_SESSION['user_email'] = $user->email;
     }
 }

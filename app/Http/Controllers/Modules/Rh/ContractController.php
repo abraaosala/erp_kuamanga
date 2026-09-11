@@ -18,7 +18,7 @@ class ContractController
         protected ContractServiceInterface $contractService,
         protected EmployeeServiceInterface $employeeService,
         protected BladeOne $blade,
-        protected Validator $validator
+        protected Validator $validator,
     ) {}
 
     public function index(Request $request): Response

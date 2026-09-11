@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class PositionService implements PositionServiceInterface
 {
     public function __construct(
-        protected PositionRepositoryInterface $positionRepository
+        protected PositionRepositoryInterface $positionRepository,
     ) {}
 
     public function getAll(): Collection
