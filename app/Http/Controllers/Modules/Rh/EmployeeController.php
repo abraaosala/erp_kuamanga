@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Modules\Rh;
 
+use App\Services\Contracts\BenefitServiceInterface;
 use App\Services\Contracts\ContractServiceInterface;
 use App\Services\Contracts\DepartmentServiceInterface;
 use App\Services\Contracts\EmployeeDocumentServiceInterface;
@@ -27,6 +28,7 @@ class EmployeeController
         protected ContractServiceInterface $contractService,
         protected EmployeeScheduleServiceInterface $employeeScheduleService,
         protected HourBankEntryServiceInterface $hourBankEntryService,
+        protected BenefitServiceInterface $benefitService,
         protected BladeOne $blade,
         protected Validator $validator
     ) {}
@@ -231,6 +233,7 @@ class EmployeeController
         $documents = $this->employeeDocumentService->getByEmployee((int) $employee->id);
         $schedules = $this->employeeScheduleService->getSchedulesByEmployee((int) $employee->id);
         $balance   = $this->hourBankEntryService->balanceByEmployee((int) $employee->id);
+        $benefits  = $employee->benefits;
 
         $html = $this->blade->run('rh.employees.show', [
             'employee'    => $employee,
@@ -238,6 +241,7 @@ class EmployeeController
             'documents'   => $documents,
             'schedules'   => $schedules,
             'balance'     => $balance,
+            'benefits'    => $benefits,
             'error'       => $_SESSION['flash_error'] ?? null,
             'success'     => $_SESSION['flash_success'] ?? null,
         ]);
@@ -340,5 +344,17 @@ class EmployeeController
         }
 
         return download_file($employee->photo, 'foto.jpg', true);
+    }
+
+    public function removeBenefit(Request $request, int $id, int $benefitId): RedirectResponse
+    {
+        try {
+            $this->benefitService->unassign($benefitId, $id);
+            $_SESSION['flash_success'] = 'Benefício removido do funcionário.';
+        } catch (\Exception $e) {
+            $_SESSION['flash_error'] = $e->getMessage();
+        }
+
+        return redirect('/rh/employees/' . $id);
     }
 }

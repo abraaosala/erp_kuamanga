@@ -70,7 +70,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="glass-card rounded-2xl p-5">
             <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider mb-2" style="color: var(--text-muted)">
                 <i data-lucide="clock" class="w-4 h-4"></i> Banho de horas
@@ -96,6 +96,12 @@
                 <i data-lucide="calendar-clock" class="w-4 h-4"></i> Escalas
             </div>
             <p class="text-2xl font-bold" style="color: var(--text-main)">{{ $schedules->count() }}</p>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider mb-2" style="color: var(--text-muted)">
+                <i data-lucide="gift" class="w-4 h-4"></i> Benefícios
+            </div>
+            <p class="text-2xl font-bold" style="color: var(--text-main)">{{ $benefits->count() }}</p>
         </div>
     </div>
 
@@ -129,7 +135,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-semibold" style="color: var(--text-main)">Contratos</h3>
@@ -185,6 +191,68 @@
             <div class="text-center py-8">
                 <i data-lucide="calendar-clock" class="w-8 h-8 mx-auto mb-2" style="color: var(--border-color)"></i>
                 <p class="text-sm" style="color: var(--text-muted)">Sem escalas atribuídas</p>
+            </div>
+            @endforelse
+        </div>
+
+        <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold" style="color: var(--text-main)">Benefícios</h3>
+                <div class="text-xs font-semibold" style="color: var(--accent)">{{ $benefits->count() }} atribuído(s)</div>
+            </div>
+            @php
+            $benefitCategories = [
+                'alimentacao' => 'Alimentação',
+                'educacao'    => 'Educação',
+                'saude'       => 'Saúde',
+                'transporte'  => 'Transporte',
+                'outro'       => 'Outro',
+            ];
+            @endphp
+            @forelse($benefits as $benefit)
+            <div class="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg bg-black/20 border mb-2" style="border-color: var(--border-color)">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm font-medium" style="color: var(--text-main)">{{ $benefit->name }}</p>
+                        @if($benefitCategory = $benefitCategories[$benefit->category] ?? null)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase" style="background-color: var(--accent-soft); color: var(--accent)">{{ $benefitCategory }}</span>
+                        @endif
+                    </div>
+                    <p class="text-xs" style="color: var(--text-muted)">
+                        @if(!empty($benefit->pivot->started_at))
+                        Atribuído em {{ date('d/m/Y', strtotime((string) $benefit->pivot->started_at)) }}
+                        @else
+                        Sem data de início
+                        @endif
+                        @if(!empty($benefit->pivot->notes))
+                        <span class="ml-1">· {{ $benefit->pivot->notes }}</span>
+                        @endif
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    @if(($benefit->pivot->status ?? 'active') === 'active')
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-600">Ativo</span>
+                    @else
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gray-500/10 text-gray-500">Inativo</span>
+                    @endif
+                    <a href="/rh/benefits/{{ $benefit->id }}" class="btn-secondary px-2.5 py-1.5 text-xs flex items-center gap-1" title="Ver benefício">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Ver
+                    </a>
+                    <form method="POST" action="/rh/employees/{{ $employee->id }}/benefits/{{ $benefit->id }}/delete" x-data="{ confirm: false }" @submit.prevent="confirm ? $el.submit() : (confirm = true)">
+                        <button type="submit" class="p-2 rounded-lg transition-all duration-200" style="color: var(--text-muted)" onmouseover="this.style.color='#ef4444'; this.style.backgroundColor='#fef2f2'" onmouseout="this.style.color='var(--text-muted)'; this.style.backgroundColor='transparent'" :title="confirm ? 'Clique para confirmar' : 'Remover'">
+                            <svg x-show="!confirm" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            <span x-show="confirm" class="text-[10px] font-bold uppercase tracking-wider">Confirmar</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-8">
+                <i data-lucide="gift" class="w-8 h-8 mx-auto mb-2" style="color: var(--border-color)"></i>
+                <p class="text-sm" style="color: var(--text-muted)">Sem benefícios atribuídos</p>
             </div>
             @endforelse
         </div>

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Modules\Rh\AttendanceController;
+use App\Http\Controllers\Modules\Rh\BenefitController;
 use App\Http\Controllers\Modules\Rh\ContractController;
 use App\Http\Controllers\Modules\Rh\DepartmentController;
 use App\Http\Controllers\Modules\Rh\EmployeeController;
@@ -39,6 +40,7 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/employees/{id}/documents/{docId}/download', [EmployeeDocumentController::class, 'download'])->name('rh.employees.documents.download');
     $router->post('/employees/{id}/documents/{docId}/delete', [EmployeeDocumentController::class, 'destroy'])->name('rh.employees.documents.destroy');
 
+$router->post('/employees/{id}/benefits/{benefitId}/delete', [EmployeeController::class, 'removeBenefit'])->name('rh.employees.benefits.destroy');
 
     $router->get('/departments', [DepartmentController::class, 'index'])->name('rh.departments.index');
     $router->get('/departments/create', [DepartmentController::class, 'create'])->name('rh.departments.create');
@@ -95,6 +97,15 @@ $router->get('/leaves', [LeaveController::class, 'index'])->name('rh.leaves.inde
     $router->post('/leaves/{id}/cancel', [LeaveController::class, 'cancel'])->name('rh.leaves.cancel');
     $router->post('/leaves/{id}/delete', [LeaveController::class, 'destroy'])->name('rh.leaves.destroy');
 
+    $router->get('/benefits', [BenefitController::class, 'index'])->name('rh.benefits.index');
+    $router->get('/benefits/create', [BenefitController::class, 'create'])->name('rh.benefits.create');
+    $router->post('/benefits', [BenefitController::class, 'store'])->name('rh.benefits.store');
+    $router->get('/benefits/{id}', [BenefitController::class, 'show'])->name('rh.benefits.show');
+    $router->get('/benefits/{id}/edit', [BenefitController::class, 'edit'])->name('rh.benefits.edit');
+    $router->post('/benefits/{id}/update', [BenefitController::class, 'update'])->name('rh.benefits.update');
+    $router->post('/benefits/{id}/delete', [BenefitController::class, 'destroy'])->name('rh.benefits.destroy');
+    $router->post('/benefits/{id}/employees', [BenefitController::class, 'assign'])->name('rh.benefits.employees.store');
+    $router->post('/benefits/{id}/employees/{employeeId}/delete', [BenefitController::class, 'unassign'])->name('rh.benefits.employees.destroy');
 
     $router->get('/payroll', [PayrollController::class, 'index'])->name('rh.payroll.index');
     $router->get('/payroll/create', [PayrollController::class, 'create'])->name('rh.payroll.create');

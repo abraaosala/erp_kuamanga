@@ -222,7 +222,21 @@ $schema->create('rotations', function ($table) {
             $table->softDeletes();
         });
 
-        $schema->create('scheduled_shifts', function ($table) {
+        $schema->create('benefits', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->string('name', 120);
+            $table->text('description')->nullable();
+            $table->string('category', 50)->nullable();
+            $table->unsignedInteger('position_id')->nullable();
+            $table->unsignedInteger('department_id')->nullable();
+            $table->integer('min_tenure_months')->default(0);
+            $table->string('status', 20)->default('active');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+$schema->create('scheduled_shifts', function ($table) {
             $table->id();
             $table->unsignedInteger('empresa_id')->nullable();
             $table->unsignedInteger('employee_id');
@@ -266,6 +280,18 @@ $schema->create('rotations', function ($table) {
             $table->text('observations')->nullable();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        $schema->create('employee_benefits', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('employee_id');
+            $table->unsignedInteger('benefit_id');
+            $table->string('status', 20)->default('active');
+            $table->date('started_at')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamps();
+            $table->unique(['employee_id', 'benefit_id']);
         });
     }
 
