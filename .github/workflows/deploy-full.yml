@@ -49,11 +49,11 @@ jobs:
           timeout: 60000
           exclude: |
             **/.git*
-            **/.htaccess
             **/.env*
             **/node_modules/**
             tests/**
             .github/**
+            .opencode/**
             docs/**
             scripts/**
             *.md
@@ -61,3 +61,25 @@ jobs:
             storage/cache/**
             storage/logs/**
             storage/dumps/**
+
+      - name: Purge dev-deps órfãos do vendor no servidor
+        env:
+          FTP_HOST: ${{ secrets.FTP_SERVER }}
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+          FTP_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          php -r '$l=json_decode(file_get_contents("composer.lock"),true); foreach(array_column($l["packages-dev"],"name") as $n){ echo "vendor/$n\n"; }' > /tmp/dev-paths.txt
+          {
+            echo "set ssl:verify-certificate no"
+            echo "set net:timeout 30"
+            echo "set net:max-retries 2"
+            echo "set ftp:use-pret off"
+            echo "open ftp://$FTP_HOST"
+            echo "cd $FTP_DIR"
+            echo "rm -rf vendor/pest-plugins"
+            echo "rm -f  vendor/pest-plugins.json"
+            while read -r p; do echo "rm -rf $p"; done < /tmp/dev-paths.txt
+            echo "quit"
+          } > /tmp/purge.lftp
+          lftp -u "$FTP_USER","$FTP_PASS" -f /tmp/purge.lftp
