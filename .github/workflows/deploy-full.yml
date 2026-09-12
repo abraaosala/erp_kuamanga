@@ -49,6 +49,7 @@ jobs:
           timeout: 60000
           exclude: |
             **/.git*
+            **/.git*/**
             **/.env*
             **/node_modules/**
             tests/**
