@@ -69,6 +69,7 @@ jobs:
           FTP_PASS: ${{ secrets.FTP_PASSWORD }}
           FTP_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
+          sudo apt-get update && sudo apt-get install -y lftp
           php -r '$l=json_decode(file_get_contents("composer.lock"),true); foreach(array_column($l["packages-dev"],"name") as $n){ echo "vendor/$n\n"; }' > /tmp/dev-paths.txt
           {
             echo "set ssl:verify-certificate no"
