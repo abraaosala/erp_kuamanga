@@ -6,8 +6,8 @@
   "scripts": {
     "dev:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --watch",
     "dev:js": ".\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --watch",
-    "build:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --minify",
-    "build:js": ".\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --minify",
+    "build:css": "tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --minify",
+    "build:js": "esbuild resources/js/app.js --bundle --outfile=public/js/app.js --minify",
     "dev": "(start /B .\\node_modules\\.bin\\tailwindcss.cmd -i ./resources/css/app.css -o ./public/css/app.css --watch) & .\\node_modules\\.bin\\esbuild.cmd resources/js/app.js --bundle --outfile=public/js/app.js --watch",
     "build": "npm run build:css && npm run build:js"
   },

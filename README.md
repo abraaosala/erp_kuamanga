@@ -67,6 +67,7 @@ A arquitetura está dividida por módulos orientados ao negócio. Documentação
 - `php console breakpoint` — define/redefine breakpoint de migração.
 - `php console seed:run` — executa os seeders.
 - `php console db:create|db:drop` — cria/remove o banco.
+- `php console db:export [--stdout] [--structure-only] [--no-db-header] [-o arquivo.sql]` — exporta o banco para SQL (PHP puro, em `storage/dumps/`). Use `--no-db-header` para importar direto numa BD já selecionada (ex.: phpMyAdmin do InfinityFree).
 - `php console make:controller|model|repository|service|view|migration|seed|middleware {Name}` — gera código a partir de stubs.
 
 ## ✅ Qualidade
