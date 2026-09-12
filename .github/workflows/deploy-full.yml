@@ -1,58 +1,17 @@
-name: CI/CD
+name: Deploy completo (vendor)
 
 on:
-  pull_request:
-    branches: [master]
-  push:
-    branches: [master]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Motivo do deploy (ex: composer.lock atualizado)'
+        required: false
+        default: 'Sincronização completa inicial / dependências alteradas'
 
 jobs:
-  quality:
-    name: Quality gates
+  deploy-full:
+    name: Deploy completo ao InfinityFree
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          coverage: none
-          tools: composer:v2
-
-      - uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
-
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Build frontend assets
-        run: npm run build
-
-      - name: Check code style (php-cs-fixer)
-        run: composer cs:check
-
-      - name: Static analysis (PHPStan level 9)
-        run: composer lint
-
-      - name: Test suite (Pest)
-        run: composer test
-
-  deploy:
-    name: Deploy to InfinityFree
-    runs-on: ubuntu-latest
-    needs: quality
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     concurrency: production-deploy
     environment: production
     steps:
@@ -78,7 +37,7 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Deploy via FTP
+      - name: Deploy completo via FTP (inclui vendor/)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -93,7 +52,6 @@ jobs:
             **/.htaccess
             **/.env*
             **/node_modules/**
-            **/vendor/**
             tests/**
             .github/**
             docs/**
