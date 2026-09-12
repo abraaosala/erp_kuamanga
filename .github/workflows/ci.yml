@@ -48,6 +48,28 @@ jobs:
       - name: Test suite (Pest)
         run: composer test
 
+  php83-prod:
+    name: PHP 8.3 (produção)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install production dependencies (--no-dev)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Lint PHP syntax
+        run: |
+          find app bootstrap console config database public routes -type f -name '*.php' -exec php -l {} \;
+
+      - name: Smoke test (console boot)
+        run: php console list --raw | head -5
+
   deploy:
     name: Deploy to InfinityFree
     runs-on: ubuntu-latest
@@ -60,7 +82,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5'
+          php-version: '8.3'
           coverage: none
           tools: composer:v2
 

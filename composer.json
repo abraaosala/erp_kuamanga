@@ -3,7 +3,7 @@
     "description": "O projecto da Geralda Bartolomeu para o final do curso",
     "type": "project",
     "require": {
-        "php": "^8.5",
+        "php": "^8.3",
         "dompdf/dompdf": "^3.1",
         "eftec/bladeone": "^4.10",
         "filp/whoops": "^2.15",
