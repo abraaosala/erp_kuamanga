@@ -293,6 +293,57 @@ abstract class TestCase extends BaseTestCase
             $table->timestamps();
             $table->unique(['employee_id', 'benefit_id']);
         });
+
+        $schema->create('job_openings', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->string('title', 150);
+            $table->unsignedInteger('department_id')->nullable();
+            $table->unsignedInteger('position_id')->nullable();
+            $table->text('description')->nullable();
+            $table->text('requirements')->nullable();
+            $table->unsignedInteger('openings_count')->default(1);
+            $table->decimal('salary_range_min', 14, 2)->nullable();
+            $table->decimal('salary_range_max', 14, 2)->nullable();
+            $table->string('location', 150)->nullable();
+            $table->string('status', 20)->default('aberta');
+            $table->date('closes_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->index('empresa_id');
+            $table->index('status');
+        });
+
+        $schema->create('candidates', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('job_opening_id')->nullable();
+            $table->string('name', 150);
+            $table->string('email', 190);
+            $table->string('phone', 30)->nullable();
+            $table->string('source', 40)->default('site');
+            $table->string('status', 20)->default('novo');
+            $table->unsignedInteger('decided_by')->nullable();
+            $table->timestamp('decided_at')->nullable();
+            $table->unsignedInteger('employee_id')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['empresa_id', 'email']);
+        });
+
+        $schema->create('interviews', function ($table) {
+            $table->id();
+            $table->unsignedInteger('empresa_id')->nullable();
+            $table->unsignedInteger('candidate_id');
+            $table->unsignedInteger('job_opening_id')->nullable();
+            $table->timestamp('scheduled_at')->nullable();
+            $table->string('interviewer', 150)->nullable();
+            $table->string('result', 20)->default('pendente');
+            $table->text('notes')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     protected function createEmpresa(): \App\Models\Empresa
