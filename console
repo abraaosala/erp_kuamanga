@@ -73,6 +73,7 @@ $application->addCommand(new \App\Console\Commands\Test());
 // Comandos com DatabaseManager
 $application->addCommand(new \App\Console\Commands\DbCreate($dbManager));
 $application->addCommand(new \App\Console\Commands\DbDrop($dbManager));
+$application->addCommand(new \App\Console\Commands\DbExport(new \App\Console\DatabaseExporter($dbManager)));
 
 // Comandos com PhinxRunner
 $application->addCommand(new \App\Console\Commands\DbSeed($phinxRunner));

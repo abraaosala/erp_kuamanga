@@ -68,7 +68,7 @@ class DatabaseManager
         $this->pdo()->exec(sprintf('DROP DATABASE IF EXISTS `%s`', $name));
     }
 
-    private function pdo(): PDO
+    public function pdo(): PDO
     {
         if ($this->pdo === null) {
             $driver = env('DB_CONNECTION', 'mysql');

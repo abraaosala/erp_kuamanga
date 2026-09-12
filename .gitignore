@@ -4,6 +4,7 @@
 /storage/cache/*
 /storage/logs/*
 /storage/uploads/
+/storage/dumps/
 /public/js/app.js
 /public/css/app.css
 .DS_Store
@@ -18,3 +19,4 @@ Thumbs.db
 database/test.sqlite
 
 /.php-cs-fixer.cache
+secrets.md
