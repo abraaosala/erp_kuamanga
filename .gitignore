@@ -19,4 +19,5 @@ Thumbs.db
 database/test.sqlite
 
 /.php-cs-fixer.cache
+/.phpunit.cache/
 secrets.md
