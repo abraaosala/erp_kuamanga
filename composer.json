@@ -3,7 +3,7 @@
     "description": "O projecto da Geralda Bartolomeu para o final do curso",
     "type": "project",
     "require": {
-        "php": "^8.5",
+        "php": "^8.3",
         "dompdf/dompdf": "^3.1",
         "eftec/bladeone": "^4.10",
         "filp/whoops": "^2.15",
@@ -16,6 +16,15 @@
         "illuminate/routing": "^12.0",
         "illuminate/validation": "^12.0",
         "robmorgan/phinx": "^0.16",
+        "symfony/clock": "^7.0",
+        "symfony/config": "^7.0",
+        "symfony/console": "^7.0",
+        "symfony/error-handler": "^7.0",
+        "symfony/event-dispatcher": "^7.0",
+        "symfony/filesystem": "^7.0",
+        "symfony/string": "^7.0",
+        "symfony/translation": "^7.0",
+        "symfony/var-dumper": "^7.0",
         "vlucas/phpdotenv": "^5.5"
     },
     "autoload": {
