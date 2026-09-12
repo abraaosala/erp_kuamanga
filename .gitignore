@@ -1,6 +1,10 @@
 /node_modules
 /vendor
 /.env
+/.env.*
+!.env.example
+/.htaccess
+/.user.ini
 /storage/cache/*
 /storage/logs/*
 /storage/uploads/
