@@ -131,11 +131,11 @@ Ao revisar uma PR de outra pessoa, verificar:
 
 | Estratégia | Quando usar |
 |---|---|
-| **Squash and merge** | Padrão para a maioria dos times — histórico limpo, 1 commit por PR na branch principal |
-| **Merge commit** | Quando o histórico de commits individuais da branch tem valor (ex.: monorepos com convenção própria) |
+| **Merge commit** | **PADRÃO DESTE REPO (abraaosala/erp_kuamanga)** — os PRs têm commits atómicos por unidade lógica (build/style/docs/feat) que devem ser preservados; usar `gh pr merge <n> --merge --delete-branch` |
+| **Squash and merge** | Apenas quando a branch for ruído (vários commits "wip/fix" sem valor individual) ou quando o utilizador pedir explicitamente |
 | **Rebase and merge** | Quando se quer histórico linear sem commit de merge, mas preservando commits individuais |
 
-Regra geral: se o time não tem preferência definida, **squash and merge** é a opção mais segura e mais comum em projetos open source.
+Regra geral: **neste repositório o default é merge commit (nunca squash)**. Squash só com pedido explícito do utilizador. Em projectos sem preferência definida, squash and merge é a opção mais comum em open source.
 
 Depois do merge:
 - Delete a branch (`gh pr merge --delete-branch` já faz isso).
