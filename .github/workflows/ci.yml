@@ -112,12 +112,12 @@ jobs:
           timeout: 60000
           exclude: |
             **/.git*
-            **/.htaccess
             **/.env*
             **/node_modules/**
             **/vendor/**
             tests/**
             .github/**
+            .opencode/**
             docs/**
             scripts/**
             *.md
