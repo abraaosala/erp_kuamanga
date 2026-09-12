@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Modules\Rh\AttendanceController;
 use App\Http\Controllers\Modules\Rh\BenefitController;
+use App\Http\Controllers\Modules\Rh\CandidateController;
 use App\Http\Controllers\Modules\Rh\ContractController;
 use App\Http\Controllers\Modules\Rh\DepartmentController;
 use App\Http\Controllers\Modules\Rh\EmployeeController;
 use App\Http\Controllers\Modules\Rh\EmployeeDocumentController;
 use App\Http\Controllers\Modules\Rh\EmployeeScheduleController;
 use App\Http\Controllers\Modules\Rh\HourBankEntryController;
+use App\Http\Controllers\Modules\Rh\InterviewController;
+use App\Http\Controllers\Modules\Rh\JobOpeningController;
 use App\Http\Controllers\Modules\Rh\LeaveController;
 use App\Http\Controllers\Modules\Rh\PayrollController;
 use App\Http\Controllers\Modules\Rh\PositionController;
@@ -113,4 +116,28 @@ $router->group(['prefix' => 'rh', 'middleware' => 'auth'], function (Router $rou
     $router->get('/payroll/{id}', [PayrollController::class, 'show'])->name('rh.payroll.show');
     $router->get('/payroll/payslip/{payslipId}/recibo', [PayrollController::class, 'recibo'])->name('rh.payroll.recibo');
     $router->post('/payroll/{id}/delete', [PayrollController::class, 'destroy'])->name('rh.payroll.destroy');
+
+    $router->get('/job-openings', [JobOpeningController::class, 'index'])->name('rh.job-openings.index');
+    $router->get('/job-openings/create', [JobOpeningController::class, 'create'])->name('rh.job-openings.create');
+    $router->post('/job-openings', [JobOpeningController::class, 'store'])->name('rh.job-openings.store');
+    $router->get('/job-openings/{id}', [JobOpeningController::class, 'show'])->name('rh.job-openings.show');
+    $router->get('/job-openings/{id}/edit', [JobOpeningController::class, 'edit'])->name('rh.job-openings.edit');
+    $router->post('/job-openings/{id}/update', [JobOpeningController::class, 'update'])->name('rh.job-openings.update');
+    $router->post('/job-openings/{id}/status', [JobOpeningController::class, 'status'])->name('rh.job-openings.status');
+    $router->post('/job-openings/{id}/delete', [JobOpeningController::class, 'destroy'])->name('rh.job-openings.destroy');
+
+    $router->get('/candidates', [CandidateController::class, 'index'])->name('rh.candidates.index');
+    $router->get('/candidates/create', [CandidateController::class, 'create'])->name('rh.candidates.create');
+    $router->post('/candidates', [CandidateController::class, 'store'])->name('rh.candidates.store');
+    $router->get('/candidates/{id}', [CandidateController::class, 'show'])->name('rh.candidates.show');
+    $router->get('/candidates/{id}/edit', [CandidateController::class, 'edit'])->name('rh.candidates.edit');
+    $router->post('/candidates/{id}/update', [CandidateController::class, 'update'])->name('rh.candidates.update');
+    $router->post('/candidates/{id}/transition', [CandidateController::class, 'transition'])->name('rh.candidates.transition');
+    $router->post('/candidates/{id}/reject', [CandidateController::class, 'reject'])->name('rh.candidates.reject');
+    $router->post('/candidates/{id}/hire', [CandidateController::class, 'hire'])->name('rh.candidates.hire');
+    $router->post('/candidates/{id}/delete', [CandidateController::class, 'destroy'])->name('rh.candidates.destroy');
+
+    $router->post('/candidates/{candidateId}/interviews', [InterviewController::class, 'store'])->name('rh.interviews.store');
+    $router->post('/candidates/{candidateId}/interviews/{interviewId}/result', [InterviewController::class, 'result'])->name('rh.interviews.result');
+    $router->post('/candidates/{candidateId}/interviews/{interviewId}/delete', [InterviewController::class, 'destroy'])->name('rh.interviews.destroy');
 });

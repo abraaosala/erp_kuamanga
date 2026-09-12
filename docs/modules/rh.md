@@ -1,15 +1,15 @@
 # Módulo RH — Estado de Implementação
 
-> Última actualização: 2026-09-11
+> Última actualização: 2026-09-12
 
 ---
 
 ## Infraestrutura base
 
-- [x] `RhServiceProvider` — regista 13 repos + 13 services (26 bindings)
-- [x] Rotas CRUD em `routes/rh.php` (80 rotas, prefixo `rh`, middleware `auth`)
+- [x] `RhServiceProvider` — regista 16 repos + 16 services (32 bindings)
+- [x] Rotas CRUD em `routes/rh.php` (101 rotas, prefixo `rh`, middleware `auth`)
 - [x] Multi-empresa — scoping por `current_empresa()` em todos os repositories
-- [x] Sidebar menu — 11 itens RH no layout
+- [x] Sidebar menu — 13 itens RH no layout
 
 ---
 
@@ -174,17 +174,21 @@
 - [x] Benefícios do funcionário visíveis no perfil (`rh.employees.show`): secção própria com estado, categoria, data de início, link para o benefício e remoção directa
 - [x] Testes Pest (16 em `tests/Modules/Rh/BenefitTest.php`)
 
-## Pendentes — roadmap (menu RH)
-
 ### 13. Recrutamento e Seleção
 
-- [ ] Migration `job_openings`, `candidates`, `interviews`
-- [ ] Models + Repository + Service
-- [ ] Controller + Views
-- [ ] Pipeline: vaga → candidatura → entrevista → decisão
-- [ ] Banco de talentos
+- [x] Migration `job_openings` (vaga: título, departamento/cargo, descrição, requisitos, nº de vagas, faixa salarial, localização, `closes_at`, estado `aberta`/`pausada`/`encerrada`) / `candidates` (nome, email, telefone, origem, estado na pipeline, `decided_by`/`decided_at`, `employee_id`; unique `empresa_id+email`) / `interviews` (data/hora, entrevistador, resultado `pendente`/`aprovado`/`reprovado`, notas) — soft deletes em todas
+- [x] Models `JobOpening` (STATUS_*), `Candidate` (STATUS_* + TERMINAL_STATUSES + SOURCES, status/pipeline) e `Interview` (RESULT_*) + relações (department/position/candidates/jobOpening/employee/interviews)
+- [x] Repository + Service (interface + impl, bindings no `RhServiceProvider`) para as 3 entidades
+- [x] Pipeline com regras de domínio no `CandidateService`: `novo → triagem → entrevista → aprovado` (transições restritas, sem saltos); `reject` a partir de qualquer estado não terminal; `hire` só de `aprovado` — cria o registo de funcionário (herda departamento/cargo da vaga), grava `decided_by` (`$_SESSION['user_id']`) e `decided_at`
+- [x] Regras em `candidateService::create`/`update`: email único por empresa (normalizado em minúsculas), candidatura só a vaga `aberta`, origem validada contra `SOURCES`; entrevistas só para candidatos não terminais
+- [x] Controllers `JobOpeningController`, `CandidateController`, `InterviewController` + 21 rotas em `routes/rh.php` (`/rh/job-openings*`, `/rh/candidates*` incl. transition/reject/hire, `/rh/candidates/{candidateId}/interviews*`) + items "Vagas"/"Candidatos" no sidebar
+- [x] Views `rh.job_openings.*` (index com KPIs, create/edit, show com candidatos e troca de estado) e `rh.candidates.*` (index com tabs por estado da pipeline, create/edit, show com linha de pipeline, acções de avanço/rejeição/contratação, entrevistas com resultado inline e agendamento)
+- [x] Banco de talentos: candidato sem vaga (`job_opening_id` nulo) candidatável a vagas futuras
+- [x] Testes Pest (21 em `tests/Modules/Rh/RecruitmentTest.php` — pipeline sem saltos, email único por empresa, hire cria employee, estado terminal bloqueado, resumo e contagens)
 
-### 14. Avaliação de Desempenho
+## Pendentes — roadmap (menu RH)
+
+### 13. Avaliação de Desempenho
 
 - [ ] Migration `performance_reviews`, `goals`
 - [ ] Models + Repository + Service
@@ -192,7 +196,7 @@
 - [ ] Avaliações periódicas / 360º
 - [ ] PDI (Plano de Desenvolvimento Individual)
 
-### 15. Portal do Colaborador
+### 14. Portal do Colaborador
 
 - [ ] Área autenticada do colaborador (self-service)
 - [ ] Consulta de dados pessoais, documentos, recibos
@@ -200,7 +204,7 @@
 - [ ] Consulta de ponto e banco de horas
 - [ ] Comunicados internos
 
-### 16. Relatórios e Indicadores
+### 15. Relatórios e Indicadores
 
 - [ ] Dashboard de RH (headcount, turnover, absenteísmo)
 - [ ] Relatório de custos com pessoal
@@ -208,52 +212,52 @@
 - [ ] Relatório de horas extras
 - [ ] Exportação (PDF/Excel)
 
-### 17. Formação
+### 16. Formação
 
 - [ ] Migration `trainings` / `training_enrollments`
 - [ ] Catálogo de cursos / formações
 - [ ] Inscrições, frequência e certificados
 - [ ] Histórico de formação por funcionário
 
-### 18. Carreira e Sucessão
+### 17. Carreira e Sucessão
 
 - [ ] Planos de carreira / progressão
 - [ ] Competências e análise de gaps
 - [ ] Sucessão: talentos, matriz de prontidão, plano de substituição
 
-### 19. Gestão Disciplinar
+### 18. Gestão Disciplinar
 
 - [ ] Migration `disciplinary_records`
 - [ ] Tipos de ocorrência (advertência, suspensão, etc.)
 - [ ] Fluxo de registo → notificação → decisão
 - [ ] Histórico disciplinar por funcionário
 
-### 20. Saúde e Segurança
+### 19. Saúde e Segurança
 
 - [ ] Atestados médicos e exames periódicos
 - [ ] Registos de acidentes de trabalho
 - [ ] EPIs e gestão de riscos
 - [ ] Brigadas / equipas de segurança
 
-### 21. Auditoria
+### 20. Auditoria
 
 - [ ] Log de acções (quem alterou o quê e quando)
 - [ ] Trilha de auditoria por entidade RH
 - [ ] Relatório de auditoria exportável
 
-### 22. Configurações
+### 21. Configurações
 
 - [ ] Parâmetros gerais do módulo RH
 - [ ] Tipos de férias/licenças configuráveis
 - [ ] Fluxos de aprovação (workflow em cascata)
 - [ ] Tipos de benefícios e elegibilidade por defeito
 
-### 23. Exportação CSV
+### 22. Exportação CSV
 
 - [ ] Exportação de listagens (colaboradores, assiduidade, saldos, férias, etc.)
 - [ ] Suporte a colunas selectáveis e aos filtros actuais
 
-### 24. Impressão / PDF
+### 23. Impressão / PDF
 
 - [ ] Impressão genérica em todas as vistas de detalhe
 - Nota: recibo de vencimento em PDF (dompdf) já implementado em `rh.payroll.recibo`
@@ -263,10 +267,11 @@
 
 ## Notas técnicas
 
-- **Total de ficheiros RH:** 1 provider, 1 routes (80 rotas), 13 controllers, 13 repos (interface+impl), 13 services (interface+impl), 15 models, 20 migrations, 4 seeds, 35 views
-- **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules/rotations usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`; scheduled_shifts usa `TRABALHO`/`FOLGA`
+- **Total de ficheiros RH:** 1 provider, 1 routes (101 rotas), 16 controllers, 16 repos (interface+impl), 16 services (interface+impl), 18 models, 21 migrations, 4 seeds, 43 views
+- **Status conventions:** employees/departments/positions/contracts usam `active`/`inactive`; schedules/rotations usam `ativo`/`inativo`; attendance usa `presente`/`atrasado`/`falta`/`justificado`; scheduled_shifts usa `TRABALHO`/`FOLGA`; job_openings usa `aberta`/`pausada`/`encerrada`; candidates usa a pipeline `novo`/`triagem`/`entrevista`/`aprovado`/`contratado`/`rejeitado`
+- **Regra de integridade cargo ↔ departamento** — `Position` pertence a `Department`; `EmployeeService`, `JobOpeningService` e `BenefitService` garantem coerência via `App\Support\DepartmentPositionRule` (departamento derivado do cargo quando vazio; ambos preenchidos e divergentes → `InvalidArgumentException`). Forms com cascata departamento→cargo (Alpine `x-show` em options nativas). Seeds derivam `department_id` do cargo (consistentes)
 - **Soft deletes** em todos os models
-- **Testes Pest operacionais** — 84 testes em `tests/Modules/Rh/` (`RosterTest.php`, `EmployeeScheduleTest.php`, `PayrollTest.php`, `IrtCalculatorTest.php`, `ValorExtensoTest.php`, `LeaveTest.php`, `BenefitTest.php`); rode com `php console test`
+- **Testes Pest operacionais** — 117 testes em `tests/Modules/Rh/` (`RosterTest.php`, `EmployeeScheduleTest.php`, `PayrollTest.php`, `IrtCalculatorTest.php`, `ValorExtensoTest.php`, `LeaveTest.php`, `BenefitTest.php`, `RecruitmentTest.php`, `PositionDepartmentTest.php`); rode com `php console test`
 - **PHPStan nível 9** — verde (`./vendor/bin/phpstan analyse --no-progress --memory-limit=1G`)
 
 ---

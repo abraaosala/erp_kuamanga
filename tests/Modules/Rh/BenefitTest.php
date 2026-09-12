@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Position;
 use App\Repositories\Modules\Rh\BenefitRepository;
 use App\Repositories\Modules\Rh\EmployeeRepository;
+use App\Repositories\Modules\Rh\PositionRepository;
 use App\Services\Modules\Rh\BenefitPolicy;
 use App\Services\Modules\Rh\BenefitService;
 
@@ -16,7 +17,7 @@ beforeEach(function (): void {
     $_SESSION['empresa_id'] = $this->empresa->id;
 
     $this->repo = new BenefitRepository();
-    $this->service = new BenefitService($this->repo, new EmployeeRepository());
+    $this->service = new BenefitService($this->repo, new EmployeeRepository(), new PositionRepository());
 
     $this->department = Department::create([
         'empresa_id' => $this->empresa->id,

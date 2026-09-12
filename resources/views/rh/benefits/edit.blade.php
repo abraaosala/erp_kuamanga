@@ -18,7 +18,7 @@
     <form method="POST" action="/rh/benefits/{{ $benefit->id }}/update" class="glass-card rounded-2xl p-6 space-y-6">
         <div>
             <h3 class="text-sm font-semibold mb-4" style="color: var(--text-main)">Dados do Benefício</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="{ departmentId: {{ $benefit->department_id ?: 'null' }} }">
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-muted)">Nome <span class="text-red-400">*</span></label>
                     <input type="text" name="name" required maxlength="120" value="{{ $benefit->name }}" class="form-input">
@@ -45,16 +45,16 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-muted)">Restrito ao cargo</label>
-                    <select name="position_id" class="form-input">
+                    <select name="position_id" class="form-input no-select2">
                         <option value="">— Todos os cargos —</option>
                         @foreach($positions as $position)
-                        <option value="{{ $position->id }}" {{ (int) $benefit->position_id === (int) $position->id ? 'selected' : '' }}>{{ $position->name }}</option>
+                        <option value="{{ $position->id }}" x-show="!departmentId || {{ $position->department_id ?: 'null' }} === departmentId" {{ (int) $benefit->position_id === (int) $position->id ? 'selected' : '' }}>{{ $position->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-muted)">Restrito ao departamento</label>
-                    <select name="department_id" class="form-input">
+                    <select name="department_id" class="form-input no-select2" @change="departmentId = $event.target.value ? parseInt($event.target.value) : null">
                         <option value="">— Todos os departamentos —</option>
                         @foreach($departments as $department)
                         <option value="{{ $department->id }}" {{ (int) $benefit->department_id === (int) $department->id ? 'selected' : '' }}>{{ $department->name }}</option>

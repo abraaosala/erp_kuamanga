@@ -8,7 +8,9 @@ use App\Models\Benefit;
 use App\Models\Employee;
 use App\Repositories\Contracts\BenefitRepositoryInterface;
 use App\Repositories\Contracts\EmployeeRepositoryInterface;
+use App\Repositories\Contracts\PositionRepositoryInterface;
 use App\Services\Contracts\BenefitServiceInterface;
+use App\Support\DepartmentPositionRule;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -19,6 +21,7 @@ class BenefitService implements BenefitServiceInterface
     public function __construct(
         protected BenefitRepositoryInterface $benefitRepository,
         protected EmployeeRepositoryInterface $employeeRepository,
+        protected PositionRepositoryInterface $positionRepository,
     ) {
         $this->benefitPolicy = new BenefitPolicy();
     }
@@ -46,6 +49,8 @@ class BenefitService implements BenefitServiceInterface
         $data['min_tenure_months'] = max(0, is_numeric($rawTenure) ? (int) $rawTenure : 0);
         $data['status'] ??= Benefit::STATUS_ACTIVE;
 
+        $data['department_id'] = $this->compatibleDepartment($data, null);
+
         return $this->benefitRepository->create($data);
     }
 
@@ -59,6 +64,8 @@ class BenefitService implements BenefitServiceInterface
             $rawTenure = $data['min_tenure_months'];
             $data['min_tenure_months'] = max(0, is_numeric($rawTenure) ? (int) $rawTenure : 0);
         }
+
+        $data['department_id'] = $this->compatibleDepartment($data, $id);
 
         return $this->benefitRepository->update($id, $data);
     }
@@ -181,5 +188,54 @@ class BenefitService implements BenefitServiceInterface
         }
 
         return $benefit;
+    }
+
+    /**
+     * Garante que cargo e departamento do benefício são coerentes.
+     *
+     * @param array<string, mixed> $data
+     * @param int|null             $benefitId benefício existente (para update)
+     */
+    private function compatibleDepartment(array $data, ?int $benefitId): ?int
+    {
+        $existing = $benefitId !== null ? $this->benefitRepository->findById($benefitId) : null;
+
+        $positionId = null;
+        if (array_key_exists('position_id', $data)) {
+            $positionId = $this->nullableId($data['position_id']);
+        } elseif ($existing !== null && $existing->position_id !== null) {
+            $positionId = (int) $existing->position_id;
+        }
+
+        $departmentId = null;
+        if (array_key_exists('department_id', $data)) {
+            $departmentId = $this->nullableId($data['department_id']);
+        } elseif ($existing !== null && $existing->department_id !== null) {
+            $departmentId = (int) $existing->department_id;
+        }
+
+        if ($positionId === null) {
+            return $departmentId;
+        }
+
+        $position = $this->positionRepository->findById($positionId);
+        if (!$position) {
+            throw new \InvalidArgumentException('Cargo não encontrado.');
+        }
+
+        return DepartmentPositionRule::resolve(
+            $departmentId,
+            $position->department_id !== null ? (int) $position->department_id : null,
+            false,
+        );
+    }
+
+    private function nullableId(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return is_numeric($value) ? (int) $value : null;
     }
 }
