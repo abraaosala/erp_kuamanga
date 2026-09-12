@@ -40,7 +40,7 @@
 
         <div>
             <h3 class="text-sm font-semibold mb-4" style="color: var(--text-main)">Dados do Funcionário</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="{ departmentId: null }">
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-muted)">Nome completo <span class="text-red-400">*</span></label>
                     <div class="field">
@@ -67,7 +67,7 @@
                     <label class="block text-xs font-semibold mb-1.5" style="color: var(--text-muted)">Departamento</label>
                     <div class="field">
                         <i data-lucide="building-2" class="field-icon"></i>
-                        <select name="department_id" class="form-input no-select2">
+                        <select name="department_id" class="form-input no-select2" @change="departmentId = $event.target.value ? parseInt($event.target.value) : null">
                             <option value="">— Selecione —</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}">{{ $dept->name }}</option>
@@ -82,7 +82,7 @@
                         <select name="position_id" class="form-input no-select2">
                             <option value="">— Selecione —</option>
                             @foreach($positions as $pos)
-                                <option value="{{ $pos->id }}">{{ $pos->name }}</option>
+                                <option value="{{ $pos->id }}" x-show="!departmentId || {{ $pos->department_id ?: 'null' }} === departmentId">{{ $pos->name }}</option>
                             @endforeach
                         </select>
                     </div>
