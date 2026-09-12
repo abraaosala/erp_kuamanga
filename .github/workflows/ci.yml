@@ -89,10 +89,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          protocol: ftps-explicit
+          protocol: ftps-legacy
           port: 21
           timeout: 60000
-          retries: 3
           exclude: |
             **/.git*
             **/.htaccess
