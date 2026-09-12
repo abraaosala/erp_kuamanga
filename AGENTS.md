@@ -80,5 +80,5 @@
 
 - `php console serve` (PHP server + npm watcher) | `php console test` (Pest)
 - `php console migrate|rollback|status|breakpoint`
-- `php console seed:run` | `php console db:create|db:drop`
+- `php console seed:run` | `php console db:create|db:drop|db:export`
 - `php console make:controller|model|repository|service|view|migration|seed|middleware`
