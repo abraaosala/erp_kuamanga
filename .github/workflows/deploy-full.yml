@@ -37,33 +37,7 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Deploy completo via FTP (inclui vendor/)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          protocol: ftp
-          port: 21
-          timeout: 60000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.env*
-            **/node_modules/**
-            tests/**
-            .github/**
-            .opencode/**
-            docs/**
-            scripts/**
-            *.md
-            storage/uploads/**
-            storage/cache/**
-            storage/logs/**
-            storage/dumps/**
-
-      - name: Purge dev-deps órfãos do vendor no servidor
+      - name: Sync completo via lftp (paralelo, inclui vendor/)
         env:
           FTP_HOST: ${{ secrets.FTP_SERVER }}
           FTP_USER: ${{ secrets.FTP_USERNAME }}
@@ -71,19 +45,23 @@ jobs:
           FTP_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
           sudo apt-get update && sudo apt-get install -y lftp >/dev/null
-          php -r '$l=json_decode(file_get_contents("composer.lock"),true); foreach(array_column($l["packages-dev"],"name") as $n){ echo "vendor/$n\n"; }' > /tmp/dev-paths.txt
-          run_one() {
-            d="$1"
-            if lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" \
-                  -e "set ssl:verify-certificate no; set net:timeout 45; set net:max-retries 2; set ftp:use-pret off; cd $FTP_DIR; rm -rf $d; quit" >/dev/null 2>&1; then
-              echo "OK   $d"
-            else
-              echo "FAIL $d"
-            fi
-          }
-          export -f run_one
-          {
-            echo vendor/pest-plugins
-            cat /tmp/dev-paths.txt
-            echo vendor/pest-plugins.json
-          } | xargs -P 8 -I {} bash -c 'run_one "$@"' _ {} | sort
+          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" -e "
+            set ssl:verify-certificate no
+            set net:timeout 60
+            set net:max-retries 3
+            set ftp:use-pret off
+            set mirror:parallel-transfer-count 8
+            mirror --reverse --delete --only-newer --parallel=8 \
+              --exclude-glob '.*' \
+              --exclude-glob 'node_modules*' \
+              --exclude-glob 'storage*' \
+              --exclude-glob 'tests*' \
+              --exclude-glob 'docs*' \
+              --exclude-glob 'scripts*' \
+              --exclude-glob 'vendor.zip' \
+              --exclude-glob '*.md' \
+              --exclude-glob '*.log' \
+              ./ \"$FTP_DIR\"
+            quit
+          "
+          echo "Sync completo concluído (paralelo=8, delete de órfãos ativo)."
