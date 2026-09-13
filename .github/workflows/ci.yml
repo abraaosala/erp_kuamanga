@@ -116,13 +116,5 @@ jobs:
             **/.env*
             **/node_modules/**
             **/vendor/**
-            tests/**
             .github/**
             .opencode/**
-            docs/**
-            scripts/**
-            *.md
-            storage/uploads/**
-            storage/cache/**
-            storage/logs/**
-            storage/dumps/**
